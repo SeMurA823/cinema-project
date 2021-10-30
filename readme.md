@@ -2,7 +2,7 @@
 
 ### Controllers
 
-* **/api/premiers**
+* `/api/films/premiers`
 
   Getting premieres
 
