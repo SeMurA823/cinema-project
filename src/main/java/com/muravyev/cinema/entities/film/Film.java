@@ -45,7 +45,6 @@ public class Film extends BaseEntity {
     @JoinColumn(name = "age_limit_id")
     private AgeLimit ageLimit;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "film_id")
+    @OneToMany(mappedBy = "film", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<FilmPoster> posters;
 }
