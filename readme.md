@@ -1,5 +1,7 @@
 # Cinema
 
+![example workflow](https://github.com/semura823/cinema-project/actions/workflows/ci.yml/badge.svg)
+
 ### Controllers
 
 * `/api/films/premiers`
