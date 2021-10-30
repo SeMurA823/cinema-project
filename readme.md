@@ -4,12 +4,15 @@
 
 * **/api/premiers**
 
-    Getting premieres
-    ####Params
-    * **size** - page size
+  Getting premieres
 
-    * **page** - page number
+  **Params**
 
-    ####Return
-    * Premieres List in JSON-format
+  * **size** - page size
+
+  * **page** - page number
+
+  **Return**
+
+  * Premieres List in JSON-format
 
