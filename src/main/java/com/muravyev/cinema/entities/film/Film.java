@@ -1,16 +1,18 @@
 package com.muravyev.cinema.entities.film;
 
 import com.muravyev.cinema.entities.BaseEntity;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
 
+
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@Getter
-@Setter
+@Data
 @Table(name = "films")
 public class Film extends BaseEntity {
     @Id
@@ -26,6 +28,8 @@ public class Film extends BaseEntity {
     @Column(name = "date_world_premiere")
     private Date worldPremiere;
 
+    @Lob
+    @Type(type = "org.hibernate.type.TextType")
     @Column(name = "plot", nullable = false)
     private String plot;
 
@@ -40,4 +44,8 @@ public class Film extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "age_limit_id")
     private AgeLimit ageLimit;
+
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "film_id")
+    private Set<FilmPoster> posters;
 }
