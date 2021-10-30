@@ -9,7 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import javax.persistence.EntityNotFoundException;
 
 @Service
 @Log4j2
@@ -21,9 +21,9 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public Optional<Film> getFilm(Long id) {
+    public Film getFilm(Long id) {
         log.log(Level.DEBUG, "Getting film with id = {}", id);
-        return filmRepository.findById(id);
+        return filmRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
 
     @Override

@@ -4,9 +4,8 @@
 
 ### Controllers
 
-* `/api/films/premiers`
-
-  Getting premieres
+* ### Getting premieres
+  `/api/films/premiers?size={size}&page={page}`
 
   **Params**
 
@@ -18,3 +17,14 @@
 
   * Premieres List in JSON-format
 
+
+* ### Getting film description
+  `/api/films/{id}`
+
+  **Params**
+
+  * **id** - film id
+
+  **Return**
+
+  * Film description in JSON-format
