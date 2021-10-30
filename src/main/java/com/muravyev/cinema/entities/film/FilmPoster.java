@@ -35,6 +35,6 @@ public class FilmPoster extends BaseEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, filename, film);
+        return Objects.hash(id, filename);
     }
 }
