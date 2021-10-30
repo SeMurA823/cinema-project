@@ -18,7 +18,7 @@ public class FilmRestController {
         this.filmService = filmService;
     }
 
-    @GetMapping("/premieres")
+    @GetMapping(value = "/premieres", params = {"size", "page"})
     public Page<Film> premieres(@PageableDefault(sort = "localPremiere") Pageable pageable) {
         return filmService.getPremieres(pageable);
     }
