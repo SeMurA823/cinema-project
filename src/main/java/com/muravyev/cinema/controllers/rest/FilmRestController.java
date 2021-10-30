@@ -1,7 +1,7 @@
 package com.muravyev.cinema.controllers.rest;
 
 import com.muravyev.cinema.entities.film.Film;
-import com.muravyev.cinema.repo.FilmRepository;
+import com.muravyev.cinema.services.FilmService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api")
 public class FilmRestController {
-    private FilmRepository filmRepository;
+    private FilmService filmService;
 
-    public FilmRestController(FilmRepository filmRepository) {
-        this.filmRepository = filmRepository;
+    public FilmRestController(FilmService filmService) {
+        this.filmService = filmService;
     }
 
     @GetMapping("/premieres")
     public Page<Film> premieres(@PageableDefault(sort = "localPremiere") Pageable pageable) {
-        return filmRepository.comingPremieres(pageable);
+        return filmService.getPremieres(pageable);
     }
 }
