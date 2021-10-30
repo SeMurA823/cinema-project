@@ -1,6 +1,8 @@
-package com.muravyev.cinema.entities;
+package com.muravyev.cinema.entities.roles;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.muravyev.cinema.entities.BaseEntity;
+import com.muravyev.cinema.entities.users.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +12,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Table(name = "user_roles")
-public class UserRole extends BaseEntity{
+public class UserRole extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,5 +1,8 @@
-package com.muravyev.cinema.entities;
+package com.muravyev.cinema.entities.users;
 
+import com.muravyev.cinema.entities.BaseEntity;
+import com.muravyev.cinema.entities.EntityStatus;
+import com.muravyev.cinema.entities.roles.UserRole;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;

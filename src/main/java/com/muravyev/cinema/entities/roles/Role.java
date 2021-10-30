@@ -1,4 +1,4 @@
-package com.muravyev.cinema.entities;
+package com.muravyev.cinema.entities.roles;
 
 import org.springframework.security.core.GrantedAuthority;
 

@@ -1,5 +1,7 @@
-package com.muravyev.cinema.entities;
+package com.muravyev.cinema.entities.payment;
 
+import com.muravyev.cinema.entities.BaseEntity;
+import com.muravyev.cinema.entities.users.User;
 import com.muravyev.cinema.entities.film.FilmScreening;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +12,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Table(name = "tickets")
-public class Ticket extends BaseEntity{
+public class Ticket extends BaseEntity {
 
     @Id
     @GeneratedValue

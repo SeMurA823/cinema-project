@@ -1,5 +1,7 @@
-package com.muravyev.cinema.entities;
+package com.muravyev.cinema.entities.payment;
 
+import com.muravyev.cinema.entities.BaseEntity;
+import com.muravyev.cinema.entities.users.Customer;
 import com.muravyev.cinema.entities.film.FilmScreening;
 import com.muravyev.cinema.entities.hall.Place;
 import lombok.Getter;
@@ -12,7 +14,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Table(name = "reservations")
-public class Reservation extends BaseEntity{
+public class Reservation extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

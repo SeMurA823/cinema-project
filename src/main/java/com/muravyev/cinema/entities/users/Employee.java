@@ -1,5 +1,6 @@
-package com.muravyev.cinema.entities;
+package com.muravyev.cinema.entities.users;
 
+import com.muravyev.cinema.entities.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,8 +10,8 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
-@Table(name = "customers")
-public class Customer extends BaseEntity {
+@Table(name = "employees")
+public class Employee extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,4 +34,7 @@ public class Customer extends BaseEntity {
 
     @Column(name = "sex", nullable = false)
     private String sex;
+
+    @Column(name = "post", nullable = false)
+    private String post;
 }

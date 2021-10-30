@@ -1,4 +1,4 @@
-package com.muravyev.cinema.entities;
+package com.muravyev.cinema.entities.users;
 
 public enum UserStatus {
     EXPIRED,
