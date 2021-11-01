@@ -7,6 +7,7 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 
@@ -39,7 +40,7 @@ public class Film extends BaseEntity {
             joinColumns = @JoinColumn(name = "film_id"),
             inverseJoinColumns = @JoinColumn(name = "country_id")
     )
-    private Set<Country> countries;
+    private List<Country> countries;
 
     @ManyToOne
     @JoinColumn(name = "age_limit_id")
