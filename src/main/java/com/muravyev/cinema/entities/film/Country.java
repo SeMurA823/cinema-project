@@ -13,8 +13,7 @@ import java.util.Objects;
 @Table(name = "countries")
 public class Country extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String code;
 
     @Column(name = "full_name", unique = true, nullable = false)
     private String fullName;
@@ -27,11 +26,11 @@ public class Country extends BaseEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Country country = (Country) o;
-        return Objects.equals(id, country.id) && Objects.equals(fullName, country.fullName) && Objects.equals(shortName, country.shortName);
+        return Objects.equals(code, country.code) && Objects.equals(fullName, country.fullName) && Objects.equals(shortName, country.shortName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, fullName, shortName);
+        return Objects.hash(code, fullName, shortName);
     }
 }
