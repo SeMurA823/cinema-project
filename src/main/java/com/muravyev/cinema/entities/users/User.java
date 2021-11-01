@@ -21,12 +21,12 @@ public class User extends BaseEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<UserRole> userRoles;
     @Column(name = "hash_password")
     private String password;
-    @Column(name = "tel")
-    private String tel;
+    @Column(name = "username", unique = true)
+    private String username;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "user_status")
@@ -36,7 +36,7 @@ public class User extends BaseEntity implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return userRoles.stream()
                 .map(UserRole::getRole)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -46,7 +46,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public String getUsername() {
-        return tel;
+        return username;
     }
 
     @Override
@@ -66,6 +66,6 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return getUserStatus().equals(UserStatus.ACTIVE) && getEntityStatus().equals(EntityStatus.ENABLE);
+        return getEntityStatus().equals(EntityStatus.ENABLE);
     }
 }
