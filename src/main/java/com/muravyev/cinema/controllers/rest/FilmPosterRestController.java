@@ -14,7 +14,7 @@ public class FilmPosterRestController {
         this.posterService = posterService;
     }
 
-    @PostMapping("/{film}")
+    @PostMapping("/{film}/add")
     public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file, @PathVariable("film") long filmId) {
         String filename = posterService.save(file, filmId);
         return ResponseEntity.ok(filename);
