@@ -8,7 +8,10 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface FilmRepository extends JpaRepository<Film, Long> {
     @Query("SELECT f FROM Film f " +
-            "WHERE f.localPremiere > CURRENT_DATE AND f.entityStatus = 'ENABLE' " +
-            "ORDER BY f.localPremiere")
-    Page<Film> comingPremieres(Pageable pageable);
+            "WHERE f.localPremiere > CURRENT_DATE AND f.entityStatus = 'ENABLE' ")
+    Page<Film> getComingPremieres(Pageable pageable);
+
+    @Query("SELECT f FROM Film f " +
+            "WHERE f.localPremiere < CURRENT_DATE AND f.entityStatus = 'ENABLE'")
+    Page<Film> getArchiveFilms(Pageable pageable);
 }
