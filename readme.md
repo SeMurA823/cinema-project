@@ -36,7 +36,7 @@
 
   If end date isn't specified, the end date is the end of that day
 
-  If start and end date isn't specified, the start date is the current time and the end date is the end of the that day
+  If start and end dates aren't specified, the start date is the current time and the end date is the end of the that day
 
   **Params**
 
