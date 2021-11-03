@@ -1,5 +1,6 @@
 package com.muravyev.cinema.entities.hall;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.muravyev.cinema.entities.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +26,7 @@ public class Place extends BaseEntity {
     @Column(name = "unused", nullable = false)
     private boolean disabled = false;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "hall_id")
     private Hall hall;
