@@ -11,6 +11,6 @@ public class RegistrationDto {
     private String firstName;
     private String lastName;
     private String patronymic;
-    private String sex;
+    private String gender;
     private Date birthDate;
 }

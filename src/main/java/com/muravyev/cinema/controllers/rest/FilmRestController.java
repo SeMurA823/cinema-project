@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/films")
@@ -43,16 +44,12 @@ public class FilmRestController {
     @DeleteMapping("/{film}/delete")
     public ResponseEntity<?> delete(@PathVariable("film") long filmId) {
         filmService.deleteFilm(filmId);
-        HashMap<Object, Object> response = new HashMap<>();
-        response.put("Status", "Deleted");
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(Map.of("Status","Deleted"));
     }
 
     @PostMapping("/{film}/disable")
     public ResponseEntity<?> disable(@PathVariable("film") long filmId) {
         filmService.disableFilm(filmId);
-        HashMap<Object, Object> response = new HashMap<>();
-        response.put("Status", "Disabled");
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(Map.of("Status","Disabled"));
     }
 }

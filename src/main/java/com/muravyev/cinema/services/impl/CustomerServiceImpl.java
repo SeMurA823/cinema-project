@@ -24,12 +24,6 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer of(RegistrationDto registrationForm) {
-        Customer customer = new Customer();
-        customer.setFirstName(registrationForm.getFirstName());
-        customer.setLastName(registrationForm.getLastName());
-        customer.setPatronymic(registrationForm.getPatronymic());
-        customer.setBirthDate(registrationForm.getBirthDate());
-        customer.setSex(registrationForm.getSex());
-        return customer;
+        return new Customer();
     }
 }

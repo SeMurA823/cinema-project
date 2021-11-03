@@ -17,12 +17,12 @@ public class Place extends BaseEntity {
     private Long id;
 
     @Column(name = "row", nullable = false)
-    private int row;
+    private String row;
 
     @Column(name = "number", nullable = false)
-    private int number;
+    private String number;
 
-    @Column(name = "disabled", nullable = false)
+    @Column(name = "unused", nullable = false)
     private boolean disabled = false;
 
     @ManyToOne

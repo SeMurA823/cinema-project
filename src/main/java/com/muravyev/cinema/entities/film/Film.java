@@ -38,7 +38,7 @@ public class Film extends BaseEntity {
     @JoinTable(
             name = "country_film",
             joinColumns = @JoinColumn(name = "film_id"),
-            inverseJoinColumns = @JoinColumn(name = "country_id")
+            inverseJoinColumns = @JoinColumn(name = "country_code")
     )
     private List<Country> countries;
 

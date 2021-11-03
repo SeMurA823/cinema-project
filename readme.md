@@ -112,3 +112,7 @@
 
 ## Security
   AuthorizationType: Basic
+
+## Entity-Relationship model
+
+  ![Entity-Relationship model](/erd.png)

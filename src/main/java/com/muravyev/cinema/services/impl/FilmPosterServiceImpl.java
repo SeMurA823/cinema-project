@@ -8,6 +8,7 @@ import com.muravyev.cinema.services.FilmPosterService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityNotFoundException;
 import java.io.File;
 
 @Service
@@ -23,7 +24,7 @@ public class FilmPosterServiceImpl implements FilmPosterService {
 
     @Override
     public String save(MultipartFile file, Long filmId) {
-        Film film = filmRepository.findById(filmId).orElseThrow();
+        Film film = filmRepository.findById(filmId).orElseThrow(EntityNotFoundException::new);
         return save(file, film);
     }
 

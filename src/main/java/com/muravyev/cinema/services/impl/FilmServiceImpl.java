@@ -54,7 +54,6 @@ public class FilmServiceImpl implements FilmService {
         film.setLocalPremiere(addingFilmDto.getLocalPremiere());
         film.setWorldPremiere(addingFilmDto.getWorldPremiere());
         film.setPlot(addingFilmDto.getPlot());
-        film.setInsertDate(new Date());
         AgeLimit ageLimit = ageLimitRepository.findById(addingFilmDto.getAgeLimit())
                 .orElseThrow(EntityNotFoundException::new);
         log.log(Level.DEBUG, "Age limit found : {}", ageLimit.getId());
@@ -81,7 +80,7 @@ public class FilmServiceImpl implements FilmService {
     public void disableFilm(long filmId) {
         Film film = filmRepository.findById(filmId)
                 .orElseThrow(EntityNotFoundException::new);
-        film.setDeleteDate(new Date());
+        film.setDisableDate(new Date());
         film.setEntityStatus(EntityStatus.DISABLE);
         filmRepository.save(film);
     }

@@ -1,9 +1,14 @@
 package com.muravyev.cinema.controllers.rest;
 
 import com.muravyev.cinema.services.FilmPosterService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.persistence.EntityNotFoundException;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/posters")
@@ -17,6 +22,6 @@ public class FilmPosterRestController {
     @PostMapping("/{film}/add")
     public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file, @PathVariable("film") long filmId) {
         String filename = posterService.save(file, filmId);
-        return ResponseEntity.ok(filename);
+        return ResponseEntity.ok(Map.of("filename", filename));
     }
 }

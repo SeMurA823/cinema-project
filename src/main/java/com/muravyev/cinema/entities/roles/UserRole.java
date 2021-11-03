@@ -18,7 +18,7 @@ public class UserRole extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @JsonIgnore

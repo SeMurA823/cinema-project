@@ -13,6 +13,7 @@ import java.util.Objects;
 @Table(name = "countries")
 public class Country extends BaseEntity {
     @Id
+    @Column(name = "code")
     private String code;
 
     @Column(name = "full_name", unique = true, nullable = false)
