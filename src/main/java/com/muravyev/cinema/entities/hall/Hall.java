@@ -1,5 +1,6 @@
 package com.muravyev.cinema.entities.hall;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.muravyev.cinema.entities.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,7 @@ public class Hall extends BaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "hall")
     private Set<Place> places;
 
