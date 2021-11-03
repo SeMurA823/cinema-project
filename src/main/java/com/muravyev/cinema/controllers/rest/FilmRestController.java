@@ -31,7 +31,7 @@ public class FilmRestController {
         return filmService.getFilm(filmId);
     }
 
-    @GetMapping("/add")
+    @PostMapping("/add")
     public Film addFilm(@RequestBody AddingFilmDto filmAddingDto) {
         return filmService.addFilm(filmAddingDto);
     }
