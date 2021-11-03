@@ -1,34 +1,48 @@
 package com.muravyev.cinema.entities.users;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.muravyev.cinema.entities.BaseEntity;
 import com.muravyev.cinema.entities.EntityStatus;
+import com.muravyev.cinema.entities.roles.Role;
 import com.muravyev.cinema.entities.roles.UserRole;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Level;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
 @Getter
 @Setter
+@Log4j2
 @Table(name = "users")
 public class User extends BaseEntity implements UserDetails {
     @Id
+    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<UserRole> userRoles;
+
+    @JsonIgnore
     @Column(name = "hash_password")
     private String password;
+
+    @JsonIgnore
     @Column(name = "username", unique = true)
     private String username;
 
+    @JsonIgnore
     @Enumerated(EnumType.STRING)
     @Column(name = "user_status")
     private UserStatus userStatus;
@@ -49,18 +63,23 @@ public class User extends BaseEntity implements UserDetails {
     private String gender;
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return userRoles.stream()
+        List<Role> authorities = userRoles.stream()
                 .map(UserRole::getRole)
                 .collect(Collectors.toList());
+        log.log(Level.DEBUG, "authorities : {}", authorities);
+        return authorities;
     }
 
     @Override
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
 
     @Override
+    @JsonIgnore
     public String getUsername() {
         return username;
     }
