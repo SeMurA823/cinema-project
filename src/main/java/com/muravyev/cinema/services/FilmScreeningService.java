@@ -1,5 +1,6 @@
 package com.muravyev.cinema.services;
 
+import com.muravyev.cinema.dto.AddingFilmScreeningDto;
 import com.muravyev.cinema.entities.film.Film;
 import com.muravyev.cinema.entities.film.FilmScreening;
 
@@ -16,4 +17,6 @@ public interface FilmScreeningService {
     Collection<FilmScreening> getFilmScreening(long filmId, Date start);
 
     Collection<FilmScreening> getFilmScreening(long filmId);
+
+    FilmScreening addFilmScreening(AddingFilmScreeningDto filmScreeningDto);
 }
