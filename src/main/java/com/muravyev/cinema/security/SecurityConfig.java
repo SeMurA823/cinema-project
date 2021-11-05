@@ -34,6 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/api/users/registration").permitAll()
                 .antMatchers("/api/films/add", "/api/posters/*/add", "/api/films/*/delete", "/api/screenings/add").hasAuthority(Role.ADMIN.getAuthority())
+                .antMatchers("/api/reserve/**").hasAuthority(Role.CUSTOMER.getAuthority())
                 .anyRequest().permitAll()
                 .and().httpBasic()
                 .and().sessionManagement().disable()
