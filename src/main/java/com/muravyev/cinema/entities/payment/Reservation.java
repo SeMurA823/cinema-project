@@ -1,5 +1,6 @@
 package com.muravyev.cinema.entities.payment;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.muravyev.cinema.entities.BaseEntity;
 import com.muravyev.cinema.entities.users.Customer;
 import com.muravyev.cinema.entities.film.FilmScreening;
@@ -19,6 +20,7 @@ public class Reservation extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;

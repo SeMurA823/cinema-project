@@ -16,23 +16,24 @@ import java.util.Optional;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
     @Query("SELECT (count(r) > 0) FROM Reservation r " +
-            "WHERE r.entityStatus = 'ENABLE' AND r.expiryDate < :expiry " +
+            "WHERE r.entityStatus = 'ENABLE' AND r.expiryDate > current_timestamp " +
             "AND r.place = :place AND r.filmScreening = :filmScreening")
     boolean existsByFilmScreeningAndPlaceAndExpiryDateBefore(@Param("place") Place place,
-                                                             @Param("filmScreening") FilmScreening filmScreening,
-                                                             @Param("expiry") Date expiry);
+                                                             @Param("filmScreening") FilmScreening filmScreening);
 
     @Query("SELECT r FROM Reservation r " +
-            "WHERE r.entityStatus = 'ENABLE' AND r.customer = :customer AND r.expiryDate < :expiry")
-    Page<Reservation> findAllByCustomerDAndExpiryDate(@Param("customer")Customer customer,
-                                                      @Param("expiry") Date expiryDate,
-                                                      Pageable pageable);
+            "WHERE r.entityStatus = 'ENABLE' AND r.customer = :customer AND r.expiryDate > current_timestamp ")
+    Page<Reservation> findAllActualByCustomer(@Param("customer")Customer customer,
+                                              Pageable pageable);
+
+    Page<Reservation> findAllByCustomer(Customer customer, Pageable pageable);
 
     @Query("SELECT r FROM Reservation r " +
-            "WHERE r.entityStatus = 'ENABLE' AND r.id = :id AND r.customer = :customer")
+            "WHERE r.entityStatus = 'ENABLE' AND r.id = :id " +
+            "AND r.customer = :customer AND r.expiryDate > current_timestamp")
     Optional<Reservation> findByIdAndCustomer(@Param("id") long id, @Param("customer") Customer customer);
 
     @Query("SELECT r FROM Reservation r INNER JOIN r.customer c " +
-            "WHERE c.user = :user AND r.id = :id AND r.entityStatus = 'ENABLE'")
+            "WHERE c.user = :user AND r.id = :id AND r.entityStatus = 'ENABLE' AND r.expiryDate > current_timestamp")
     Optional<Reservation> findByIdAndCustomerUser(@Param("id") long id, @Param("user") User customerUser);
 }

@@ -23,10 +23,13 @@ public class ReservationRestController {
         this.reservationService = reservationService;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<?> reservation(@RequestBody CreateReservationDto reservationDto,
-                                         Authentication authentication) {
-        Reservation reservation = reservationService.createReservation(reservationDto.getFilmScreening(),
+    @PostMapping("/{screening}/create")
+    public ResponseEntity<?> reservation(
+            @PathVariable("screening") long filmScreeningId,
+            @RequestBody CreateReservationDto reservationDto,
+            Authentication authentication) {
+        Reservation reservation = reservationService.createReservation(
+                filmScreeningId,
                 reservationDto.getRow(),
                 reservationDto.getNum(),
                 (User) authentication.getPrincipal());

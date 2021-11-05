@@ -1,6 +1,5 @@
 package com.muravyev.cinema.services.impl;
 
-import com.muravyev.cinema.dto.CreateReservationDto;
 import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.film.FilmScreening;
 import com.muravyev.cinema.entities.hall.Place;
@@ -17,7 +16,6 @@ import org.apache.logging.log4j.Level;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +29,7 @@ import java.util.Date;
 @Log4j2
 public class ReservationServiceImpl implements ReservationService {
     @Value("${app.reservation.expired}")
-    private static int reserveMillis;
+    private int reserveMillis;
 
     private ReservationRepository reservationRepository;
     private CustomerRepository customerRepository;
@@ -71,7 +69,7 @@ public class ReservationServiceImpl implements ReservationService {
     public Reservation createReservation(FilmScreening filmScreening,
                                          Customer customer,
                                          Place place) {
-        if (reservationRepository.existsByFilmScreeningAndPlaceAndExpiryDateBefore(place, filmScreening, new Date())) {
+        if (reservationRepository.existsByFilmScreeningAndPlaceAndExpiryDateBefore(place, filmScreening)) {
             log.log(Level.DEBUG, "Reservation exists date: {}", filmScreening.getDate());
             log.log(Level.DEBUG, "  row = {}", place.getRow());
             log.log(Level.DEBUG, "  num = {}", place.getNumber());
@@ -94,7 +92,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public Page<Reservation> getReservations(Customer customer, Pageable pageable) {
-        return reservationRepository.findAllByCustomerDAndExpiryDate(customer, new Date(), pageable);
+        return reservationRepository.findAllActualByCustomer(customer, pageable);
     }
 
     @Override

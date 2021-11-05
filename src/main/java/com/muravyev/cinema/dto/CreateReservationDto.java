@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class CreateReservationDto {
-    private long filmScreening;
     private String num;
     private String row;
 }
