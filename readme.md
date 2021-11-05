@@ -4,6 +4,19 @@
 
 ## Controllers
 
+1. Films
+   1. [Getting premieres](https://github.com/SeMurA823/cinema-project#getting-premieres)
+   2. [Getting film description](https://github.com/SeMurA823/cinema-project#getting-film-description)
+   3. [Getting upcoming film screenings](https://github.com/SeMurA823/cinema-project#getting-upcoming-film-screenings)
+   4. [Getting archive films](https://github.com/SeMurA823/cinema-project#getting-archive-films)
+   5. [Adding a movie](https://github.com/SeMurA823/cinema-project#adding-a-movie-for-admin)
+   6. [Delete a movie](https://github.com/SeMurA823/cinema-project#delete-a-movie-for-admin)
+   7. [Disable a movie](https://github.com/SeMurA823/cinema-project#disable-a-movie-for-admin)
+2. Booking
+   1. [Create reservation](https://github.com/SeMurA823/cinema-project#create-reservation-for-customer)
+   2. [List of reserved seats](https://github.com/SeMurA823/cinema-project#list-of-reserved-seats-for-customer)
+   3. [Cancel Reservation](https://github.com/SeMurA823/cinema-project#cancel-reservation-for-customer)
+
 * ### Getting premieres
   `/api/films/premiers?size={size}&page={page}`
 
