@@ -1,7 +1,7 @@
 package com.muravyev.cinema.controllers.rest;
 
 import com.muravyev.cinema.dto.AddingFilmScreeningDto;
-import com.muravyev.cinema.entities.film.FilmScreening;
+import com.muravyev.cinema.entities.screening.FilmScreening;
 import com.muravyev.cinema.services.FilmScreeningService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +34,11 @@ public class FilmScreeningRestController {
     public ResponseEntity<?> screenings(@PathVariable("film") long filmId,
                                               @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd") Date start) {
         return ResponseEntity.ok(screeningService.getFilmScreening(filmId, start));
+    }
+
+    @GetMapping("/seats")
+    public ResponseEntity<?> seats(@RequestParam("screening") long screeningId) {
+        return ResponseEntity.ok(screeningService.getStatusSeats(screeningId));
     }
 
     @PostMapping("/add")

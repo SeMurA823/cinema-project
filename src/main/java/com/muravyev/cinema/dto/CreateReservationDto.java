@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class CreateReservationDto {
-    private String num;
-    private String row;
+    private int num;
+    private int row;
 }

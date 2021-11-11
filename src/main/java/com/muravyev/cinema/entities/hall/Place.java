@@ -18,10 +18,10 @@ public class Place extends BaseEntity {
     private Long id;
 
     @Column(name = "row", nullable = false)
-    private String row;
+    private int row;
 
     @Column(name = "number", nullable = false)
-    private String number;
+    private int number;
 
     @Column(name = "unused", nullable = false)
     private boolean disabled = false;

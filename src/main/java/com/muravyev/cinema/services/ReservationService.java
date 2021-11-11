@@ -1,6 +1,6 @@
 package com.muravyev.cinema.services;
 
-import com.muravyev.cinema.entities.film.FilmScreening;
+import com.muravyev.cinema.entities.screening.FilmScreening;
 import com.muravyev.cinema.entities.hall.Place;
 import com.muravyev.cinema.entities.payment.Reservation;
 import com.muravyev.cinema.entities.users.Customer;
@@ -14,7 +14,7 @@ public interface ReservationService {
     Reservation createReservation(FilmScreening filmScreening, User user, Place place);
 
     @Transactional
-    Reservation createReservation(long filmScreeningId, String row, String cell, User user);
+    Reservation createReservation(long filmScreeningId, int row, int cell, User user);
 
     @Transactional
     Reservation createReservation(FilmScreening filmScreening, Customer customer, Place place);

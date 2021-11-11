@@ -3,12 +3,12 @@ package com.muravyev.cinema.entities.payment;
 import com.muravyev.cinema.entities.BaseEntity;
 import com.muravyev.cinema.entities.hall.Place;
 import com.muravyev.cinema.entities.users.Customer;
-import com.muravyev.cinema.entities.users.User;
-import com.muravyev.cinema.entities.film.FilmScreening;
+import com.muravyev.cinema.entities.screening.FilmScreening;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -31,4 +31,13 @@ public class Ticket extends BaseEntity {
     @ManyToOne
     @JoinColumn(name="film_screening_id", nullable = false)
     private FilmScreening filmScreening;
+
+    @Transient
+    private boolean isExpired;
+
+    @PostLoad
+    private void checkExpired(){
+        Date now  = new Date();
+        isExpired = filmScreening.getDate().before(now);
+    }
 }

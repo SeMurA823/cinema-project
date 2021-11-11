@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface PlaceRepository extends JpaRepository<Place, Long> {
-    Optional<Place> findByRowAndNumberAndHall(String row, String number, Hall hall);
+    Optional<Place> findByRowAndNumberAndHall(int row, int number, Hall hall);
 }

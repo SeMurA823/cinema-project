@@ -1,12 +1,14 @@
-package com.muravyev.cinema.entities.film;
+package com.muravyev.cinema.entities.screening;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.muravyev.cinema.entities.BaseEntity;
+import com.muravyev.cinema.entities.film.Film;
 import com.muravyev.cinema.entities.hall.Hall;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
 
@@ -30,6 +32,9 @@ public class FilmScreening extends BaseEntity {
 
     @Column(name = "date")
     private Date date;
+
+    @Column(name = "price")
+    private BigDecimal price;
 
     @Override
     public boolean equals(Object o) {

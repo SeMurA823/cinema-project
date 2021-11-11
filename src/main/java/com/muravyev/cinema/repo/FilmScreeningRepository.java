@@ -1,6 +1,6 @@
 package com.muravyev.cinema.repo;
 
-import com.muravyev.cinema.entities.film.FilmScreening;
+import com.muravyev.cinema.entities.screening.FilmScreening;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

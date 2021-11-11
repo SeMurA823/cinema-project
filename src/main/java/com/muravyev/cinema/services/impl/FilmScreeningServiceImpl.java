@@ -2,11 +2,10 @@ package com.muravyev.cinema.services.impl;
 
 import com.muravyev.cinema.dto.AddingFilmScreeningDto;
 import com.muravyev.cinema.entities.film.Film;
-import com.muravyev.cinema.entities.film.FilmScreening;
+import com.muravyev.cinema.entities.screening.FilmScreening;
 import com.muravyev.cinema.entities.hall.Hall;
-import com.muravyev.cinema.repo.FilmRepository;
-import com.muravyev.cinema.repo.FilmScreeningRepository;
-import com.muravyev.cinema.repo.HallRepository;
+import com.muravyev.cinema.entities.screening.FilmScreeningSeat;
+import com.muravyev.cinema.repo.*;
 import com.muravyev.cinema.services.FilmScreeningService;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Level;
@@ -16,6 +15,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Log4j2
@@ -23,13 +23,16 @@ public class FilmScreeningServiceImpl implements FilmScreeningService {
     private FilmScreeningRepository screeningRepository;
     private FilmRepository filmRepository;
     private HallRepository hallRepository;
+    private FilmScreeningSeatRepository screeningSeatRepository;
 
     public FilmScreeningServiceImpl(FilmScreeningRepository screeningRepository,
                                     FilmRepository filmRepository,
-                                    HallRepository hallRepository) {
+                                    HallRepository hallRepository,
+                                    FilmScreeningSeatRepository screeningSeatRepository) {
         this.screeningRepository = screeningRepository;
         this.filmRepository = filmRepository;
         this.hallRepository = hallRepository;
+        this.screeningSeatRepository = screeningSeatRepository;
     }
 
     @Override
@@ -61,6 +64,17 @@ public class FilmScreeningServiceImpl implements FilmScreeningService {
         filmScreening.setDate(filmScreeningDto.getDate());
         return screeningRepository.save(filmScreening);
     }
+
+    @Override
+    public List<FilmScreeningSeat> getStatusSeats(long screeningId) {
+        return screeningSeatRepository.findAllByScreeningId(screeningId);
+    }
+
+    @Override
+    public List<FilmScreeningSeat> getStatusSeats(FilmScreening filmScreening) {
+        return screeningSeatRepository.findAllByScreening(filmScreening);
+    }
+
 
     private Date toNextDay(Date date) {
         Calendar calendar = Calendar.getInstance();

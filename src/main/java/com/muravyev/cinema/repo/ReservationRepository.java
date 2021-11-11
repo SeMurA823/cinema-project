@@ -1,6 +1,6 @@
 package com.muravyev.cinema.repo;
 
-import com.muravyev.cinema.entities.film.FilmScreening;
+import com.muravyev.cinema.entities.screening.FilmScreening;
 import com.muravyev.cinema.entities.hall.Place;
 import com.muravyev.cinema.entities.payment.Reservation;
 import com.muravyev.cinema.entities.users.Customer;
@@ -11,7 +11,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Date;
 import java.util.Optional;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {

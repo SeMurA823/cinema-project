@@ -2,10 +2,12 @@ package com.muravyev.cinema.entities.hall;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.muravyev.cinema.entities.BaseEntity;
+import com.muravyev.cinema.entities.screening.FilmScreening;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -23,5 +25,9 @@ public class Hall extends BaseEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "hall")
     private Set<Place> places;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "hall")
+    private List<FilmScreening> screeningList;
 
 }

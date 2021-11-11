@@ -1,7 +1,7 @@
 package com.muravyev.cinema.services.impl;
 
 import com.muravyev.cinema.entities.EntityStatus;
-import com.muravyev.cinema.entities.film.FilmScreening;
+import com.muravyev.cinema.entities.screening.FilmScreening;
 import com.muravyev.cinema.entities.hall.Place;
 import com.muravyev.cinema.entities.payment.Reservation;
 import com.muravyev.cinema.entities.users.Customer;
@@ -56,7 +56,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public Reservation createReservation(long filmScreeningId, String row, String cell, User user) {
+    public Reservation createReservation(long filmScreeningId, int row, int cell, User user) {
         FilmScreening filmScreening = screeningRepository.findById(filmScreeningId)
                 .orElseThrow(EntityNotFoundException::new);
         Place place = placeRepository.findByRowAndNumberAndHall(row, cell, filmScreening.getHall())
