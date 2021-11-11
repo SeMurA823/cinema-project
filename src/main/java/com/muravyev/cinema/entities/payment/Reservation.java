@@ -3,7 +3,7 @@ package com.muravyev.cinema.entities.payment;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.muravyev.cinema.entities.BaseEntity;
 import com.muravyev.cinema.entities.users.Customer;
-import com.muravyev.cinema.entities.film.FilmScreening;
+import com.muravyev.cinema.entities.screening.FilmScreening;
 import com.muravyev.cinema.entities.hall.Place;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,4 +35,13 @@ public class Reservation extends BaseEntity {
     @ManyToOne
     @JoinColumn(name="film_screening_id", nullable = false)
     private FilmScreening filmScreening;
+
+    @Transient
+    private boolean isExpired;
+
+    @PostLoad
+    private void checkExpired() {
+        Date now = new Date();
+        isExpired = expiryDate.before(now) || filmScreening.getDate().before(now);
+    }
 }
