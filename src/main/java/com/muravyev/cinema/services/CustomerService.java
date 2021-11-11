@@ -8,4 +8,6 @@ public interface CustomerService {
 
     Customer registration(RegistrationDto registrationForm, User user);
     Customer of(RegistrationDto registrationForm);
+
+    Customer getCustomer(User user);
 }

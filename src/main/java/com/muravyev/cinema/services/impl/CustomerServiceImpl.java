@@ -7,6 +7,8 @@ import com.muravyev.cinema.repo.CustomerRepository;
 import com.muravyev.cinema.services.CustomerService;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
+
 @Service
 public class CustomerServiceImpl implements CustomerService {
     private CustomerRepository customerRepository;
@@ -25,5 +27,12 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer of(RegistrationDto registrationForm) {
         return new Customer();
+    }
+
+    @Override
+    public Customer getCustomer(User user) {
+        return customerRepository.findByUser(user)
+                .orElseThrow(EntityNotFoundException::new);
+
     }
 }
