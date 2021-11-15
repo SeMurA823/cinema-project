@@ -11,8 +11,8 @@ import java.util.Objects;
 @Entity
 @Getter
 @Setter
-@Table(name = "places")
-public class Place extends BaseEntity {
+@Table(name = "seats")
+public class Seat extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,8 +35,8 @@ public class Place extends BaseEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Place place = (Place) o;
-        return row == place.row && number == place.number && disabled == place.disabled && Objects.equals(id, place.id) && Objects.equals(hall, place.hall);
+        Seat seat = (Seat) o;
+        return row == seat.row && number == seat.number && disabled == seat.disabled && Objects.equals(id, seat.id) && Objects.equals(hall, seat.hall);
     }
 
     @Override

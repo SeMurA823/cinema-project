@@ -24,7 +24,7 @@ public class Hall extends BaseEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "hall")
-    private Set<Place> places;
+    private Set<Seat> seats;
 
     @JsonIgnore
     @OneToMany(mappedBy = "hall")

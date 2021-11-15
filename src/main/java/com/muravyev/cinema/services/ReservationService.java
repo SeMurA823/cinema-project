@@ -1,7 +1,7 @@
 package com.muravyev.cinema.services;
 
+import com.muravyev.cinema.entities.hall.Seat;
 import com.muravyev.cinema.entities.screening.FilmScreening;
-import com.muravyev.cinema.entities.hall.Place;
 import com.muravyev.cinema.entities.payment.Reservation;
 import com.muravyev.cinema.entities.users.Customer;
 import com.muravyev.cinema.entities.users.User;
@@ -11,13 +11,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface ReservationService {
     @Transactional
-    Reservation createReservation(FilmScreening filmScreening, User user, Place place);
+    Reservation createReservation(FilmScreening filmScreening, User user, Seat seat);
 
     @Transactional
     Reservation createReservation(long filmScreeningId, int row, int cell, User user);
 
     @Transactional
-    Reservation createReservation(FilmScreening filmScreening, Customer customer, Place place);
+    Reservation createReservation(FilmScreening filmScreening, Customer customer, Seat seat);
 
     Page<Reservation> getReservations(User user, Pageable pageable);
 

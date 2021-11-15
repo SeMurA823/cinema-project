@@ -147,7 +147,7 @@
   ```json
   {
     "id": 10,
-    "place": {
+    "seat": {
         "id": 27,
         "row": "2",
         "number": "12",
@@ -182,7 +182,7 @@
     "content": [
         {
             "id": 10,
-            "place": {
+            "seat": {
                 "id": 27,
                 "row": "2",
                 "number": "12",

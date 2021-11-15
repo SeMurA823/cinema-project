@@ -1,14 +1,14 @@
 package com.muravyev.cinema.services.impl;
 
 import com.muravyev.cinema.entities.EntityStatus;
+import com.muravyev.cinema.entities.hall.Seat;
 import com.muravyev.cinema.entities.screening.FilmScreening;
-import com.muravyev.cinema.entities.hall.Place;
 import com.muravyev.cinema.entities.payment.Reservation;
 import com.muravyev.cinema.entities.users.Customer;
 import com.muravyev.cinema.entities.users.User;
 import com.muravyev.cinema.repo.CustomerRepository;
 import com.muravyev.cinema.repo.FilmScreeningRepository;
-import com.muravyev.cinema.repo.PlaceRepository;
+import com.muravyev.cinema.repo.SeatRepository;
 import com.muravyev.cinema.repo.ReservationRepository;
 import com.muravyev.cinema.services.ReservationService;
 import lombok.extern.log4j.Log4j2;
@@ -34,24 +34,24 @@ public class ReservationServiceImpl implements ReservationService {
     private ReservationRepository reservationRepository;
     private CustomerRepository customerRepository;
     private FilmScreeningRepository screeningRepository;
-    private PlaceRepository placeRepository;
+    private SeatRepository seatRepository;
 
     public ReservationServiceImpl(ReservationRepository reservationRepository,
                                   CustomerRepository customerRepository,
                                   FilmScreeningRepository screeningRepository,
-                                  PlaceRepository placeRepository) {
+                                  SeatRepository seatRepository) {
         this.reservationRepository = reservationRepository;
         this.customerRepository = customerRepository;
         this.screeningRepository = screeningRepository;
-        this.placeRepository = placeRepository;
+        this.seatRepository = seatRepository;
     }
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public Reservation createReservation(FilmScreening filmScreening, User user, Place place) {
+    public Reservation createReservation(FilmScreening filmScreening, User user, Seat seat) {
         Customer customer = customerRepository.findByUser(user)
                 .orElseThrow(EntityNotFoundException::new);
-        return createReservation(filmScreening, customer, place);
+        return createReservation(filmScreening, customer, seat);
     }
 
     @Override
@@ -59,24 +59,24 @@ public class ReservationServiceImpl implements ReservationService {
     public Reservation createReservation(long filmScreeningId, int row, int cell, User user) {
         FilmScreening filmScreening = screeningRepository.findById(filmScreeningId)
                 .orElseThrow(EntityNotFoundException::new);
-        Place place = placeRepository.findByRowAndNumberAndHall(row, cell, filmScreening.getHall())
+        Seat seat = seatRepository.findByRowAndNumberAndHall(row, cell, filmScreening.getHall())
                 .orElseThrow(EntityNotFoundException::new);
-        return createReservation(filmScreening, user, place);
+        return createReservation(filmScreening, user, seat);
     }
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public Reservation createReservation(FilmScreening filmScreening,
                                          Customer customer,
-                                         Place place) {
-        if (reservationRepository.existsByFilmScreeningAndPlaceAndExpiryDateBefore(place, filmScreening)) {
+                                         Seat seat) {
+        if (reservationRepository.existsByFilmScreeningAndPlaceAndExpiryDateBefore(seat, filmScreening)) {
             log.log(Level.DEBUG, "Reservation exists date: {}", filmScreening.getDate());
-            log.log(Level.DEBUG, "  row = {}", place.getRow());
-            log.log(Level.DEBUG, "  num = {}", place.getNumber());
+            log.log(Level.DEBUG, "  row = {}", seat.getRow());
+            log.log(Level.DEBUG, "  num = {}", seat.getNumber());
             throw new EntityExistsException();
         }
         Reservation reservation = new Reservation();
-        reservation.setPlace(place);
+        reservation.setSeat(seat);
         reservation.setExpiryDate(getExpiredDate());
         reservation.setFilmScreening(filmScreening);
         reservation.setCustomer(customer);

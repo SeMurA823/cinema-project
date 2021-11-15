@@ -38,7 +38,7 @@ public class PaymentServiceImpl implements PaymentService {
         Ticket ticket = new Ticket();
         ticket.setCustomer(reservation.getCustomer());
         ticket.setFilmScreening(reservation.getFilmScreening());
-        ticket.setPlace(reservation.getPlace());
+        ticket.setSeat(reservation.getSeat());
         Purchase purchase = new Purchase();
         purchase.setCustomer(reservation.getCustomer());
         purchase.setPrice(reservation.getFilmScreening().getPrice());

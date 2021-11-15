@@ -1,7 +1,7 @@
 package com.muravyev.cinema.entities.payment;
 
 import com.muravyev.cinema.entities.BaseEntity;
-import com.muravyev.cinema.entities.hall.Place;
+import com.muravyev.cinema.entities.hall.Seat;
 import com.muravyev.cinema.entities.users.Customer;
 import com.muravyev.cinema.entities.screening.FilmScreening;
 import lombok.Getter;
@@ -25,8 +25,8 @@ public class Ticket extends BaseEntity {
     private Customer customer;
 
     @ManyToOne
-    @JoinColumn(name = "place_id")
-    private Place place;
+    @JoinColumn(name = "seat_id")
+    private Seat seat;
 
     @ManyToOne
     @JoinColumn(name="film_screening_id", nullable = false)

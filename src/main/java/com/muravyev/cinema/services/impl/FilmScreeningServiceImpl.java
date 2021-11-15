@@ -62,6 +62,7 @@ public class FilmScreeningServiceImpl implements FilmScreeningService {
         filmScreening.setFilm(film);
         filmScreening.setHall(hall);
         filmScreening.setDate(filmScreeningDto.getDate());
+        filmScreening.setPrice(filmScreeningDto.getPrice());
         return screeningRepository.save(filmScreening);
     }
 

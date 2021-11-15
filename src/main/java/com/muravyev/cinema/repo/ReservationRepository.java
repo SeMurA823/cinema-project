@@ -1,7 +1,7 @@
 package com.muravyev.cinema.repo;
 
 import com.muravyev.cinema.entities.screening.FilmScreening;
-import com.muravyev.cinema.entities.hall.Place;
+import com.muravyev.cinema.entities.hall.Seat;
 import com.muravyev.cinema.entities.payment.Reservation;
 import com.muravyev.cinema.entities.users.Customer;
 import com.muravyev.cinema.entities.users.User;
@@ -16,8 +16,8 @@ import java.util.Optional;
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
     @Query("SELECT (count(r) > 0) FROM Reservation r " +
             "WHERE r.entityStatus = 'ENABLE' AND r.expiryDate > current_timestamp " +
-            "AND r.place = :place AND r.filmScreening = :filmScreening")
-    boolean existsByFilmScreeningAndPlaceAndExpiryDateBefore(@Param("place") Place place,
+            "AND r.seat = :seat AND r.filmScreening = :filmScreening")
+    boolean existsByFilmScreeningAndPlaceAndExpiryDateBefore(@Param("seat") Seat seat,
                                                              @Param("filmScreening") FilmScreening filmScreening);
 
     @Query("SELECT r FROM Reservation r " +
