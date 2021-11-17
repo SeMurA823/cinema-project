@@ -242,8 +242,6 @@
 
 ## Security
 
-AuthorizationType: Bearer
-
 **Login:**
 ```json
 {
