@@ -242,7 +242,33 @@
 
 ## Security
 
-AuthorizationType: Basic
+AuthorizationType: Bearer
+
+**Login:**
+```json
+{
+    "username":"username",
+    "password":"123456"
+}
+```
+
+OR
+
+**Login by refresh token**
+```json
+{
+    "username":"token_auth",
+    "password":"MGYyYmI3ZWItMjk2OS00NDEzLWI1ZTgtMWNmMTRiMTE4MjNhOis3OTg3Mzg0OTgxNw=="
+}
+```
+**Return:**
+```json
+{
+    "access_token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIrNzk4NzM4NDk4MTciLCJleHAiOjE2MzcxNzc0MjksImlhdCI6MTYzNzE3NDQyOX0.CDeMyj5R8qYHOP7NGj9ADDnf0Nw3-0PPDEUBUjDaqbY",
+    "refresh_token": "MTYxOTdjYzQtZjJjYS00NTBlLWI1NmItMTc5NThlZjg5YWVhOis3OTg3Mzg0OTgxNw==",
+    "expires_in": "2021-11-17T19:30:29.000+00:00"
+}
+```
 
 ## Entity-Relationship model
 
