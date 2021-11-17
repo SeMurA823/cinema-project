@@ -1,6 +1,7 @@
 package com.muravyev.cinema.services.impl;
 
 import com.muravyev.cinema.dto.RegistrationDto;
+import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.users.Customer;
 import com.muravyev.cinema.entities.users.User;
 import com.muravyev.cinema.repo.CustomerRepository;
@@ -31,7 +32,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer getCustomer(User user) {
-        return customerRepository.findByUser(user)
+        return customerRepository.findByUserAndEntityStatus(user, EntityStatus.ACTIVE)
                 .orElseThrow(EntityNotFoundException::new);
 
     }

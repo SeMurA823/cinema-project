@@ -4,7 +4,9 @@ import com.muravyev.cinema.entities.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
@@ -12,7 +14,6 @@ import java.util.Objects;
 @Setter
 @Table(name = "countries")
 public class Country extends BaseEntity {
-    @Id
     @Column(name = "code")
     private String code;
 

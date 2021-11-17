@@ -32,6 +32,7 @@ public class FileWriterServiceImpl implements FileWriterService {
             log.log(Level.WARN, e.getMessage());
             throw new RuntimeException(e);
         }
+        log.info("File written {}", newFile.getName());
         return newFile;
     }
 
@@ -46,13 +47,11 @@ public class FileWriterServiceImpl implements FileWriterService {
     }
 
     private String generateUniqueFilename(String original) {
-        log.log(Level.DEBUG, "Original filename: {}", original);
         String newFilename = new StringBuilder()
                 .append(UUID.randomUUID().toString().replace("-", ""))
                 .append('.')
                 .append(original)
                 .toString();
-        log.log(Level.DEBUG, "New filename: {}", newFilename);
         return newFilename;
     }
 }

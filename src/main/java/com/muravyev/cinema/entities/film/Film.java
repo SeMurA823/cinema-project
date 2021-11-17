@@ -16,10 +16,6 @@ import java.util.Set;
 @Data
 @Table(name = "films")
 public class Film extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "name", nullable = false)
     private String name;
 
@@ -38,7 +34,7 @@ public class Film extends BaseEntity {
     @JoinTable(
             name = "country_film",
             joinColumns = @JoinColumn(name = "film_id"),
-            inverseJoinColumns = @JoinColumn(name = "country_code")
+            inverseJoinColumns = @JoinColumn(name = "country_id")
     )
     private List<Country> countries;
 

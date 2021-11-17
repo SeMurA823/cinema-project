@@ -13,10 +13,6 @@ import java.math.BigDecimal;
 @Setter
 @Table(name = "purchases")
 public class Purchase extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "price")
     private BigDecimal price;
 

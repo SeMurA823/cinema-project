@@ -11,11 +11,11 @@ import org.springframework.data.repository.query.Param;
 
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
     @Query("SELECT t FROM Ticket t " +
-            "WHERE t.entityStatus = 'ENABLE' AND t.customer = :customer")
+            "WHERE t.entityStatus = 'ACTIVE' AND t.customer = :customer")
     Page<Ticket> findAllByCustomer(@Param("customer") Customer customer, Pageable pageable);
 
     @Query("SELECT t FROM Ticket t " +
             "JOIN t.customer c " +
-            "WHERE c.user = :user AND t.entityStatus = 'ENABLE'")
+            "WHERE c.user = :user AND t.entityStatus = 'ACTIVE'")
     Page<Ticket> findAllByCustomerUser(@Param("user") User customerUser, Pageable pageable);
 }

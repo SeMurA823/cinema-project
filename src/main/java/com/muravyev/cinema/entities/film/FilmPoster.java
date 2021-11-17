@@ -13,10 +13,6 @@ import java.util.Objects;
 @Setter
 @Table(name = "film_posters")
 public class FilmPoster extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "filename", unique = true)
     private String filename;
 
@@ -30,11 +26,11 @@ public class FilmPoster extends BaseEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FilmPoster that = (FilmPoster) o;
-        return Objects.equals(id, that.id) && Objects.equals(filename, that.filename) && Objects.equals(film, that.film);
+        return Objects.equals(getId(), that.getId()) && Objects.equals(filename, that.filename) && Objects.equals(film, that.film);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, filename);
+        return Objects.hash(getId(), filename);
     }
 }

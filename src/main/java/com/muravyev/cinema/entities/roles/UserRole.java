@@ -13,11 +13,6 @@ import javax.persistence.*;
 @Setter
 @Table(name = "user_roles")
 public class UserRole extends BaseEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Enumerated(EnumType.STRING)
     private Role role;
 

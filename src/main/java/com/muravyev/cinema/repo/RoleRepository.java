@@ -10,11 +10,11 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface RoleRepository extends JpaRepository<UserRole, Long> {
-    @Query("SELECT r FROM UserRole r WHERE r.entityStatus='ENABLE' AND r.user.id = :userId")
+    @Query("SELECT r FROM UserRole r WHERE r.entityStatus='ACTIVE' AND r.user.id = :userId")
     List<UserRole> findAllByUserId(@Param("userId") long userId);
 
     @Query("SELECT r FROM UserRole r " +
-            "WHERE r.entityStatus='ENABLE' AND r.user.id = :userId AND r.role = :role")
+            "WHERE r.entityStatus='ACTIVE' AND r.user.id = :userId AND r.role = :role")
     UserRole findByUserIdAndRole(@Param("userId") long userId, @Param("role") Role role);
 
     default UserRole existsByUserAndRole(User user, Role role) {

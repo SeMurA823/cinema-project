@@ -9,7 +9,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -31,25 +30,8 @@ public class FilmRestController {
         return filmService.getFilm(filmId);
     }
 
-    @PostMapping("/add")
-    public Film addFilm(@RequestBody AddingFilmDto filmAddingDto) {
-        return filmService.addFilm(filmAddingDto);
-    }
-
     @GetMapping("/archive")
     public Page<Film> archive(@PageableDefault(sort = "localPremiere") Pageable pageable) {
         return filmService.getArchiveFilms(pageable);
-    }
-
-    @DeleteMapping("/{film}/delete")
-    public ResponseEntity<?> delete(@PathVariable("film") long filmId) {
-        filmService.deleteFilm(filmId);
-        return ResponseEntity.ok(Map.of("Status","Deleted"));
-    }
-
-    @PostMapping("/{film}/disable")
-    public ResponseEntity<?> disable(@PathVariable("film") long filmId) {
-        filmService.disableFilm(filmId);
-        return ResponseEntity.ok(Map.of("Status","Disabled"));
     }
 }

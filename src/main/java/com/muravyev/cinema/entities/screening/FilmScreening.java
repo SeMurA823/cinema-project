@@ -17,10 +17,6 @@ import java.util.Objects;
 @Setter
 @Table(name = "film_screenings")
 public class FilmScreening extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @ManyToOne
     @JoinColumn(name = "hall_id")
     private Hall hall;
@@ -42,11 +38,11 @@ public class FilmScreening extends BaseEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         FilmScreening that = (FilmScreening) o;
-        return Objects.equals(id, that.id) && Objects.equals(hall, that.hall) && Objects.equals(date, that.date);
+        return Objects.equals(getId(), that.getId()) && Objects.equals(hall, that.hall) && Objects.equals(date, that.date);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), id, hall, date);
+        return Objects.hash(super.hashCode(), getId(), hall, date);
     }
 }

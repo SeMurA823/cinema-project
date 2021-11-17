@@ -1,8 +1,8 @@
 package com.muravyev.cinema.services;
 
 import com.muravyev.cinema.entities.hall.Seat;
-import com.muravyev.cinema.entities.screening.FilmScreening;
 import com.muravyev.cinema.entities.payment.Reservation;
+import com.muravyev.cinema.entities.screening.FilmScreening;
 import com.muravyev.cinema.entities.users.Customer;
 import com.muravyev.cinema.entities.users.User;
 import org.springframework.data.domain.Page;

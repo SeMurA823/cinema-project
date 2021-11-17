@@ -1,5 +1,6 @@
 package com.muravyev.cinema.services.impl;
 
+import com.muravyev.cinema.dto.LoginDto;
 import com.muravyev.cinema.dto.RegistrationDto;
 import com.muravyev.cinema.entities.roles.Role;
 import com.muravyev.cinema.entities.users.User;
@@ -9,10 +10,12 @@ import com.muravyev.cinema.services.CustomerService;
 import com.muravyev.cinema.services.RoleService;
 import com.muravyev.cinema.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 
@@ -53,6 +56,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public User registration(RegistrationDto registrationForm) {
         User user = new User();
         user.setUsername(registrationForm.getUsername());
@@ -64,8 +68,22 @@ public class UserServiceImpl implements UserService {
         user.setPatronymic(registrationForm.getPatronymic());
         user.setGender(registrationForm.getGender());
         user = userRepository.save(user);
-        customerService.registration(registrationForm, user);
         user.setUserRoles(Set.of(roleService.setRole(user, Role.CUSTOMER)));
+        customerService.registration(registrationForm, user);
         return user;
+    }
+
+    @Override
+    public User login(String username, String password) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User '" + username + "' not found"));
+        if (!passwordEncoder.matches(password, user.getPassword()))
+            throw new AuthenticationServiceException("Password is illegal");
+        return user;
+    }
+
+    @Override
+    public User login(LoginDto loginDto) {
+        return login(loginDto.getUsername(), loginDto.getPassword());
     }
 }

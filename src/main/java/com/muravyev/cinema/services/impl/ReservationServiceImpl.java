@@ -2,14 +2,14 @@ package com.muravyev.cinema.services.impl;
 
 import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.hall.Seat;
-import com.muravyev.cinema.entities.screening.FilmScreening;
 import com.muravyev.cinema.entities.payment.Reservation;
+import com.muravyev.cinema.entities.screening.FilmScreening;
 import com.muravyev.cinema.entities.users.Customer;
 import com.muravyev.cinema.entities.users.User;
 import com.muravyev.cinema.repo.CustomerRepository;
 import com.muravyev.cinema.repo.FilmScreeningRepository;
-import com.muravyev.cinema.repo.SeatRepository;
 import com.muravyev.cinema.repo.ReservationRepository;
+import com.muravyev.cinema.repo.SeatRepository;
 import com.muravyev.cinema.services.ReservationService;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Level;
@@ -28,7 +28,7 @@ import java.util.Date;
 @Service
 @Log4j2
 public class ReservationServiceImpl implements ReservationService {
-    @Value("${app.reservation.expired}")
+    @Value("${app.reserve.expiration}")
     private int reserveMillis;
 
     private ReservationRepository reservationRepository;
@@ -49,7 +49,7 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public Reservation createReservation(FilmScreening filmScreening, User user, Seat seat) {
-        Customer customer = customerRepository.findByUser(user)
+        Customer customer = customerRepository.findByUserAndEntityStatus(user, EntityStatus.ACTIVE)
                 .orElseThrow(EntityNotFoundException::new);
         return createReservation(filmScreening, customer, seat);
     }
@@ -85,7 +85,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public Page<Reservation> getReservations(User user, Pageable pageable) {
-        Customer customer = customerRepository.findByUser(user)
+        Customer customer = customerRepository.findByUserAndEntityStatus(user, EntityStatus.ACTIVE)
                 .orElseThrow(EntityNotFoundException::new);
         return getReservations(customer, pageable);
     }
@@ -97,8 +97,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public void cancelReservation(Reservation reservation) {
-        reservation.setEntityStatus(EntityStatus.DISABLE);
-        reservation.setDisableDate(new Date());
+        reservation.setEntityStatus(EntityStatus.DELETED);
         reservationRepository.save(reservation);
     }
 

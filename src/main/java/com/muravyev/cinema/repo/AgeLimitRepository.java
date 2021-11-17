@@ -3,5 +3,8 @@ package com.muravyev.cinema.repo;
 import com.muravyev.cinema.entities.film.AgeLimit;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AgeLimitRepository extends JpaRepository<AgeLimit, String> {
+import java.util.Optional;
+
+public interface AgeLimitRepository extends JpaRepository<AgeLimit, Long> {
+    Optional<AgeLimit> findByName(String name);
 }

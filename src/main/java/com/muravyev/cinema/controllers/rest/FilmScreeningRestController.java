@@ -41,10 +41,4 @@ public class FilmScreeningRestController {
         return ResponseEntity.ok(screeningService.getStatusSeats(screeningId));
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<?> addScreening(@RequestBody AddingFilmScreeningDto addingFilmScreeningDto){
-        FilmScreening filmScreening = screeningService.addFilmScreening(addingFilmScreeningDto);
-        return ResponseEntity.ok(filmScreening);
-    }
-
 }

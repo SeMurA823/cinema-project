@@ -2,9 +2,9 @@ package com.muravyev.cinema.entities.payment;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.muravyev.cinema.entities.BaseEntity;
-import com.muravyev.cinema.entities.users.Customer;
-import com.muravyev.cinema.entities.screening.FilmScreening;
 import com.muravyev.cinema.entities.hall.Seat;
+import com.muravyev.cinema.entities.screening.FilmScreening;
+import com.muravyev.cinema.entities.users.Customer;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,10 +16,6 @@ import java.util.Date;
 @Setter
 @Table(name = "reservations")
 public class Reservation extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)

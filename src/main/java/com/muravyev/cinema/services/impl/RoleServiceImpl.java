@@ -36,7 +36,7 @@ public class RoleServiceImpl implements RoleService {
 
     private UserRole createSemiFinished() {
         UserRole userRole = new UserRole();
-        userRole.setInsertDate(new Date());
+        userRole.setCreated(new Date());
         return userRole;
     }
 }

@@ -5,17 +5,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Entity
 @Getter
 @Setter
 @Table(name = "employees")
 public class Employee extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

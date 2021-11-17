@@ -13,10 +13,6 @@ import java.util.Objects;
 @Setter
 @Table(name = "seats")
 public class Seat extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "row", nullable = false)
     private int row;
 
@@ -36,11 +32,11 @@ public class Seat extends BaseEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Seat seat = (Seat) o;
-        return row == seat.row && number == seat.number && disabled == seat.disabled && Objects.equals(id, seat.id) && Objects.equals(hall, seat.hall);
+        return row == seat.row && number == seat.number && disabled == seat.disabled && Objects.equals(getId(), seat.getId()) && Objects.equals(hall, seat.hall);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, row, number, disabled, hall);
+        return Objects.hash(getId(), row, number, disabled, hall);
     }
 }

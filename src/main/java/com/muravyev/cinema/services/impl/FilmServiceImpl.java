@@ -16,7 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -80,8 +79,7 @@ public class FilmServiceImpl implements FilmService {
     public void disableFilm(long filmId) {
         Film film = filmRepository.findById(filmId)
                 .orElseThrow(EntityNotFoundException::new);
-        film.setDisableDate(new Date());
-        film.setEntityStatus(EntityStatus.DISABLE);
+        film.setEntityStatus(EntityStatus.NOT_ACTIVE);
         filmRepository.save(film);
     }
 

@@ -8,7 +8,7 @@ import com.muravyev.cinema.entities.roles.UserRole;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import org.apache.logging.log4j.Level;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -25,12 +25,8 @@ import java.util.stream.Collectors;
 @Log4j2
 @Table(name = "users")
 public class User extends BaseEntity implements UserDetails {
-    @Id
     @JsonIgnore
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @JsonIgnore
+    @CreatedDate
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<UserRole> userRoles;
 
@@ -66,9 +62,10 @@ public class User extends BaseEntity implements UserDetails {
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<Role> authorities = userRoles.stream()
+                .filter(x->x.getEntityStatus().equals(EntityStatus.ACTIVE))
                 .map(UserRole::getRole)
                 .collect(Collectors.toList());
-        log.log(Level.DEBUG, "authorities : {}", authorities);
+        log.info("authorities ({}) : {}", username, authorities);
         return authorities;
     }
 
@@ -101,6 +98,6 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return getEntityStatus().equals(EntityStatus.ENABLE);
+        return getEntityStatus().equals(EntityStatus.ACTIVE);
     }
 }

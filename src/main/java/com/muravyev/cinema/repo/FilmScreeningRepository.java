@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface FilmScreeningRepository extends JpaRepository<FilmScreening, Long> {
     @Query("SELECT f FROM FilmScreening f " +
-            "WHERE f.entityStatus = 'ENABLE' " +
+            "WHERE f.entityStatus = 'ACTIVE' " +
             "AND f.film.id = :filmId " +
             "AND f.date >= :startDate " +
             "AND f.date < :endDate " +

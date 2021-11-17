@@ -2,8 +2,8 @@ package com.muravyev.cinema.entities.payment;
 
 import com.muravyev.cinema.entities.BaseEntity;
 import com.muravyev.cinema.entities.hall.Seat;
-import com.muravyev.cinema.entities.users.Customer;
 import com.muravyev.cinema.entities.screening.FilmScreening;
+import com.muravyev.cinema.entities.users.Customer;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,11 +15,6 @@ import java.util.Date;
 @Setter
 @Table(name = "tickets")
 public class Ticket extends BaseEntity {
-
-    @Id
-    @GeneratedValue
-    private Long id;
-
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;
