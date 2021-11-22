@@ -1,7 +1,7 @@
 package com.muravyev.cinema.entities.film;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.muravyev.cinema.entities.BaseEntity;
+import com.muravyev.cinema.entities.IdentityBaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +12,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Table(name = "film_posters")
-public class FilmPoster extends BaseEntity {
+public class FilmPoster extends IdentityBaseEntity {
     @Column(name = "filename", unique = true)
     private String filename;
 

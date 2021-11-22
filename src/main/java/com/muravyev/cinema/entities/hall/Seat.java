@@ -1,7 +1,7 @@
 package com.muravyev.cinema.entities.hall;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.muravyev.cinema.entities.BaseEntity;
+import com.muravyev.cinema.entities.IdentityBaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +12,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Table(name = "seats")
-public class Seat extends BaseEntity {
+public class Seat extends IdentityBaseEntity {
     @Column(name = "row", nullable = false)
     private int row;
 

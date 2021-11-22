@@ -1,6 +1,6 @@
 package com.muravyev.cinema.entities.payment;
 
-import com.muravyev.cinema.entities.BaseEntity;
+import com.muravyev.cinema.entities.IdentityBaseEntity;
 import com.muravyev.cinema.entities.users.Customer;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Table(name = "purchases")
-public class Purchase extends BaseEntity {
+public class Purchase extends IdentityBaseEntity {
     @Column(name = "price")
     private BigDecimal price;
 

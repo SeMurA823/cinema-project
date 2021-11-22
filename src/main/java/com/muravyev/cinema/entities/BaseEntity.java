@@ -11,10 +11,6 @@ import java.util.Date;
 @Data
 @MappedSuperclass
 public class BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @JsonIgnore
     @CreatedDate
     @Column(name = "insert_date")

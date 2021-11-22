@@ -1,6 +1,7 @@
 package com.muravyev.cinema.entities.screening;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Subselect;
@@ -27,6 +28,7 @@ public class FilmScreeningSeat {
     @JoinColumn(name = "screening_id")
     private FilmScreening screening;
 
+    @JsonProperty("status")
     @Column(name = "status_seat")
     @Enumerated(EnumType.STRING)
     private SeatStatus seatStatus;

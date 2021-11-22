@@ -1,65 +1,98 @@
 package com.muravyev.cinema.security.services;
 
+import com.muravyev.cinema.entities.session.ClientSession;
 import com.muravyev.cinema.entities.users.User;
 import com.muravyev.cinema.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
 
 @Service
 public class TokenManagerImpl implements TokenManager {
     @Autowired
-    private RefreshTokenUtils refreshTokenUtils;
+    private RefreshTokenService refreshTokenService;
 
     @Autowired
-    private AccessTokenUtils accessTokenUtils;
+    private AccessTokenService accessTokenService;
+
+    @Autowired
+    private ClientSessionService<ClientSession> clientSessionService;
 
     @Autowired
     private UserService userService;
 
     @Override
-    public TokenPair createToken(User user) {
-        String refreshToken = refreshTokenUtils.createToken(user);
-        String accessToken = accessTokenUtils.createToken(user);
-        return new InnerTokenPair(accessToken, refreshToken);
+    public TokenPairClientable createToken(User user) {
+        ClientSessionService.HttpClientSessionable<ClientSession> session = clientSessionService.createSession(user);
+        Token refreshToken = refreshTokenService.createToken(session);
+        Token accessToken = accessTokenService.createToken(user);
+        return new InnerTokenPairClient(session, new InnerTokenPair(accessToken, refreshToken));
     }
 
     @Override
     public TokenPair refresh(String refreshToken) {
-        String newRefreshToken = refreshTokenUtils.refreshToken(refreshToken);
-        String username = refreshTokenUtils.extractUsername(refreshToken);
-        String newAccessToken = accessTokenUtils.createToken(userService.loadUserByUsername(username));
+        Token newRefreshToken = refreshTokenService.refreshToken(refreshToken);
+        String username = refreshTokenService.extractUsername(refreshToken);
+        Token newAccessToken = accessTokenService.createToken(userService.loadUserByUsername(username));
         return new InnerTokenPair(newAccessToken, newRefreshToken);
     }
 
+    @Override
+    public TokenPair disable(String refreshTokenStr, String clientId) {
+        clientSessionService.disableClient(clientId);
+        Token refreshToken = refreshTokenService.disableToken(refreshTokenStr);
+        Token accessToken = accessTokenService.disableToken("");
+        return new InnerTokenPair(accessToken, refreshToken);
+    }
 
-    private class InnerTokenPair implements TokenPair {
-        private final String accessToken;
-        private final String refreshToken;
-        private final Date expiryDate;
+    @Override
+    public void disableAll(User user) {
+        clientSessionService.disableAll(user);
+    }
 
-        public InnerTokenPair(String accessToken, String refreshToken) {
-            this.accessToken = accessToken;
-            this.refreshToken = refreshToken;
-            this.expiryDate = TokenManagerImpl.this.accessTokenUtils
-                    .extractExpiration(this.accessToken);
+
+    private static class InnerTokenPairClient implements TokenPairClientable {
+
+        private final ClientSessionService.HttpClientSessionable<?> client;
+        private final TokenPair tokenPair;
+
+        public InnerTokenPairClient(ClientSessionService.HttpClientSessionable<?> client, TokenPair tokenPair) {
+            this.client = client;
+            this.tokenPair = tokenPair;
         }
 
         @Override
-        public String getAccessToken() {
+        public Token getAccessToken() {
+            return tokenPair.getAccessToken();
+        }
+
+        @Override
+        public Token getRefreshToken() {
+            return tokenPair.getRefreshToken();
+        }
+
+        @Override
+        public ClientSessionService.HttpClientSessionable<?> getClient() {
+            return client;
+        }
+    }
+
+    private static class InnerTokenPair implements TokenPair {
+        private final Token accessToken;
+        private final Token refreshToken;
+
+        public InnerTokenPair(Token accessToken, Token refreshToken) {
+            this.accessToken = accessToken;
+            this.refreshToken = refreshToken;
+        }
+
+        @Override
+        public Token getAccessToken() {
             return accessToken;
         }
 
         @Override
-        public String getRefreshToken() {
+        public Token getRefreshToken() {
             return refreshToken;
-        }
-
-        @Override
-        public Date getExpiryDate() {
-            return this.expiryDate;
         }
     }
 }

@@ -1,18 +1,15 @@
 package com.muravyev.cinema.security.services;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonGetter;
-
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE)
-public interface TokenPair {
-    Token getAccessToken();
-    Token getRefreshToken();
+public interface TokenPairClientable extends TokenPair{
+    ClientSessionService.HttpClientSessionable<?> getClient();
+
+    @Override
     default Map<String, Object> toResult(){
         return new LinkedHashMap<>(){{
+            put("client_id", getClient().compact());
             put("access_token", getAccessToken().compact());
             put("refresh_token", getRefreshToken().compact());
             put("token_type", "bearer");

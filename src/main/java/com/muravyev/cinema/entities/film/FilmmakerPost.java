@@ -1,6 +1,6 @@
 package com.muravyev.cinema.entities.film;
 
-import com.muravyev.cinema.entities.BaseEntity;
+import com.muravyev.cinema.entities.IdentityBaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Table(name = "filmmaker_posts")
-public class FilmmakerPost extends BaseEntity {
+public class FilmmakerPost extends IdentityBaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 

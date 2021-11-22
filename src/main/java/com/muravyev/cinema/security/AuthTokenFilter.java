@@ -1,9 +1,8 @@
 package com.muravyev.cinema.security;
 
-import com.muravyev.cinema.security.services.AccessTokenUtils;
+import com.muravyev.cinema.security.services.AccessTokenService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,7 +23,7 @@ import java.util.Optional;
 public class AuthTokenFilter extends GenericFilterBean {
 
     @Autowired
-    private AccessTokenUtils accessTokenUtils;
+    private AccessTokenService accessTokenService;
 
     @Autowired
     private UserDetailsService userDetailsService;
@@ -43,9 +42,9 @@ public class AuthTokenFilter extends GenericFilterBean {
         try {
             log.debug("Using filter: {}", this.getClass().getName());
             Optional<String> accessToken = getTokenRequest((HttpServletRequest) servletRequest);
-            if (accessToken.isPresent() && !accessTokenUtils.isExpiredToken(accessToken.get())) {
+            if (accessToken.isPresent()) {
                 log.debug("Access token: {}", accessToken.get());
-                String username = accessTokenUtils.extractUsername(accessToken.get());
+                String username = accessTokenService.extractUsername(accessToken.get());
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities()

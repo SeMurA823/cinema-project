@@ -1,6 +1,6 @@
 package com.muravyev.cinema.entities.film;
 
-import com.muravyev.cinema.entities.BaseEntity;
+import com.muravyev.cinema.entities.IdentityBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Type;
@@ -15,7 +15,7 @@ import java.util.Set;
 @Entity
 @Data
 @Table(name = "films")
-public class Film extends BaseEntity {
+public class Film extends IdentityBaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 

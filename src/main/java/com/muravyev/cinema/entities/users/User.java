@@ -1,7 +1,7 @@
 package com.muravyev.cinema.entities.users;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.muravyev.cinema.entities.BaseEntity;
+import com.muravyev.cinema.entities.IdentityBaseEntity;
 import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.roles.Role;
 import com.muravyev.cinema.entities.roles.UserRole;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Setter
 @Log4j2
 @Table(name = "users")
-public class User extends BaseEntity implements UserDetails {
+public class User extends IdentityBaseEntity implements UserDetails {
     @JsonIgnore
     @CreatedDate
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)

@@ -1,7 +1,7 @@
 package com.muravyev.cinema.entities.screening;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.muravyev.cinema.entities.BaseEntity;
+import com.muravyev.cinema.entities.IdentityBaseEntity;
 import com.muravyev.cinema.entities.film.Film;
 import com.muravyev.cinema.entities.hall.Hall;
 import lombok.Getter;
@@ -16,7 +16,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Table(name = "film_screenings")
-public class FilmScreening extends BaseEntity {
+public class FilmScreening extends IdentityBaseEntity {
     @ManyToOne
     @JoinColumn(name = "hall_id")
     private Hall hall;

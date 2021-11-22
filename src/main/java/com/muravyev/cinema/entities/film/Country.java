@@ -1,6 +1,6 @@
 package com.muravyev.cinema.entities.film;
 
-import com.muravyev.cinema.entities.BaseEntity;
+import com.muravyev.cinema.entities.IdentityBaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +13,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Table(name = "countries")
-public class Country extends BaseEntity {
+public class Country extends IdentityBaseEntity {
     @Column(name = "code")
     private String code;
 

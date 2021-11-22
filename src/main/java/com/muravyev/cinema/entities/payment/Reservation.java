@@ -1,7 +1,7 @@
 package com.muravyev.cinema.entities.payment;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.muravyev.cinema.entities.BaseEntity;
+import com.muravyev.cinema.entities.IdentityBaseEntity;
 import com.muravyev.cinema.entities.hall.Seat;
 import com.muravyev.cinema.entities.screening.FilmScreening;
 import com.muravyev.cinema.entities.users.Customer;
@@ -15,7 +15,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Table(name = "reservations")
-public class Reservation extends BaseEntity {
+public class Reservation extends IdentityBaseEntity {
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)

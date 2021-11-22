@@ -1,7 +1,7 @@
 package com.muravyev.cinema.entities.hall;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.muravyev.cinema.entities.BaseEntity;
+import com.muravyev.cinema.entities.IdentityBaseEntity;
 import com.muravyev.cinema.entities.screening.FilmScreening;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +17,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(name = "halls")
-public class Hall extends BaseEntity {
+public class Hall extends IdentityBaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 

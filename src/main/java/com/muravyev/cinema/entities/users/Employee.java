@@ -1,6 +1,6 @@
 package com.muravyev.cinema.entities.users;
 
-import com.muravyev.cinema.entities.BaseEntity;
+import com.muravyev.cinema.entities.IdentityBaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Table(name = "employees")
-public class Employee extends BaseEntity {
+public class Employee extends IdentityBaseEntity {
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
