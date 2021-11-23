@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,8 +25,52 @@ public class AccessTokenService implements TokenService<UserDetails> {
     @Value("${token.access.secret}")
     private String secretKey;
 
+    @Value("${app.cookie.domain}")
+    private String cookieDomain;
+
     @Value("${app.cookie.path}")
     private String cookiePath;
+
+    private Token dummyToken;
+
+    @Autowired
+    private void setDefaultToken(@Value("${token.access.cookie}") String cookieKey) {
+        Date now = new Date();
+        dummyToken = new Token() {
+            @Override
+            public String compact() {
+                return "empty";
+            }
+
+            @Override
+            public ResponseCookie toCookie() {
+                return ResponseCookie.from(cookieKey, compact())
+                        .maxAge(0)
+                        .build();
+            }
+
+            @Override
+            public ResponseCookie toCookie(long maxAge) {
+                return ResponseCookie.from(cookieKey, compact())
+                        .maxAge(0)
+                        .build();
+            }
+
+            @Override
+            public Date getExpiryDate() {
+                return now;
+            }
+
+            @Override
+            public Map<String, Object> result() {
+                return new LinkedHashMap<>() {{
+                    put("access_token", compact());
+                    put("expires_in", getExpiryDate().getTime());
+                    put("token_type", "bearer");
+                }};
+            }
+        };
+    }
 
 
     private Key getKey() {
@@ -48,13 +93,7 @@ public class AccessTokenService implements TokenService<UserDetails> {
 
     @Override
     public Token disableToken(String token) {
-        return new AccessTokenImpl(
-                Jwts.builder()
-                        .setExpiration(new Date())
-                        .setClaims(new HashMap<>())
-                        .setSubject("")
-                        .signWith(getKey(), SignatureAlgorithm.HS256)
-                        .compact());
+        return dummyToken;
     }
 
     @Override
@@ -120,6 +159,7 @@ public class AccessTokenService implements TokenService<UserDetails> {
                     .maxAge(maxAge)
                     .httpOnly(true)
                     .path(cookiePath)
+                    //.domain(cookieDomain)
                     .build();
         }
 

@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class RefreshTokenService implements TokenService<ClientSessionService.HttpClientSessionable<ClientSession>> {
@@ -23,6 +24,8 @@ public class RefreshTokenService implements TokenService<ClientSessionService.Ht
     private String cookieName;
     @Value("${app.cookie.path}")
     private String cookiePath;
+    @Value("${app.cookie.domain}")
+    private String cookieDomain;
     @Autowired
     private RefreshTokenRepository tokenRepository;
 
@@ -39,16 +42,23 @@ public class RefreshTokenService implements TokenService<ClientSessionService.Ht
     }
     //TODO: set isolation level
     @Override
-    @Transactional
+    @Transactional(noRollbackFor = {InvalidTokenException.class})
     public Token refreshToken(String token) {
         Optional<RefreshToken> optionalRefreshToken =
                 tokenRepository.findByTokenAndEntityStatus(token, EntityStatus.ACTIVE);
         if (optionalRefreshToken.isEmpty())
             throw new InvalidTokenException();
         RefreshToken oldRefreshToken = optionalRefreshToken.get();
-        if (oldRefreshToken.getClientSession().getEntityStatus() == EntityStatus.NOT_ACTIVE)
-            tokenRepository.setStatusAllByClientSession(oldRefreshToken.getClientSession(), EntityStatus.NOT_ACTIVE);
+        if (oldRefreshToken.getClientSession().getEntityStatus() == EntityStatus.NOT_ACTIVE) {
+            Iterable<RefreshToken> iterable = tokenRepository.findAllByClientSessionAndEntityStatus(oldRefreshToken.getClientSession(),
+                            EntityStatus.ACTIVE).stream()
+                    .peek(x -> x.setEntityStatus(EntityStatus.NOT_ACTIVE))
+                    .collect(Collectors.toList());
+            tokenRepository.saveAll(iterable);
+            throw new InvalidTokenException();
+        }
         RefreshToken refreshToken = refreshToken(oldRefreshToken);
+        disableToken(oldRefreshToken);
         return new RefreshTokenImpl(tokenRepository.save(refreshToken));
     }
 
@@ -120,6 +130,7 @@ public class RefreshTokenService implements TokenService<ClientSessionService.Ht
                     .maxAge(maxAge)
                     .httpOnly(true)
                     .path(cookiePath)
+                   // .domain(cookieDomain)
                     .build();
         }
 

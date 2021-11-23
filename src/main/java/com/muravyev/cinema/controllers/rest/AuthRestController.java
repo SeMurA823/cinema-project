@@ -43,13 +43,17 @@ public class AuthRestController {
     @PostMapping(params = {"login"})
     public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto) {
         User user = userService.login(loginDto);
-        TokenPair tokenPair = tokenManager.createToken(user);
+        TokenPairClientable tokenPair = tokenManager.createToken(user);
         ResponseCookie cookie = (loginDto.isRememberMe())
                 ? tokenPair.getRefreshToken().toCookie()
                 : tokenPair.getRefreshToken().toCookie(-1);
+        ResponseCookie sessionCookie = (loginDto.isRememberMe())
+                ? tokenPair.getClient().toCookie(Integer.MAX_VALUE)
+                : tokenPair.getClient().toCookie(-1);
         return ResponseEntity
                 .ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .header(HttpHeaders.SET_COOKIE, sessionCookie.toString())
                 .body(tokenPair.getAccessToken().result());
     }
 
@@ -75,7 +79,7 @@ public class AuthRestController {
 //    }
 
     @PostMapping(params = {"refresh"})
-    public ResponseEntity<?> profile(@CookieValue("Refresh") Cookie cookie) {
+    public ResponseEntity<?> profile(@CookieValue(name = "Refresh") Cookie cookie) {
         String refreshToken = cookie.getValue();
         TokenPair tokenPair = tokenManager.refresh(refreshToken);
         return ResponseEntity.ok()

@@ -2,6 +2,7 @@ package com.muravyev.cinema.security.services;
 
 import com.muravyev.cinema.entities.users.User;
 import org.springframework.http.HttpCookie;
+import org.springframework.http.ResponseCookie;
 
 public interface ClientSessionService<T> {
     HttpClientSessionable<T> createSession(User user);
@@ -11,7 +12,7 @@ public interface ClientSessionService<T> {
     void disableAll(User user);
 
     interface HttpClientSessionable<T> {
-        HttpCookie toCookie(long maxAge);
+        ResponseCookie toCookie(long maxAge);
         String compact();
         T get();
     }

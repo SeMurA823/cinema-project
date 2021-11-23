@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ClientSessionServiceImpl implements ClientSessionService<ClientSession> {
@@ -21,6 +22,9 @@ public class ClientSessionServiceImpl implements ClientSessionService<ClientSess
 
     @Value("${app.cookie.path}")
     private String cookiePath;
+
+    @Value("${app.cookie.domain}")
+    private String cookieDomain;
 
     private final ClientSessionRepository clientSessionRepository;
 
@@ -38,7 +42,7 @@ public class ClientSessionServiceImpl implements ClientSessionService<ClientSess
     @Override
     @Transactional
     public void disableClient(String clientId) {
-        ClientSession clientSession = clientSessionRepository.findById(clientId)
+        ClientSession clientSession = clientSessionRepository.findById(UUID.fromString(clientId))
                 .orElseThrow(EntityNotFoundException::new);
         clientSession.setEntityStatus(EntityStatus.NOT_ACTIVE);
     }
@@ -61,9 +65,10 @@ public class ClientSessionServiceImpl implements ClientSessionService<ClientSess
         }
 
         @Override
-        public HttpCookie toCookie(long maxAge) {
+        public ResponseCookie toCookie(long maxAge) {
             return ResponseCookie.from(cookieName, clientSession.getId().toString())
                     .path(cookiePath)
+                    //.domain(cookieDomain)
                     .maxAge(maxAge)
                     .httpOnly(true)
                     .build();

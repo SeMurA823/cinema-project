@@ -1,5 +1,6 @@
 package com.muravyev.cinema.entities.film;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.muravyev.cinema.entities.IdentityBaseEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +19,7 @@ public class FilmmakerPost extends IdentityBaseEntity {
     @JoinColumn(name = "filmmaker_id")
     private Filmmaker filmmaker;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "film_id")
     private Film film;
