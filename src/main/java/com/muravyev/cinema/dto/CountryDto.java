@@ -10,9 +10,9 @@ public class CountryDto {
     @NotEmpty
     private String code;
     @NotEmpty
-    @JsonProperty("full_name")
+    @JsonProperty("fullName")
     private String fullName;
     @NotEmpty
-    @JsonProperty("short_name")
+    @JsonProperty("shortName")
     private String shortName;
 }

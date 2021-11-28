@@ -2,6 +2,7 @@ package com.muravyev.cinema.services.impl;
 
 import com.muravyev.cinema.dto.LoginDto;
 import com.muravyev.cinema.dto.RegistrationDto;
+import com.muravyev.cinema.dto.UserInfoDto;
 import com.muravyev.cinema.entities.roles.Role;
 import com.muravyev.cinema.entities.users.User;
 import com.muravyev.cinema.entities.users.UserStatus;
@@ -11,6 +12,7 @@ import com.muravyev.cinema.services.RoleService;
 import com.muravyev.cinema.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -85,5 +87,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public User login(LoginDto loginDto) {
         return login(loginDto.getUsername(), loginDto.getPassword());
+    }
+
+    @Override
+    public User editPassword(String newPassword, User user) {
+        user.setPassword(passwordEncoder.encode(newPassword));
+        return userRepository.save(user);
+    }
+
+    @Override
+    public User editUserInfo(UserInfoDto userInfo, User user) {
+        user.setFirstName(userInfo.getFirstName());
+        user.setLastName(userInfo.getLastName());
+        user.setPatronymic(userInfo.getPatronymic());
+        user.setBirthDate(userInfo.getBirthDate());
+        return userRepository.save(user);
     }
 }

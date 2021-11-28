@@ -8,7 +8,7 @@ import javax.validation.constraints.NotEmpty;
 
 @Data
 public class AgeLimitDto {
-    @JsonProperty("start_age")
+    @JsonProperty("startAge")
     @Min(0)
     private int startAge;
     @NotEmpty

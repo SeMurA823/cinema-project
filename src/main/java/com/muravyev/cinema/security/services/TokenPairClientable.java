@@ -7,13 +7,13 @@ public interface TokenPairClientable extends TokenPair{
     ClientSessionService.HttpClientSessionable<?> getClient();
 
     @Override
-    default Map<String, Object> toResult(){
+    default Map<String, Object> result(){
         return new LinkedHashMap<>(){{
-            put("client_id", getClient().compact());
-            put("access_token", getAccessToken().compact());
-            put("refresh_token", getRefreshToken().compact());
-            put("token_type", "bearer");
-            put("expires_in", getAccessToken().getExpiryDate().getTime());
+            put("clientId", getClient().compact());
+            put("accessToken", getAccessToken().compact());
+            put("refreshToken", getRefreshToken().compact());
+            put("tokenType", "bearer");
+            put("expiresIn", getAccessToken().getExpiryDate().getTime());
         }};
     }
 }

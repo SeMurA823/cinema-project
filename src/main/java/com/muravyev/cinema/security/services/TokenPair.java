@@ -11,7 +11,7 @@ import java.util.Map;
 public interface TokenPair {
     Token getAccessToken();
     Token getRefreshToken();
-    default Map<String, Object> toResult(){
+    default Map<String, Object> result(){
         return new LinkedHashMap<>(){{
             put("access_token", getAccessToken().compact());
             put("refresh_token", getRefreshToken().compact());

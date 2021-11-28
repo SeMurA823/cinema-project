@@ -52,9 +52,7 @@ public class AuthRestController {
                 : tokenPair.getClient().toCookie(-1);
         return ResponseEntity
                 .ok()
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .header(HttpHeaders.SET_COOKIE, sessionCookie.toString())
-                .body(tokenPair.getAccessToken().result());
+                .body(tokenPair.result());
     }
 
     @PostMapping(value = "/logout")
@@ -81,12 +79,17 @@ public class AuthRestController {
     @PostMapping(params = {"refresh"})
     public ResponseEntity<?> profile(@CookieValue(name = "Refresh") Cookie cookie) {
         String refreshToken = cookie.getValue();
+        return profile(refreshToken);
+    }
+
+    @PostMapping(params = {"refresh", "refreshToken"})
+    public ResponseEntity<?> profile(@RequestParam("refreshToken") String refreshToken) {
         TokenPair tokenPair = tokenManager.refresh(refreshToken);
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE,
                         tokenPair.getRefreshToken()
                                 .toCookie().toString())
-                .body(tokenPair.getAccessToken().result());
+                .body(tokenPair.result());
     }
 
 }
