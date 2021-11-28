@@ -12,6 +12,6 @@ public class LoginDto {
     private String username;
     @Size(min = 6)
     private String password;
-    @JsonProperty("remember_me")
+    @JsonProperty("rememberMe")
     private boolean rememberMe;
 }

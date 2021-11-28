@@ -14,6 +14,6 @@ public class RateDto {
     @JsonProperty("rating")
     private int rating;
     @Positive
-    @JsonProperty("film_id")
+    @JsonProperty("filmId")
     private long filmId;
 }

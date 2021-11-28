@@ -15,14 +15,14 @@ public class RegistrationDto {
     @Size(min = 6)
     private String password;
     @NotEmpty
-    @JsonProperty("first_name")
+    @JsonProperty("firstName")
     private String firstName;
     @NotEmpty
-    @JsonProperty("last_name")
+    @JsonProperty("lastName")
     private String lastName;
     private String patronymic;
     private String gender;
     @Past
-    @JsonProperty("birth_date")
+    @JsonProperty("birthDate")
     private Date birthDate;
 }
