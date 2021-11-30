@@ -71,6 +71,7 @@ public class ClientSessionServiceImpl implements ClientSessionService<ClientSess
                     //.domain(cookieDomain)
                     .maxAge(maxAge)
                     .httpOnly(true)
+                    .sameSite("LAX")
                     .build();
         }
 

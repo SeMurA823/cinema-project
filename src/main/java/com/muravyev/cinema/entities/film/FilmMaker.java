@@ -6,13 +6,15 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @Table(name = "filmmakers")
-public class Filmmaker extends IdentityBaseEntity {
+public class FilmMaker extends IdentityBaseEntity {
 
     @Column(name = "first_name", nullable = false)
     private String firstName;
@@ -22,5 +24,10 @@ public class Filmmaker extends IdentityBaseEntity {
 
     @Column(name = "patronymic")
     private String patronymic;
+
+    @OneToMany(mappedBy = "filmMaker")
+    private List<FilmMakerPost> postList;
+
+
 
 }

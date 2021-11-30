@@ -20,7 +20,7 @@ public class Seat extends IdentityBaseEntity {
     private int number;
 
     @Column(name = "unused", nullable = false)
-    private boolean disabled = false;
+    private boolean unUsed = false;
 
     @JsonIgnore
     @ManyToOne
@@ -32,11 +32,11 @@ public class Seat extends IdentityBaseEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Seat seat = (Seat) o;
-        return row == seat.row && number == seat.number && disabled == seat.disabled && Objects.equals(getId(), seat.getId()) && Objects.equals(hall, seat.hall);
+        return row == seat.row && number == seat.number && unUsed == seat.unUsed && Objects.equals(getId(), seat.getId()) && Objects.equals(hall, seat.hall);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), row, number, disabled, hall);
+        return Objects.hash(getId(), row, number, unUsed, hall);
     }
 }

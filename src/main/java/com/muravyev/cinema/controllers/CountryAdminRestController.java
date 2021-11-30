@@ -1,4 +1,4 @@
-package com.muravyev.cinema.controllers.rest;
+package com.muravyev.cinema.controllers;
 
 import com.muravyev.cinema.dto.CountryDto;
 import com.muravyev.cinema.entities.film.Country;
@@ -15,9 +15,18 @@ public class CountryAdminRestController {
         this.countryService = countryService;
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<?> add(@RequestBody CountryDto countryDto) {
-        Country country = countryService.save(countryDto);
+    @PostMapping("/set")
+    public ResponseEntity<?> setCountry(@RequestBody CountryDto countryDto) {
+        Country country = countryService.setCountry(countryDto);
         return ResponseEntity.ok(country);
     }
+
+    @DeleteMapping("/{id}/delete")
+    public ResponseEntity<?> deleteCountry(@PathVariable("id") String code) {
+        countryService.deleteCountry(code);
+        return ResponseEntity.ok()
+                .build();
+    }
+
+
 }

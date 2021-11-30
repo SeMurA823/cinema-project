@@ -21,7 +21,7 @@ public class AgeLimitServiceImpl implements AgeLimitService {
     @Override
     @Transactional
     public AgeLimit setAgeLimit(AgeLimitDto ageLimitDto) {
-        AgeLimit ageLimit = ageLimitRepository.findByName(ageLimitDto.getName())
+        AgeLimit ageLimit = ageLimitRepository.findById(ageLimitDto.getName())
                 .orElse(new AgeLimit());
         ageLimit.setStartAge(ageLimitDto.getStartAge());
         ageLimit.setName(ageLimitDto.getName());

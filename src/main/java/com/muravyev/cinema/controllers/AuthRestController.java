@@ -1,4 +1,4 @@
-package com.muravyev.cinema.controllers.rest;
+package com.muravyev.cinema.controllers;
 
 import com.muravyev.cinema.dto.LoginDto;
 import com.muravyev.cinema.dto.RegistrationDto;
@@ -44,7 +44,7 @@ public class AuthRestController {
     public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto) {
         User user = userService.login(loginDto);
         TokenPairClientable tokenPair = tokenManager.createToken(user);
-        ResponseCookie cookie = (loginDto.isRememberMe())
+        ResponseCookie tokenCookie = (loginDto.isRememberMe())
                 ? tokenPair.getRefreshToken().toCookie()
                 : tokenPair.getRefreshToken().toCookie(-1);
         ResponseCookie sessionCookie = (loginDto.isRememberMe())
@@ -52,6 +52,8 @@ public class AuthRestController {
                 : tokenPair.getClient().toCookie(-1);
         return ResponseEntity
                 .ok()
+                .header(HttpHeaders.SET_COOKIE, tokenCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, sessionCookie.toString())
                 .body(tokenPair.result());
     }
 

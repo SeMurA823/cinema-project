@@ -1,6 +1,7 @@
 package com.muravyev.cinema.services.impl;
 
-import com.muravyev.cinema.dto.AddingFilmScreeningDto;
+import com.muravyev.cinema.dto.FilmScreeningDto;
+import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.film.Film;
 import com.muravyev.cinema.entities.hall.Hall;
 import com.muravyev.cinema.entities.screening.FilmScreening;
@@ -23,10 +24,10 @@ import java.util.List;
 @Service
 @Log4j2
 public class FilmScreeningServiceImpl implements FilmScreeningService {
-    private FilmScreeningRepository screeningRepository;
-    private FilmRepository filmRepository;
-    private HallRepository hallRepository;
-    private FilmScreeningSeatRepository screeningSeatRepository;
+    private final FilmScreeningRepository screeningRepository;
+    private final FilmRepository filmRepository;
+    private final HallRepository hallRepository;
+    private final FilmScreeningSeatRepository screeningSeatRepository;
 
     public FilmScreeningServiceImpl(FilmScreeningRepository screeningRepository,
                                     FilmRepository filmRepository,
@@ -56,17 +57,37 @@ public class FilmScreeningServiceImpl implements FilmScreeningService {
     }
 
     @Override
-    public FilmScreening addFilmScreening(AddingFilmScreeningDto filmScreeningDto) {
-        FilmScreening filmScreening = new FilmScreening();
-        Film film = filmRepository.findById(filmScreeningDto.getFilmId())
+    public void disableFilmScreening(long filmScreening) {
+        screeningRepository.findById(filmScreening)
+                .ifPresent(sc -> {
+                    sc.setEntityStatus(EntityStatus.NOT_ACTIVE);
+                    screeningRepository.save(sc);
+                });
+    }
+
+    @Override
+    public FilmScreening setFilmScreening(long screeningId, FilmScreeningDto screeningDto) {
+        FilmScreening filmScreening = screeningRepository.findById(screeningId)
+                .orElse(new FilmScreening());
+        return configureFilmScreening(screeningDto, filmScreening);
+    }
+
+    private FilmScreening configureFilmScreening(FilmScreeningDto screeningDto, FilmScreening filmScreening) {
+        Film film = filmRepository.findById(screeningDto.getFilmId())
                 .orElseThrow(EntityNotFoundException::new);
-        Hall hall = hallRepository.findById(filmScreeningDto.getHallId())
+        Hall hall = hallRepository.findById(screeningDto.getHallId())
                 .orElseThrow(EntityNotFoundException::new);
         filmScreening.setFilm(film);
         filmScreening.setHall(hall);
-        filmScreening.setDate(filmScreeningDto.getDate());
-        filmScreening.setPrice(filmScreeningDto.getPrice());
+        filmScreening.setDate(screeningDto.getDate());
+        filmScreening.setPrice(screeningDto.getPrice());
         return screeningRepository.save(filmScreening);
+    }
+
+    @Override
+    public FilmScreening addFilmScreening(FilmScreeningDto filmScreeningDto) {
+        FilmScreening filmScreening = new FilmScreening();
+        return configureFilmScreening(filmScreeningDto, filmScreening);
     }
 
     @Override

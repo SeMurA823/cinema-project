@@ -1,11 +1,15 @@
 package com.muravyev.cinema.entities.film;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.muravyev.cinema.entities.BaseEntity;
 import com.muravyev.cinema.entities.IdentityBaseEntity;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.domain.Persistable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Objects;
 
@@ -13,7 +17,9 @@ import java.util.Objects;
 @Getter
 @Setter
 @Table(name = "countries")
-public class Country extends IdentityBaseEntity {
+public class Country extends BaseEntity implements Persistable<String> {
+
+    @Id
     @Column(name = "code")
     private String code;
 
@@ -34,5 +40,17 @@ public class Country extends IdentityBaseEntity {
     @Override
     public int hashCode() {
         return Objects.hash(code, fullName, shortName);
+    }
+
+    @JsonIgnore
+    @Override
+    public String getId() {
+        return code;
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isNew() {
+        return getCreated() == null;
     }
 }

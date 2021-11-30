@@ -1,7 +1,5 @@
-package com.muravyev.cinema.controllers.rest;
+package com.muravyev.cinema.controllers;
 
-import com.muravyev.cinema.dto.AddingFilmScreeningDto;
-import com.muravyev.cinema.entities.screening.FilmScreening;
 import com.muravyev.cinema.services.FilmScreeningService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;

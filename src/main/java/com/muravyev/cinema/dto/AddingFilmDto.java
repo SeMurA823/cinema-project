@@ -14,9 +14,9 @@ public class AddingFilmDto {
     private Date localPremiere;
     private Date worldPremiere;
     @Positive
-    private Long ageLimit;
+    private String ageLimit;
     @NotEmpty
     private String plot;
     @NotEmpty
-    private List<Long> countries;
+    private List<String> countries;
 }

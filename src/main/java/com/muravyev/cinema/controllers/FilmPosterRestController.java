@@ -1,4 +1,4 @@
-package com.muravyev.cinema.controllers.rest;
+package com.muravyev.cinema.controllers;
 
 import com.muravyev.cinema.services.FilmPosterService;
 import org.springframework.http.ResponseEntity;

@@ -130,6 +130,7 @@ public class RefreshTokenService implements TokenService<ClientSessionService.Ht
                     .maxAge(maxAge)
                     .httpOnly(true)
                     .path(cookiePath)
+                    .sameSite("LAX")
                    // .domain(cookieDomain)
                     .build();
         }

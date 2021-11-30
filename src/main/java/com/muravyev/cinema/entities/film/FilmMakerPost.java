@@ -11,13 +11,13 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Table(name = "filmmaker_posts")
-public class FilmmakerPost extends IdentityBaseEntity {
+public class FilmMakerPost extends IdentityBaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
     @ManyToOne
     @JoinColumn(name = "filmmaker_id")
-    private Filmmaker filmmaker;
+    private FilmMaker filmMaker;
 
     @JsonIgnore
     @ManyToOne

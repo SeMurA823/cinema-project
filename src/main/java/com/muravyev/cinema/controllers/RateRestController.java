@@ -1,4 +1,4 @@
-package com.muravyev.cinema.controllers.rest;
+package com.muravyev.cinema.controllers;
 
 import com.muravyev.cinema.dto.RateDto;
 import com.muravyev.cinema.entities.film.FilmRating;

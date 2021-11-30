@@ -1,4 +1,4 @@
-package com.muravyev.cinema.controllers.rest;
+package com.muravyev.cinema.controllers;
 
 import com.muravyev.cinema.dto.CreateReservationDto;
 import com.muravyev.cinema.entities.payment.Reservation;

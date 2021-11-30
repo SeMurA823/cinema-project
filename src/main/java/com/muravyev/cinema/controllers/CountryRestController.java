@@ -1,4 +1,4 @@
-package com.muravyev.cinema.controllers.rest;
+package com.muravyev.cinema.controllers;
 
 import com.muravyev.cinema.services.CountryService;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/countries")
 public class CountryRestController {
-    private CountryService countryService;
+    private final CountryService countryService;
 
     public CountryRestController(CountryService countryService) {
         this.countryService = countryService;
@@ -18,11 +18,11 @@ public class CountryRestController {
 
     @GetMapping("/")
     public ResponseEntity<?> getAll() {
-        return ResponseEntity.ok(countryService.findAll());
+        return ResponseEntity.ok(countryService.getAllCountries());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable("id") long countryId) {
-        return ResponseEntity.ok(countryService.findById(countryId));
+    public ResponseEntity<?> getById(@PathVariable("id") String country) {
+        return ResponseEntity.ok(countryService.getCountry(country));
     }
 }

@@ -1,4 +1,4 @@
-package com.muravyev.cinema.controllers.rest;
+package com.muravyev.cinema.controllers;
 
 import com.muravyev.cinema.entities.payment.Purchase;
 import com.muravyev.cinema.entities.users.User;

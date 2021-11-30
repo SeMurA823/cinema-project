@@ -5,6 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface AgeLimitRepository extends JpaRepository<AgeLimit, Long> {
-    Optional<AgeLimit> findByName(String name);
+public interface AgeLimitRepository extends JpaRepository<AgeLimit, String> {
 }

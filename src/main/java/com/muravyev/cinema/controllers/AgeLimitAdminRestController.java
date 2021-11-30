@@ -1,4 +1,4 @@
-package com.muravyev.cinema.controllers.rest;
+package com.muravyev.cinema.controllers;
 
 
 import com.muravyev.cinema.dto.AgeLimitDto;
@@ -19,7 +19,7 @@ public class AgeLimitAdminRestController {
         this.ageLimitService = ageLimitService;
     }
 
-    @PutMapping("/put")
+    @PostMapping("/set")
     public ResponseEntity<?> setAgeLimit(@RequestBody AgeLimitDto ageLimitDto) {
         return ResponseEntity.ok(ageLimitService.setAgeLimit(ageLimitDto));
     }

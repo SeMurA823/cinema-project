@@ -6,9 +6,11 @@ import com.muravyev.cinema.entities.film.Country;
 import java.util.List;
 
 public interface CountryService {
-    Country findById(long id);
+    Country getCountry(String id);
 
-    List<Country> findAll();
+    List<Country> getAllCountries();
 
-    Country save(CountryDto countryDto);
+    Country setCountry(CountryDto countryDto);
+
+    void deleteCountry(String code);
 }

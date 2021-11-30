@@ -1,4 +1,4 @@
-package com.muravyev.cinema.controllers.rest;
+package com.muravyev.cinema.controllers;
 
 import com.muravyev.cinema.security.exceptions.InvalidTokenException;
 import lombok.extern.log4j.Log4j2;

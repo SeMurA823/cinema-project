@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
-public class AddingFilmScreeningDto {
+public class FilmScreeningDto {
     @Positive
     private long hallId;
     @Positive

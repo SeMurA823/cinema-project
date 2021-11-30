@@ -19,23 +19,29 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
-    public Country findById(long id) {
+    public Country getCountry(String id) {
         return countryRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
-    public List<Country> findAll() {
+    public List<Country> getAllCountries() {
         return countryRepository.findAll(Sort.by("code").ascending());
     }
 
     @Override
-    public Country save(CountryDto countryDto) {
-        Country country = new Country();
+    public Country setCountry(CountryDto countryDto) {
+        Country country = countryRepository.findById(countryDto.getCode())
+                .orElse(new Country());
         country.setCode(countryDto.getCode());
         country.setFullName(countryDto.getFullName());
         country.setShortName(countryDto.getShortName());
         return countryRepository.save(country);
+    }
+
+    @Override
+    public void deleteCountry(String code) {
+        countryRepository.deleteById(code);
     }
 
 }
