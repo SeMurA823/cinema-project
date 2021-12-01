@@ -6,7 +6,6 @@ import com.muravyev.cinema.entities.film.FilmMaker;
 import com.muravyev.cinema.entities.film.FilmMakerPost;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 
 import java.util.List;
 
@@ -27,5 +26,5 @@ public interface FilmMakerService {
 
     List<FilmMakerPost> getFilmMakerPosts(long filmId);
 
-    Page<FilmMakerPost> getAllPosts(long filmMakerId, @PageableDefault(sort = {"film.localPremiere"}) Pageable pageable);
+    Page<FilmMakerPost> getAllPosts(long filmMakerId, Pageable pageable);
 }
