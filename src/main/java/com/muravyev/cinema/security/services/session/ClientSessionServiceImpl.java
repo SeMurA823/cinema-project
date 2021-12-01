@@ -1,11 +1,10 @@
-package com.muravyev.cinema.security.services;
+package com.muravyev.cinema.security.services.session;
 
 import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.session.ClientSession;
 import com.muravyev.cinema.entities.users.User;
 import com.muravyev.cinema.repo.ClientSessionRepository;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpCookie;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

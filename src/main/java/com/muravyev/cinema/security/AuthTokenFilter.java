@@ -1,6 +1,6 @@
 package com.muravyev.cinema.security;
 
-import com.muravyev.cinema.security.services.AccessTokenService;
+import com.muravyev.cinema.security.services.token.AccessTokenService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

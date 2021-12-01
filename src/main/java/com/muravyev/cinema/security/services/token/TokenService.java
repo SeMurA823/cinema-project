@@ -1,4 +1,4 @@
-package com.muravyev.cinema.security.services;
+package com.muravyev.cinema.security.services.token;
 
 import java.util.Date;
 

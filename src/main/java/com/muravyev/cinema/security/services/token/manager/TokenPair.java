@@ -1,9 +1,8 @@
-package com.muravyev.cinema.security.services;
+package com.muravyev.cinema.security.services.token.manager;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonGetter;
+import com.muravyev.cinema.security.services.token.Token;
 
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 

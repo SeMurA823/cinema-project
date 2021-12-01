@@ -10,7 +10,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/posters")
 public class FilmPosterRestController {
-    private FilmPosterService posterService;
+    private final FilmPosterService posterService;
 
     public FilmPosterRestController(FilmPosterService posterService) {
         this.posterService = posterService;

@@ -1,4 +1,6 @@
-package com.muravyev.cinema.security.services;
+package com.muravyev.cinema.security.services.token.manager;
+
+import com.muravyev.cinema.security.services.session.ClientSessionService;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

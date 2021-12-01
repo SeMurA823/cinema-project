@@ -1,13 +1,11 @@
-package com.muravyev.cinema.security.services;
+package com.muravyev.cinema.security.services.token;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.apache.tomcat.util.http.SameSiteCookies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.web.reactive.WebFluxProperties;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -16,6 +14,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.*;
 
+/**
+ * Service for processing access token
+ */
 @Component
 public class AccessTokenService implements TokenService<UserDetails> {
     @Value("${token.access.age}")

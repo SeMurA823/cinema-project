@@ -1,4 +1,4 @@
-package com.muravyev.cinema.security.services;
+package com.muravyev.cinema.security.services.token;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonGetter;

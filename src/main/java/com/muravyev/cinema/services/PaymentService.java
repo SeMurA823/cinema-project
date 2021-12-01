@@ -13,7 +13,9 @@ public interface PaymentService {
 
     Purchase buyTicket(long reservationId, User user);
 
-    Page<Ticket> getTickets(Customer customer, Pageable pageable);
+    Page<Ticket> getActualTickets(User user, Pageable pageable);
 
-    Page<Ticket> getTickets(User user, Pageable pageable);
+    Page<Ticket> getExpiredTickets(User user, Pageable pageable);
+
+    Ticket cancelTicket(long ticketId, User user);
 }

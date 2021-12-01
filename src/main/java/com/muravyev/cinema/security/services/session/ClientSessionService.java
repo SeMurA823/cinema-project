@@ -1,7 +1,6 @@
-package com.muravyev.cinema.security.services;
+package com.muravyev.cinema.security.services.session;
 
 import com.muravyev.cinema.entities.users.User;
-import org.springframework.http.HttpCookie;
 import org.springframework.http.ResponseCookie;
 
 public interface ClientSessionService<T> {

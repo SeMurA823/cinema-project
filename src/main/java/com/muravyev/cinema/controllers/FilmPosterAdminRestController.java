@@ -10,13 +10,13 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/admin/posters")
 public class FilmPosterAdminRestController {
-    private FilmPosterService posterService;
+    private final FilmPosterService posterService;
 
     public FilmPosterAdminRestController(FilmPosterService posterService) {
         this.posterService = posterService;
     }
 
-    @PostMapping("/add")
+    @PostMapping("/upload")
     public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file, @RequestParam("film") long filmId) {
         String filename = posterService.save(file, filmId);
         return ResponseEntity.ok(Map.of("filename", filename));

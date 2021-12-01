@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 @Log4j2
 @Table(name = "users")
 public class User extends IdentityBaseEntity implements UserDetails {
-    @JsonIgnore
     @CreatedDate
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<UserRole> userRoles;

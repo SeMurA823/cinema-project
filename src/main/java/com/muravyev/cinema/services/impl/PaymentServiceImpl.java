@@ -1,5 +1,6 @@
 package com.muravyev.cinema.services.impl;
 
+import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.payment.Purchase;
 import com.muravyev.cinema.entities.payment.Reservation;
 import com.muravyev.cinema.entities.payment.Ticket;
@@ -13,6 +14,8 @@ import com.muravyev.cinema.services.PaymentService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityNotFoundException;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -54,13 +57,27 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public Page<Ticket> getTickets(Customer customer, Pageable pageable) {
-        return ticketRepository.findAllByCustomer(customer, pageable);
+    public Page<Ticket> getActualTickets(User user, Pageable pageable) {
+        return ticketRepository.findAllByCustomerUserAndEntityStatusAndExpired(user,
+                EntityStatus.ACTIVE,
+                false,
+                pageable);
     }
 
     @Override
-    public Page<Ticket> getTickets(User user, Pageable pageable) {
-        return ticketRepository.findAllByCustomerUser(user, pageable);
+    public Page<Ticket> getExpiredTickets(User user, Pageable pageable) {
+        return ticketRepository.findAllByCustomerUserAndEntityStatusAndExpired(user,
+                EntityStatus.ACTIVE,
+                false,
+                pageable);
+    }
+
+    @Override
+    public Ticket cancelTicket(long ticketId, User user) {
+        Ticket ticket = ticketRepository.findByIdAndCustomerUserAndEntityStatus(ticketId, user, EntityStatus.ACTIVE)
+                .orElseThrow(EntityNotFoundException::new);
+        ticket.setEntityStatus(EntityStatus.NOT_ACTIVE);
+        return ticketRepository.save(ticket);
     }
 
 

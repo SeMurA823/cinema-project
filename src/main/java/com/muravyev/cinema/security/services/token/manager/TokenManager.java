@@ -1,4 +1,4 @@
-package com.muravyev.cinema.security.services;
+package com.muravyev.cinema.security.services.token.manager;
 
 import com.muravyev.cinema.entities.users.User;
 
