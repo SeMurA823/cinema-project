@@ -9,7 +9,7 @@ import com.muravyev.cinema.repo.PurchaseRepository;
 import com.muravyev.cinema.repo.ReservationRepository;
 import com.muravyev.cinema.repo.TicketRepository;
 import com.muravyev.cinema.services.CustomerService;
-import com.muravyev.cinema.services.PaymentService;
+import com.muravyev.cinema.services.TicketService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,16 +17,16 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 
 @Service
-public class PaymentServiceImpl implements PaymentService {
-    private TicketRepository ticketRepository;
-    private PurchaseRepository purchaseRepository;
-    private ReservationRepository reservationRepository;
-    private CustomerService customerService;
+public class TicketServiceImpl implements TicketService {
+    private final TicketRepository ticketRepository;
+    private final PurchaseRepository purchaseRepository;
+    private final ReservationRepository reservationRepository;
+    private final CustomerService customerService;
 
-    public PaymentServiceImpl(TicketRepository ticketRepository,
-                              PurchaseRepository purchaseRepository,
-                              ReservationRepository reservationRepository,
-                              CustomerService customerService) {
+    public TicketServiceImpl(TicketRepository ticketRepository,
+                             PurchaseRepository purchaseRepository,
+                             ReservationRepository reservationRepository,
+                             CustomerService customerService) {
         this.ticketRepository = ticketRepository;
         this.purchaseRepository = purchaseRepository;
         this.reservationRepository = reservationRepository;
@@ -64,7 +64,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public Page<Ticket> getExpiredTickets(User user, Pageable pageable) {
+    public Page<Ticket> getArchiveTickets(User user, Pageable pageable) {
         return ticketRepository.findAllByCustomerUserAndEntityStatusAndExpired(user,
                 EntityStatus.ACTIVE,
                 false,
