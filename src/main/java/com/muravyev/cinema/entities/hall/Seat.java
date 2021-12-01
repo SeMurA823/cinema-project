@@ -27,6 +27,9 @@ public class Seat extends IdentityBaseEntity {
     @JoinColumn(name = "hall_id")
     private Hall hall;
 
+    public Seat() {
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -1,7 +1,6 @@
 package com.muravyev.cinema.entities.film;
 
 import com.muravyev.cinema.entities.BaseEntity;
-import com.muravyev.cinema.entities.IdentityBaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.domain.Persistable;

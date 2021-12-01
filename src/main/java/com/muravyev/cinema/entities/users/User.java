@@ -1,8 +1,8 @@
 package com.muravyev.cinema.entities.users;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.muravyev.cinema.entities.IdentityBaseEntity;
 import com.muravyev.cinema.entities.EntityStatus;
+import com.muravyev.cinema.entities.IdentityBaseEntity;
 import com.muravyev.cinema.entities.roles.Role;
 import com.muravyev.cinema.entities.roles.UserRole;
 import lombok.Getter;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Table(name = "users")
 public class User extends IdentityBaseEntity implements UserDetails {
     @CreatedDate
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     private Set<UserRole> userRoles;
 
     @JsonIgnore

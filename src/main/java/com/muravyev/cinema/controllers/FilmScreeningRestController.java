@@ -10,7 +10,7 @@ import java.util.Date;
 @RestController
 @RequestMapping("/api/screenings")
 public class FilmScreeningRestController {
-    private FilmScreeningService screeningService;
+    private final FilmScreeningService screeningService;
 
     public FilmScreeningRestController(FilmScreeningService screeningService) {
         this.screeningService = screeningService;

@@ -46,12 +46,19 @@ public class FileWriterServiceImpl implements FileWriterService {
         return write(file, DEFAULT_PATH);
     }
 
+    @Override
+    public boolean remove(File file) {
+        return file.delete();
+    }
+
+    @Override
+    public boolean remove(String filename) {
+        return remove(new File(DEFAULT_PATH + "/" + filename));
+    }
+
     private String generateUniqueFilename(String original) {
-        String newFilename = new StringBuilder()
-                .append(UUID.randomUUID().toString().replace("-", ""))
-                .append('.')
-                .append(original)
-                .toString();
-        return newFilename;
+        return UUID.randomUUID().toString().replace("-", "") +
+                '.' +
+                original;
     }
 }

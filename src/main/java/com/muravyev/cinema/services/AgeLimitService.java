@@ -10,5 +10,7 @@ public interface AgeLimitService {
     @Transactional
     AgeLimit setAgeLimit(AgeLimitDto ageLimitDto);
 
+    void deleteAgeLimit(String id);
+
     List<AgeLimit> getAgeLimits();
 }

@@ -2,8 +2,8 @@ package com.muravyev.cinema.security.services.token.manager;
 
 import com.muravyev.cinema.entities.session.ClientSession;
 import com.muravyev.cinema.entities.users.User;
-import com.muravyev.cinema.security.services.token.AccessTokenService;
 import com.muravyev.cinema.security.services.session.ClientSessionService;
+import com.muravyev.cinema.security.services.token.AccessTokenService;
 import com.muravyev.cinema.security.services.token.RefreshTokenService;
 import com.muravyev.cinema.security.services.token.Token;
 import com.muravyev.cinema.services.UserService;

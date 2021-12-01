@@ -22,9 +22,9 @@ import java.util.stream.Collectors;
 @Service
 @Log4j2
 public class FilmServiceImpl implements FilmService {
-    private FilmRepository filmRepository;
-    private AgeLimitRepository ageLimitRepository;
-    private CountryRepository countryRepository;
+    private final FilmRepository filmRepository;
+    private final AgeLimitRepository ageLimitRepository;
+    private final CountryRepository countryRepository;
 
     public FilmServiceImpl(FilmRepository filmRepository,
                            AgeLimitRepository ageLimitRepository,
@@ -76,11 +76,11 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public void disableFilm(long filmId) {
+    public Film disableFilm(long filmId) {
         Film film = filmRepository.findById(filmId)
                 .orElseThrow(EntityNotFoundException::new);
         film.setEntityStatus(EntityStatus.NOT_ACTIVE);
-        filmRepository.save(film);
+        return filmRepository.save(film);
     }
 
 }

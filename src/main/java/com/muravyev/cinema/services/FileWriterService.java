@@ -11,4 +11,8 @@ public interface FileWriterService {
     File write(@NotNull MultipartFile file, String uploadPath);
 
     File write(@NotNull MultipartFile file);
+
+    boolean remove(File file);
+
+    boolean remove(String filename);
 }

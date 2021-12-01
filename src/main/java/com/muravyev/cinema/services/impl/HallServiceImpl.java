@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class HallServiceImpl implements HallService {
@@ -55,6 +58,19 @@ public class HallServiceImpl implements HallService {
     }
 
     @Override
+    public List<Seat> addSeats(long hallId, int row, int size) {
+        Hall hall = hallRepository.findById(hallId)
+                .orElseThrow(EntityNotFoundException::new);
+        List<Seat> collect = IntStream.rangeClosed(1, size)
+                .mapToObj(this::createSeat)
+                .peek(seat -> seat.setRow(row))
+                .peek(seat -> seat.setHall(hall))
+                .peek(seat -> seat.setUnUsed(false))
+                .collect(Collectors.toList());
+        return seatRepository.saveAll(collect);
+    }
+
+    @Override
     public void setUnUsedSeat(long hallId, int num, int row, boolean unused) {
         Hall hall = hallRepository.findById(hallId)
                 .orElseThrow(EntityNotFoundException::new);
@@ -63,6 +79,12 @@ public class HallServiceImpl implements HallService {
                     seat.setUnUsed(unused);
                     seatRepository.save(seat);
                 });
+    }
+
+    private Seat createSeat(int number) {
+        Seat seat = new Seat();
+        seat.setNumber(number);
+        return seat;
     }
 
 }

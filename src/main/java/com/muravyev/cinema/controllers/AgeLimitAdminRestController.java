@@ -7,8 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
 @Validated
 @RestController
 @RequestMapping("/api/admin/age")
@@ -22,6 +20,13 @@ public class AgeLimitAdminRestController {
     @PostMapping("/set")
     public ResponseEntity<?> setAgeLimit(@RequestBody AgeLimitDto ageLimitDto) {
         return ResponseEntity.ok(ageLimitService.setAgeLimit(ageLimitDto));
+    }
+
+    @DeleteMapping("{id}/delete")
+    public ResponseEntity<?> deleteAgeLimit(@PathVariable("id") String id) {
+        ageLimitService.deleteAgeLimit(id);
+        return ResponseEntity.ok()
+                .build();
     }
 
 }

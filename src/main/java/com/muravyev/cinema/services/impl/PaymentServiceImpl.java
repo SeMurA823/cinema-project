@@ -4,7 +4,6 @@ import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.payment.Purchase;
 import com.muravyev.cinema.entities.payment.Reservation;
 import com.muravyev.cinema.entities.payment.Ticket;
-import com.muravyev.cinema.entities.users.Customer;
 import com.muravyev.cinema.entities.users.User;
 import com.muravyev.cinema.repo.PurchaseRepository;
 import com.muravyev.cinema.repo.ReservationRepository;

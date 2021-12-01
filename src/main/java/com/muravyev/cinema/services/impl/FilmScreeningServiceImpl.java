@@ -12,7 +12,8 @@ import com.muravyev.cinema.repo.FilmScreeningSeatRepository;
 import com.muravyev.cinema.repo.HallRepository;
 import com.muravyev.cinema.services.FilmScreeningService;
 import lombok.extern.log4j.Log4j2;
-import org.apache.logging.log4j.Level;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -40,8 +41,12 @@ public class FilmScreeningServiceImpl implements FilmScreeningService {
     }
 
     @Override
+    public Page<FilmScreening> getAllFilmScreening(Pageable pageable) {
+        return screeningRepository.findAll(pageable);
+    }
+
+    @Override
     public Collection<FilmScreening> getFilmScreening(long filmId, Date start, Date end) {
-        log.log(Level.DEBUG, "getting film screening for film: {}", filmId);
         return screeningRepository.getFilmScreenings(filmId, start, end);
     }
 

@@ -30,6 +30,11 @@ public class AgeLimitServiceImpl implements AgeLimitService {
     }
 
     @Override
+    public void deleteAgeLimit(String id) {
+        ageLimitRepository.deleteById(id);
+    }
+
+    @Override
     public List<AgeLimit> getAgeLimits() {
         return ageLimitRepository.findAll(Sort.by("startAge").ascending());
     }

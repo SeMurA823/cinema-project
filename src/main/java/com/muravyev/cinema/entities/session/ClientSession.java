@@ -2,7 +2,6 @@ package com.muravyev.cinema.entities.session;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.muravyev.cinema.entities.BaseEntity;
-import com.muravyev.cinema.entities.IdentityBaseEntity;
 import com.muravyev.cinema.entities.users.User;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

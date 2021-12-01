@@ -16,5 +16,5 @@ public interface FilmService {
 
     void deleteFilm(long filmId);
 
-    void disableFilm(long filmId);
+    Film disableFilm(long filmId);
 }

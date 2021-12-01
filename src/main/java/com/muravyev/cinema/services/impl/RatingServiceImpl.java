@@ -9,12 +9,10 @@ import com.muravyev.cinema.entities.users.User;
 import com.muravyev.cinema.repo.RatingRepository;
 import com.muravyev.cinema.services.CustomerService;
 import com.muravyev.cinema.services.RatingService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.Optional;
 
 @Service
 public class RatingServiceImpl implements RatingService {
