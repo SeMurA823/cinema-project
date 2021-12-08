@@ -18,7 +18,7 @@ import java.util.Objects;
 @ControllerAdvice
 public class RestExceptionHandler {
 
-    @ExceptionHandler({EntityNotFoundException.class})
+    @ExceptionHandler({EntityNotFoundException.class, IndexOutOfBoundsException.class})
     public ResponseEntity<?> handleNotFound(Exception e) {
         log.error(e);
         return ResponseEntity

@@ -17,7 +17,7 @@ import javax.persistence.Table;
 public class AgeLimit extends BaseEntity implements Persistable<String> {
     @Id
     @Column(name = "name")
-    private String name;
+    private String id;
 
     @Column(name = "description", nullable = false)
     private String description;
@@ -25,10 +25,8 @@ public class AgeLimit extends BaseEntity implements Persistable<String> {
     @Column(name = "start_age", nullable = false)
     private int startAge;
 
-    @Override
-    public String getId() {
-        return name;
-    }
+    @Column(name = "value")
+    private String value;
 
     @Override
     public boolean isNew() {

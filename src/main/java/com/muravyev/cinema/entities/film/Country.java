@@ -6,10 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.domain.Persistable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -20,7 +18,7 @@ public class Country extends BaseEntity implements Persistable<String> {
 
     @Id
     @Column(name = "code")
-    private String code;
+    private String id;
 
     @Column(name = "full_name", unique = true, nullable = false)
     private String fullName;
@@ -28,23 +26,21 @@ public class Country extends BaseEntity implements Persistable<String> {
     @Column(name = "short_name", unique = true, nullable = false)
     private String shortName;
 
+    @JsonIgnore
+    @ManyToMany(mappedBy = "countries", fetch = FetchType.LAZY)
+    private List<Film> films;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Country country = (Country) o;
-        return Objects.equals(code, country.code) && Objects.equals(fullName, country.fullName) && Objects.equals(shortName, country.shortName);
+        return Objects.equals(id, country.id) && Objects.equals(fullName, country.fullName) && Objects.equals(shortName, country.shortName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(code, fullName, shortName);
-    }
-
-    @JsonIgnore
-    @Override
-    public String getId() {
-        return code;
+        return Objects.hash(id, fullName, shortName);
     }
 
     @JsonIgnore

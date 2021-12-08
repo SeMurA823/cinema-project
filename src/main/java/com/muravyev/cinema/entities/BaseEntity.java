@@ -11,17 +11,14 @@ import java.util.Date;
 @Data
 @MappedSuperclass
 public class BaseEntity {
-    @JsonIgnore
     @CreatedDate
     @Column(name = "insert_date")
     private Date created;
 
-    @JsonIgnore
     @LastModifiedDate
     @Column(name = "update_date")
     private Date updated;
 
-    @JsonIgnore
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private EntityStatus entityStatus = EntityStatus.ACTIVE;
@@ -34,5 +31,9 @@ public class BaseEntity {
     @PrePersist
     private void persist() {
         created = new Date();
+    }
+
+    public boolean isActive() {
+        return entityStatus == EntityStatus.ACTIVE;
     }
 }

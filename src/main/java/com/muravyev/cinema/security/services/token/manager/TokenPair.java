@@ -12,10 +12,10 @@ public interface TokenPair {
     Token getRefreshToken();
     default Map<String, Object> result(){
         return new LinkedHashMap<>(){{
-            put("access_token", getAccessToken().compact());
-            put("refresh_token", getRefreshToken().compact());
-            put("token_type", "bearer");
-            put("expires_in", getAccessToken().getExpiryDate().getTime());
+            put("accessToken", getAccessToken().compact());
+            put("refreshToken", getRefreshToken().compact());
+            put("tokenType", "bearer");
+            put("expiresIn", getAccessToken().getExpiryDate().getTime());
         }};
     }
 }

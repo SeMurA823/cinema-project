@@ -3,9 +3,13 @@ package com.muravyev.cinema.controllers;
 
 import com.muravyev.cinema.dto.AgeLimitDto;
 import com.muravyev.cinema.services.AgeLimitService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Validated
 @RestController
@@ -17,16 +21,37 @@ public class AgeLimitAdminRestController {
         this.ageLimitService = ageLimitService;
     }
 
-    @PostMapping("/set")
-    public ResponseEntity<?> setAgeLimit(@RequestBody AgeLimitDto ageLimitDto) {
-        return ResponseEntity.ok(ageLimitService.setAgeLimit(ageLimitDto));
+    @PostMapping("/{ageLimit}")
+    public ResponseEntity<?> setAgeLimit(@PathVariable("ageLimit") String ageLimit, @RequestBody AgeLimitDto ageLimitDto) {
+        return ResponseEntity.ok(ageLimitService.setAgeLimits(List.of(ageLimit), ageLimitDto).get(0));
     }
 
-    @DeleteMapping("{id}/delete")
+    @PostMapping
+    public ResponseEntity<?> setAgeLimits(@RequestParam("id") List<String> id, @RequestBody AgeLimitDto ageLimitDto) {
+        return ResponseEntity.ok(ageLimitService.setAgeLimits(id, ageLimitDto));
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<?> addAgeLimit(@RequestBody AgeLimitDto ageLimitDto) {
+        return setAgeLimit(ageLimitDto.getName(), ageLimitDto);
+    }
+
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteAgeLimit(@PathVariable("id") String id) {
-        ageLimitService.deleteAgeLimit(id);
+        ageLimitService.deleteAgeLimits(List.of(id));
         return ResponseEntity.ok()
                 .build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteAgeLimits(@RequestParam("id") List<String> id) {
+        ageLimitService.deleteAgeLimits(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getLimits(@PageableDefault Pageable pageable) {
+        return ResponseEntity.ok(ageLimitService.getAgeLimits(pageable));
     }
 
 }

@@ -8,7 +8,7 @@ import javax.validation.constraints.NotEmpty;
 @Data
 public class CountryDto {
     @NotEmpty
-    private String code;
+    private String id;
     @NotEmpty
     @JsonProperty("fullName")
     private String fullName;
