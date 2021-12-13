@@ -66,6 +66,9 @@ public class FilmServiceImpl implements FilmService {
                 .map(Country::getId)
                 .collect(Collectors.toList()));
         film.setCountries(countryList);
+        log.info("DTO {}", filmDto.isActive());
+        film.setEntityStatus((filmDto.isActive()) ? EntityStatus.ACTIVE : EntityStatus.NOT_ACTIVE);
+        log.info("Entity {}", film.getEntityStatus());
         return film;
     }
 
@@ -115,52 +118,6 @@ public class FilmServiceImpl implements FilmService {
         filmDto.setAgeLimitId(film.getAgeLimit().getId());
         filmDto.setActive(film.isActive());
         return filmDto;
-    }
-
-    @Override
-    public List<FilmDto> getFilmsDto(List<Long> id) {
-        return this.getFilms(id).stream()
-                .map(this::from)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public Page<FilmDto> getPremieresDto(Pageable pageable) {
-        return this.getPremieres(pageable).map(this::from);
-    }
-
-    @Override
-    public FilmDto addFilmDto(FilmDto addingFilmDto) {
-        return from(addFilm(addingFilmDto));
-    }
-
-    @Override
-    public Page<FilmDto> getArchiveFilmsDto(Pageable pageable) {
-        return getArchiveFilms(pageable).map(this::from);
-    }
-
-    @Override
-    public List<FilmDto> deleteFilmsDto(List<Long> id) {
-        return deleteFilms(id).stream()
-                .map(this::from)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public FilmDto disableFilmDto(long filmId) {
-        return from(disableFilm(filmId));
-    }
-
-    @Override
-    public Page<FilmDto> getAllFilmsDto(Pageable pageable) {
-        return getAllFilms(pageable).map(this::from);
-    }
-
-    @Override
-    public List<FilmDto> setFilmsDto(List<Long> filmId, FilmDto filmDto) {
-        return setFilms(filmId, filmDto).stream()
-                .map(this::from)
-                .collect(Collectors.toList());
     }
 
 }

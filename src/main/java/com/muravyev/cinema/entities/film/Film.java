@@ -1,6 +1,5 @@
 package com.muravyev.cinema.entities.film;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.muravyev.cinema.entities.IdentityBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,7 +9,6 @@ import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 
 @EqualsAndHashCode(callSuper = true)

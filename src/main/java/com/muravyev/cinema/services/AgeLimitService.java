@@ -18,5 +18,7 @@ public interface AgeLimitService {
 
     Page<AgeLimit> getAgeLimits(Pageable pageable);
 
+    List<AgeLimit> getAgeLimits();
+
     List<AgeLimit> getAgeLimits(List<String> id);
 }

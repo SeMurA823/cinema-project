@@ -1,13 +1,21 @@
 package com.muravyev.cinema.services;
 
-import com.muravyev.cinema.entities.film.Film;
+import com.muravyev.cinema.dto.PosterDto;
 import com.muravyev.cinema.entities.film.FilmPoster;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 public interface FilmPosterService {
-    FilmPoster save(MultipartFile file, Long film);
 
-    FilmPoster save(MultipartFile file, Film film);
+    FilmPoster createPoster(PosterDto posterDto);
 
-    void delete(long posterId);
+    void delete(Iterable<Long> posterId);
+
+    List<FilmPoster> getPosters(Iterable<Long> id);
+
+    Page<FilmPoster> getPosters(long filmId, Pageable pageable);
+
+    FilmPoster updatePoster(long posterId, PosterDto posterDto);
 }

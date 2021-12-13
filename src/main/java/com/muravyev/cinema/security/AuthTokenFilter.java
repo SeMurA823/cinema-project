@@ -52,7 +52,7 @@ public class AuthTokenFilter extends GenericFilterBean {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
-            log.error(e);
+            log.error("{}", e.getMessage());
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }

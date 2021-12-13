@@ -3,8 +3,6 @@ package com.muravyev.cinema.controllers;
 import com.muravyev.cinema.entities.film.AgeLimit;
 import com.muravyev.cinema.services.AgeLimitService;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,8 +27,8 @@ public class AgeLimitRestController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getLimits(@PageableDefault Pageable pageable) {
-        return ResponseEntity.ok(limitService.getAgeLimits(pageable));
+    public ResponseEntity<Iterable<?>> getLimits() {
+        return ResponseEntity.ok(limitService.getAgeLimits());
     }
 
     @GetMapping("/{id}")

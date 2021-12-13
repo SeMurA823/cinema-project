@@ -1,5 +1,6 @@
 package com.muravyev.cinema.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,5 +17,6 @@ public class FilmDto {
     private String plot;
     private List<String> countriesId;
     private String ageLimitId;
-    private boolean isActive = true;
+    @JsonProperty(value = "isActive", required = true)
+    private boolean isActive;
 }

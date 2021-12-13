@@ -3,8 +3,6 @@ package com.muravyev.cinema.controllers;
 
 import com.muravyev.cinema.dto.AgeLimitDto;
 import com.muravyev.cinema.services.AgeLimitService;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -47,11 +45,6 @@ public class AgeLimitAdminRestController {
     public ResponseEntity<?> deleteAgeLimits(@RequestParam("id") List<String> id) {
         ageLimitService.deleteAgeLimits(id);
         return ResponseEntity.ok().build();
-    }
-
-    @GetMapping
-    public ResponseEntity<?> getLimits(@PageableDefault Pageable pageable) {
-        return ResponseEntity.ok(ageLimitService.getAgeLimits(pageable));
     }
 
 }

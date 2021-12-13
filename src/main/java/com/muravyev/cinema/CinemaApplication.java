@@ -14,13 +14,16 @@ public class CinemaApplication implements WebMvcConfigurer {
     @Value("${upload.default.path}")
     private String fileStoragePath;
 
+    @Value("${app.resource-handler.path}")
+    private String handlerPath;
+
     public static void main(String[] args) {
         SpringApplication.run(CinemaApplication.class, args);
     }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/files/**")
+        registry.addResourceHandler(handlerPath + "/**")
                 .addResourceLocations("file://" + fileStoragePath + "/");
     }
 }

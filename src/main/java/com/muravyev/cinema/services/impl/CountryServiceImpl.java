@@ -6,6 +6,7 @@ import com.muravyev.cinema.repo.CountryRepository;
 import com.muravyev.cinema.services.CountryService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +27,11 @@ public class CountryServiceImpl implements CountryService {
     @Override
     public Page<Country> getAllCountries(Pageable pageable) {
         return countryRepository.findAll(pageable);
+    }
+
+    @Override
+    public List<Country> getAllCountries() {
+        return countryRepository.findAll(Sort.by("id").ascending());
     }
 
     @Override

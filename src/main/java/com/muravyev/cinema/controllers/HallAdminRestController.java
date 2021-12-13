@@ -1,12 +1,17 @@
 package com.muravyev.cinema.controllers;
 
+import com.muravyev.cinema.dto.HallDto;
+import com.muravyev.cinema.entities.IdentityBaseEntity;
 import com.muravyev.cinema.entities.hall.Hall;
 import com.muravyev.cinema.entities.hall.Seat;
 import com.muravyev.cinema.services.HallService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin/hall")
@@ -17,7 +22,7 @@ public class HallAdminRestController {
         this.hallService = hallService;
     }
 
-    @PostMapping("/add")
+    @PostMapping("/create")
     public ResponseEntity<?> createHall(String name) {
         Hall hall = hallService.setHall(name);
         return ResponseEntity.ok(hall);
@@ -37,5 +42,20 @@ public class HallAdminRestController {
                                       @RequestParam("size") int size) {
         List<Seat> seats = hallService.addSeats(hallId, row, size);
         return ResponseEntity.ok(seats);
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getHallsDto(@PageableDefault Pageable pageable) {
+        return ResponseEntity.ok(hallService.getAllHalls(pageable).map(this::from));
+    }
+
+    private HallDto from(Hall hall) {
+        HallDto hallDto = new HallDto();
+        hallDto.setId(hall.getId());
+        hallDto.setName(hall.getName());
+        hallDto.setSeatsId(hall.getSeats().stream()
+                .map(IdentityBaseEntity::getId)
+                .collect(Collectors.toSet()));
+        return hallDto;
     }
 }

@@ -15,7 +15,7 @@ public class FilmScreeningAdminRestController {
         this.screeningService = screeningService;
     }
 
-    @PostMapping("/add")
+    @PostMapping("/create")
     public ResponseEntity<?> addScreening(@RequestBody FilmScreeningDto filmScreeningDto){
         FilmScreening filmScreening = screeningService.addFilmScreening(filmScreeningDto);
         return ResponseEntity.ok(filmScreening);
@@ -28,12 +28,14 @@ public class FilmScreeningAdminRestController {
                 .build();
     }
 
-    @PostMapping("/{screening}/edit")
+    @PostMapping("/{screening}")
     public ResponseEntity<?> editScreening(@PathVariable("screening") long screening,
                                            @RequestBody FilmScreeningDto screeningDto) {
         FilmScreening filmScreening = screeningService.setFilmScreening(screening, screeningDto);
         return ResponseEntity.ok(filmScreening);
     }
+
+
 
 
 }

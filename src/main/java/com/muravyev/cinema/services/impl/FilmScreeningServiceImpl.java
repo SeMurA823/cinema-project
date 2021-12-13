@@ -46,19 +46,29 @@ public class FilmScreeningServiceImpl implements FilmScreeningService {
     }
 
     @Override
-    public Collection<FilmScreening> getFilmScreening(long filmId, Date start, Date end) {
+    public List<FilmScreening> getFilmScreenings(List<Long> id) {
+        return screeningRepository.findAllById(id);
+    }
+
+    @Override
+    public void deleteFilmScreenings(List<Long> id) {
+        screeningRepository.deleteAllById(id);
+    }
+
+    @Override
+    public Collection<FilmScreening> getFilmScreenings(long filmId, Date start, Date end) {
         return screeningRepository.getFilmScreenings(filmId, start, end);
     }
 
     @Override
-    public Collection<FilmScreening> getFilmScreening(long filmId, Date start) {
-        return getFilmScreening(filmId, start, toNextDay(start));
+    public Collection<FilmScreening> getFilmScreenings(long filmId, Date start) {
+        return getFilmScreenings(filmId, start, toNextDay(start));
     }
 
     @Override
-    public Collection<FilmScreening> getFilmScreening(long filmId) {
+    public Collection<FilmScreening> getFilmScreenings(long filmId) {
         Date start = new Date();
-        return getFilmScreening(filmId, start);
+        return getFilmScreenings(filmId, start);
     }
 
     @Override

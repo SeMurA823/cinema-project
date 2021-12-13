@@ -15,11 +15,15 @@ public interface FilmScreeningService {
 
     Page<FilmScreening> getAllFilmScreening(Pageable pageable);
 
-    Collection<FilmScreening> getFilmScreening(long filmId, Date start, Date end);
+    List<FilmScreening> getFilmScreenings(List<Long> id);
 
-    Collection<FilmScreening> getFilmScreening(long filmId, Date start);
+    void deleteFilmScreenings(List<Long> id);
 
-    Collection<FilmScreening> getFilmScreening(long filmId);
+    Collection<FilmScreening> getFilmScreenings(long filmId, Date start, Date end);
+
+    Collection<FilmScreening> getFilmScreenings(long filmId, Date start);
+
+    Collection<FilmScreening> getFilmScreenings(long filmId);
 
     void disableFilmScreening(long filmScreening);
 

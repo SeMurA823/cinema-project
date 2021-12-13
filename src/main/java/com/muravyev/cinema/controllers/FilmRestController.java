@@ -6,10 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,7 +26,12 @@ public class FilmRestController {
 
     @GetMapping("/{film}")
     public ResponseEntity<?> film(@PathVariable("film") long filmId) {
-        return ResponseEntity.ok(filmService.getFilmsDto(List.of(filmId)).get(0));
+        return ResponseEntity.ok(filmService.getFilms(List.of(filmId)).get(0));
+    }
+
+    @GetMapping(params = "id")
+    public ResponseEntity<?> getFilms(@RequestParam("id") List<Long> id) {
+        return ResponseEntity.ok(filmService.getFilms(id));
     }
 
     @GetMapping("/archive")

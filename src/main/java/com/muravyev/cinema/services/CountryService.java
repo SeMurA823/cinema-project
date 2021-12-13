@@ -13,6 +13,8 @@ public interface CountryService {
     Page<Country> getAllCountries(Pageable pageable);
 
 
+    List<Country> getAllCountries();
+
     List<Country> setCountries(List<String> code, CountryDto countryDto);
 
     Country createCountry(CountryDto countryDto);

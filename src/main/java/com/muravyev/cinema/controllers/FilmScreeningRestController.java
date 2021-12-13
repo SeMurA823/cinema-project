@@ -20,18 +20,18 @@ public class FilmScreeningRestController {
     public ResponseEntity<?> screenings(@RequestParam("film") long filmId,
                                               @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd") Date start,
                                               @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd") Date end) {
-        return ResponseEntity.ok(screeningService.getFilmScreening(filmId, start, end));
+        return ResponseEntity.ok(screeningService.getFilmScreenings(filmId, start, end));
     }
 
     @GetMapping(value = "/", params = {"film"})
     public ResponseEntity<?> screenings(@RequestParam("film") long filmId) {
-        return ResponseEntity.ok(screeningService.getFilmScreening(filmId));
+        return ResponseEntity.ok(screeningService.getFilmScreenings(filmId));
     }
 
     @GetMapping(value = "/", params = {"start", "film"})
     public ResponseEntity<?> screenings(@RequestParam("film") long filmId,
                                               @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd") Date start) {
-        return ResponseEntity.ok(screeningService.getFilmScreening(filmId, start));
+        return ResponseEntity.ok(screeningService.getFilmScreenings(filmId, start));
     }
 
     @GetMapping("/{screening}/seats")

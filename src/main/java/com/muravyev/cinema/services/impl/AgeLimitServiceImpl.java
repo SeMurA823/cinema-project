@@ -54,6 +54,11 @@ public class AgeLimitServiceImpl implements AgeLimitService {
     }
 
     @Override
+    public List<AgeLimit> getAgeLimits() {
+        return ageLimitRepository.findAll();
+    }
+
+    @Override
     public List<AgeLimit> getAgeLimits(List<String> id) {
         return ageLimitRepository.findAllById(id);
     }

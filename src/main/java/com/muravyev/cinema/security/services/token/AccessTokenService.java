@@ -1,6 +1,7 @@
 package com.muravyev.cinema.security.services.token;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -121,9 +122,10 @@ public class AccessTokenService implements TokenService<UserDetails> {
 
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
+        JwtParser jwtParser = Jwts.parserBuilder()
                 .setSigningKey(getKey())
-                .build()
+                .build();
+        return jwtParser
                 .parseClaimsJws(token)
                 .getBody();
     }

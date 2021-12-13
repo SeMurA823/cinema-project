@@ -19,8 +19,8 @@ public class CountryRestController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAll(@PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
-        return ResponseEntity.ok(countryService.getAllCountries(pageable));
+    public ResponseEntity<Iterable<?>> getAll() {
+        return ResponseEntity.ok(countryService.getAllCountries());
     }
 
     @GetMapping("/{id}")
@@ -31,6 +31,11 @@ public class CountryRestController {
     @GetMapping(params = "id")
     public ResponseEntity<?> getAllById(@RequestParam("id") List<String> codes) {
         return ResponseEntity.ok(countryService.getCountries(codes));
+    }
+
+    @GetMapping(params = {"size", "page"})
+    public ResponseEntity<?> getAll(@PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+        return ResponseEntity.ok(countryService.getAllCountries(pageable));
     }
 
 }
