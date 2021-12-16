@@ -3,7 +3,7 @@ package com.muravyev.cinema.security.services.token.manager;
 import com.muravyev.cinema.entities.users.User;
 
 public interface TokenManager {
-    TokenPairClientable createToken(User user);
+    TokenPairClientable createTokenClientSession(User user);
 
     TokenPair refresh(String refreshToken);
 

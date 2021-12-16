@@ -24,7 +24,7 @@ public class TokenManagerImpl implements TokenManager {
     }
 
     @Override
-    public TokenPairClientable createToken(User user) {
+    public TokenPairClientable createTokenClientSession(User user) {
         ClientSessionService.HttpClientSessionable<ClientSession> session = clientSessionService.createSession(user);
         Token refreshToken = refreshTokenService.createToken(session);
         Token accessToken = accessTokenService.createToken(user);

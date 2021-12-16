@@ -3,6 +3,7 @@ package com.muravyev.cinema.security.services.token;
 import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.session.ClientSession;
 import com.muravyev.cinema.entities.session.RefreshToken;
+import com.muravyev.cinema.entities.users.User;
 import com.muravyev.cinema.repo.RefreshTokenRepository;
 import com.muravyev.cinema.security.exceptions.InvalidTokenException;
 import com.muravyev.cinema.security.services.session.ClientSessionService;
@@ -41,21 +42,18 @@ public class RefreshTokenService implements TokenService<ClientSessionService.Ht
         refreshToken.setClientSession(clientSession);
         return new RefreshTokenImpl(tokenRepository.save(refreshToken));
     }
-    //TODO: set isolation level
+
+
     @Override
-    @Transactional(noRollbackFor = {InvalidTokenException.class})
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Token refreshToken(String token) {
         Optional<RefreshToken> optionalRefreshToken =
                 tokenRepository.findByTokenAndEntityStatus(token, EntityStatus.ACTIVE);
         if (optionalRefreshToken.isEmpty())
             throw new InvalidTokenException();
         RefreshToken oldRefreshToken = optionalRefreshToken.get();
+        tokenRepository.setStatusAllByClientSession(oldRefreshToken.getClientSession(), EntityStatus.NOT_ACTIVE);
         if (oldRefreshToken.getClientSession().getEntityStatus() == EntityStatus.NOT_ACTIVE) {
-            Iterable<RefreshToken> iterable = tokenRepository.findAllByClientSessionAndEntityStatus(oldRefreshToken.getClientSession(),
-                            EntityStatus.ACTIVE).stream()
-                    .peek(x -> x.setEntityStatus(EntityStatus.NOT_ACTIVE))
-                    .collect(Collectors.toList());
-            tokenRepository.saveAll(iterable);
             throw new InvalidTokenException();
         }
         RefreshToken refreshToken = refreshToken(oldRefreshToken);
