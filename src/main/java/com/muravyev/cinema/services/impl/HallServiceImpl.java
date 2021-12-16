@@ -1,5 +1,6 @@
 package com.muravyev.cinema.services.impl;
 
+import com.muravyev.cinema.dto.HallDto;
 import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.hall.Hall;
 import com.muravyev.cinema.entities.hall.Seat;
@@ -32,10 +33,17 @@ public class HallServiceImpl implements HallService {
     }
 
     @Override
-    public Hall setHall(String name) {
-        Hall hall = hallRepository.findByNameAndEntityStatus(name, EntityStatus.ACTIVE)
-                .orElse(new Hall());
-        hall.setName(name);
+    public Hall editHall(long hallId, HallDto hallDto) {
+        Hall hall = hallRepository.findById(hallId)
+                .orElseThrow(EntityNotFoundException::new);
+        hall.setName(hallDto.getName());
+        return hallRepository.save(hall);
+    }
+
+    @Override
+    public Hall createHall(HallDto hallDto) {
+        Hall hall = new Hall();
+        hall.setName(hall.getName());
         return hallRepository.save(hall);
     }
 
@@ -92,6 +100,12 @@ public class HallServiceImpl implements HallService {
         Seat seat = new Seat();
         seat.setNumber(number);
         return seat;
+    }
+
+    @Override
+    public Hall getHall(long hallId) {
+        return hallRepository.findById(hallId)
+                .orElseThrow(EntityNotFoundException::new);
     }
 
 }
