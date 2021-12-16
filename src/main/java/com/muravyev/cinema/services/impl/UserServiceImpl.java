@@ -11,6 +11,8 @@ import com.muravyev.cinema.services.CustomerService;
 import com.muravyev.cinema.services.RoleService;
 import com.muravyev.cinema.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -101,5 +103,10 @@ public class UserServiceImpl implements UserService {
         user.setPatronymic(userInfo.getPatronymic());
         user.setBirthDate(userInfo.getBirthDate());
         return userRepository.save(user);
+    }
+
+    @Override
+    public Page<User> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 }
