@@ -1,5 +1,6 @@
 package com.muravyev.cinema.services.impl;
 
+import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.roles.Role;
 import com.muravyev.cinema.entities.roles.UserRole;
 import com.muravyev.cinema.entities.users.User;
@@ -8,8 +9,9 @@ import com.muravyev.cinema.services.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.Objects;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RoleServiceImpl implements RoleService {
@@ -22,21 +24,31 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public UserRole setRole(User user, Role role) {
-        UserRole candidateUserRole = roleRepository.existsByUserAndRole(user, role);
-        if (Objects.isNull(candidateUserRole)) {
-            UserRole userRole = createSemiFinished();
-            userRole.setRole(role);
-            userRole.setUser(user);
-            return roleRepository.save(userRole);
-        } else {
-            return candidateUserRole;
-        }
-
+        return setRole(user.getId(), role);
     }
 
-    private UserRole createSemiFinished() {
-        UserRole userRole = new UserRole();
-        userRole.setCreated(new Date());
-        return userRole;
+    @Override
+    public UserRole setRole(long userId, Role role) {
+        Optional<UserRole> candidateRole = roleRepository.findByUserIdAndRoleAndEntityStatus(userId, role,
+                EntityStatus.ACTIVE);
+        if (candidateRole.isEmpty()) {
+            User user = new User();
+            user.setId(userId);
+            UserRole userRole = new UserRole(role, user);
+            return roleRepository.save(userRole);
+        }
+        return candidateRole.get();
+    }
+
+    @Override
+    public List<UserRole> getActiveRoles(long userId) {
+        return roleRepository.findAllByUserIdAndEntityStatus(userId, EntityStatus.ACTIVE);
+    }
+
+    @Override
+    public void setRolesStatus(Collection<Long> ids, EntityStatus status) {
+        List<UserRole> roles = roleRepository.findAllById(ids);
+        roles.forEach(x -> x.setEntityStatus(status));
+        roleRepository.saveAll(roles);
     }
 }

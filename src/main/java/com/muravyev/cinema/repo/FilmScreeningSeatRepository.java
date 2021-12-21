@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface FilmScreeningSeatRepository extends ReadOnlyRepository<FilmScreeningSeat, Long> {
     List<FilmScreeningSeat> findAllByScreeningId(long screeningId);
+
     List<FilmScreeningSeat> findAllByScreening(FilmScreening screening);
 }

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Map;
 
 public interface HallService {
     Hall editHall(long hallId, HallDto hallDto);
@@ -15,7 +16,7 @@ public interface HallService {
 
     void disableHall(long hallId);
 
-    Seat addSeat(long hallId, int num, int row);
+    Seat addSeat(long hallId, int row);
 
     List<Seat> addSeats(long hallId, int row, int size);
 
@@ -24,4 +25,10 @@ public interface HallService {
     Page<Hall> getAllHalls(Pageable pageable);
 
     Hall getHall(long hallId);
+
+    Map<Integer, List<Seat>> getAllSeats(long hallId);
+
+    void setUnUsedSeats(long hallId, List<Long> seatIds, boolean b);
+
+    void deleteSeats(long hallId, List<Long> seatIds);
 }

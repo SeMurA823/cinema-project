@@ -11,7 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -23,7 +22,7 @@ public class Hall extends IdentityBaseEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "hall")
-    private Set<Seat> seats;
+    private List<Seat> seats;
 
     @JsonIgnore
     @OneToMany(mappedBy = "hall")

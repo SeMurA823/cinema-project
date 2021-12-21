@@ -5,10 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.domain.Persistable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -16,8 +13,8 @@ import javax.persistence.Table;
 @Table(name = "age_limits")
 public class AgeLimit extends BaseEntity implements Persistable<String> {
     @Id
-    @Column(name = "name")
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private String name;
 
     @Column(name = "description", nullable = false)
     private String description;
@@ -25,8 +22,10 @@ public class AgeLimit extends BaseEntity implements Persistable<String> {
     @Column(name = "start_age", nullable = false)
     private int startAge;
 
-    @Column(name = "value")
-    private String value;
+    @Override
+    public String getId() {
+        return name;
+    }
 
     @Override
     public boolean isNew() {

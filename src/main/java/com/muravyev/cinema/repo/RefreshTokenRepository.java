@@ -13,7 +13,9 @@ import java.util.Optional;
 
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
     List<RefreshToken> findAllByClientSessionAndEntityStatus(ClientSession clientSession, EntityStatus entityStatus);
+
     Optional<RefreshToken> findByTokenAndEntityStatus(String token, EntityStatus entityStatus);
+
     @Modifying
     @Query("update RefreshToken rt set rt.entityStatus = :status where rt.clientSession = :cs and rt.entityStatus <> :status")
     void setStatusAllByClientSession(@Param("cs") ClientSession clientSession, @Param("status") EntityStatus status);

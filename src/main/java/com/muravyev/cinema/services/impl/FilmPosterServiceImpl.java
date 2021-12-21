@@ -65,7 +65,7 @@ public class FilmPosterServiceImpl implements FilmPosterService {
 
     private void writeBase64ToFile(File file, String dataStr) {
         byte[] data = DatatypeConverter.parseBase64Binary(dataStr);
-        try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))){
+        try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
             outputStream.write(data);
         } catch (IOException e) {
             log.error(e);

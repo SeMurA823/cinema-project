@@ -24,15 +24,15 @@ public class Ticket extends IdentityBaseEntity {
     private Seat seat;
 
     @ManyToOne
-    @JoinColumn(name="film_screening_id", nullable = false)
+    @JoinColumn(name = "film_screening_id", nullable = false)
     private FilmScreening filmScreening;
 
     @Transient
     private boolean isExpired;
 
     @PostLoad
-    private void checkExpired(){
-        Date now  = new Date();
+    private void checkExpired() {
+        Date now = new Date();
         isExpired = filmScreening.getDate().before(now);
     }
 }

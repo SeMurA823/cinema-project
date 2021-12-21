@@ -38,7 +38,7 @@ public class AgeLimitServiceImpl implements AgeLimitService {
 
     private AgeLimit setLimit(AgeLimitDto ageLimitDto, AgeLimit ageLimit) {
         ageLimit.setStartAge(ageLimitDto.getStartAge());
-        ageLimit.setId(ageLimitDto.getName());
+        ageLimit.setName(ageLimitDto.getName());
         ageLimit.setDescription(ageLimitDto.getDescription());
         return ageLimit;
     }

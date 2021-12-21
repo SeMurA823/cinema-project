@@ -1,13 +1,14 @@
 package com.muravyev.cinema.entities.users;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.muravyev.cinema.entities.BaseEntity;
 import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.IdentityBaseEntity;
 import com.muravyev.cinema.entities.roles.Role;
 import com.muravyev.cinema.entities.roles.UserRole;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 @Entity
 @Getter
 @Setter
-@Log4j2
+@NoArgsConstructor
 @Table(name = "users")
 public class User extends IdentityBaseEntity implements UserDetails {
     @CreatedDate
@@ -37,7 +38,6 @@ public class User extends IdentityBaseEntity implements UserDetails {
     @Column(name = "username", unique = true)
     private String username;
 
-    @JsonIgnore
     @Enumerated(EnumType.STRING)
     @Column(name = "user_status")
     private UserStatus userStatus;
@@ -61,10 +61,9 @@ public class User extends IdentityBaseEntity implements UserDetails {
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<Role> authorities = userRoles.stream()
-                .filter(x->x.getEntityStatus().equals(EntityStatus.ACTIVE))
+                .filter(BaseEntity::isActive)
                 .map(UserRole::getRole)
                 .collect(Collectors.toList());
-        log.info("authorities ({}) : {}", username, authorities);
         return authorities;
     }
 

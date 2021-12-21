@@ -24,6 +24,6 @@ public class CinemaApplication implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler(handlerPath + "/**")
-                .addResourceLocations("file://" + fileStoragePath + "/");
+                .addResourceLocations("file:///" + fileStoragePath + "/");
     }
 }

@@ -4,11 +4,11 @@ import java.util.Date;
 
 /**
  * Token service for create, refresh and disable a token
+ *
  * @param <T>, Class whose objects will be used to generate the token
  */
 public interface TokenService<T> {
     /**
-     *
      * @param t, The object that will be used to generate the token
      * @return new token
      */
@@ -16,6 +16,7 @@ public interface TokenService<T> {
 
     /**
      * Refresh token
+     *
      * @param token, Token to be refreshed
      * @return new token
      */
@@ -27,6 +28,7 @@ public interface TokenService<T> {
 
     /**
      * Disable token
+     *
      * @param token, token to be disabled
      * @return token with age = 0
      */

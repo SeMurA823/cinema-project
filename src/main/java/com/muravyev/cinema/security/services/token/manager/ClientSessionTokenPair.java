@@ -3,7 +3,7 @@ package com.muravyev.cinema.security.services.token.manager;
 import com.muravyev.cinema.security.services.session.ClientSessionService;
 import com.muravyev.cinema.security.services.token.Token;
 
-public class ClientSessionTokenPair implements TokenPairClientable{
+public class ClientSessionTokenPair implements TokenPairClientable {
     private final ClientSessionService.HttpClientSessionable<?> client;
     private final TokenPair tokenPair;
 

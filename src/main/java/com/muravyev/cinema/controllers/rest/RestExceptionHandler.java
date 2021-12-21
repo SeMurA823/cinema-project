@@ -1,9 +1,11 @@
-package com.muravyev.cinema.controllers;
+package com.muravyev.cinema.controllers.rest;
 
 import com.muravyev.cinema.security.exceptions.InvalidTokenException;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -33,6 +35,14 @@ public class RestExceptionHandler {
                 .status(HttpStatus.UNPROCESSABLE_ENTITY)
                 .body(generateResponse(e, HttpStatus.UNPROCESSABLE_ENTITY));
     }
+
+    @ExceptionHandler({AuthenticationException.class, ExpiredJwtException.class})
+    public ResponseEntity<?> handleAuth(AuthenticationException e) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(generateResponse(e, HttpStatus.UNAUTHORIZED));
+    }
+
     @ExceptionHandler({InvalidTokenException.class})
     public ResponseEntity<?> handleInvalidToken(Exception e) {
         log.error(e);
@@ -60,6 +70,6 @@ public class RestExceptionHandler {
     private Map<Object, Object> generateResponse(Exception e, HttpStatus status) {
         return Map.of("status_code", status.value(),
                 "timestamp", new Date(),
-                "message", Objects.isNull(e.getMessage())?e.getClass().getSimpleName():e.getMessage());
+                "message", Objects.isNull(e.getMessage()) ? e.getClass().getSimpleName() : e.getMessage());
     }
 }

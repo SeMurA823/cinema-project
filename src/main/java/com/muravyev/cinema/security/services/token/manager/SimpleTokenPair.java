@@ -2,7 +2,7 @@ package com.muravyev.cinema.security.services.token.manager;
 
 import com.muravyev.cinema.security.services.token.Token;
 
-public class SimpleTokenPair implements TokenPair{
+public class SimpleTokenPair implements TokenPair {
     private final Token accessToken;
     private final Token refreshToken;
 

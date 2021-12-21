@@ -1,4 +1,4 @@
-package com.muravyev.cinema.controllers;
+package com.muravyev.cinema.controllers.rest;
 
 import com.muravyev.cinema.dto.LoginDto;
 import com.muravyev.cinema.dto.RegistrationDto;
@@ -21,7 +21,7 @@ import javax.validation.Valid;
 @Log4j2
 @RestController
 @RequestMapping("/api/auth")
-public class AuthRestController {
+public class AuthController {
     private UserService userService;
     private TokenManager tokenManager;
 

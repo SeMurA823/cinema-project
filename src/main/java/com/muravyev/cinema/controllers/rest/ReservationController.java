@@ -1,4 +1,4 @@
-package com.muravyev.cinema.controllers;
+package com.muravyev.cinema.controllers.rest;
 
 import com.muravyev.cinema.dto.CreateReservationDto;
 import com.muravyev.cinema.entities.payment.Reservation;
@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,13 +16,14 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/reserve")
-public class ReservationRestController {
-    private ReservationService reservationService;
+public class ReservationController {
+    private final ReservationService reservationService;
 
-    public ReservationRestController(ReservationService reservationService) {
+    public ReservationController(ReservationService reservationService) {
         this.reservationService = reservationService;
     }
 
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     @PostMapping("/{screening}/create")
     public ResponseEntity<?> reservation(
             @PathVariable("screening") long filmScreeningId,
@@ -35,6 +37,7 @@ public class ReservationRestController {
         return ResponseEntity.ok(reservation);
     }
 
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     @GetMapping("/")
     public ResponseEntity<?> reservations(@PageableDefault(sort = "expiryDate") Pageable pageable,
                                           Authentication authentication) {
@@ -43,6 +46,7 @@ public class ReservationRestController {
         return ResponseEntity.ok(reservations);
     }
 
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     @PutMapping("/{reserve}/cancel")
     public ResponseEntity<?> cancel(@PathVariable("reserve") long reserveId, Authentication authentication) {
         reservationService.cancelReservation(

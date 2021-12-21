@@ -7,10 +7,10 @@ import com.muravyev.cinema.entities.roles.Role;
 import com.muravyev.cinema.entities.users.User;
 import com.muravyev.cinema.entities.users.UserStatus;
 import com.muravyev.cinema.repo.UserRepository;
+import com.muravyev.cinema.repo.UserRoleRepository;
 import com.muravyev.cinema.services.CustomerService;
 import com.muravyev.cinema.services.RoleService;
 import com.muravyev.cinema.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -20,36 +20,32 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    private CustomerService customerService;
+    private final UserRoleRepository roleRepository;
 
-    private PasswordEncoder passwordEncoder;
+    private final CustomerService customerService;
 
-    private RoleService roleService;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    public void setRoleService(RoleService roleService) {
-        this.roleService = roleService;
-    }
+    private final RoleService roleService;
 
-    @Autowired
-    public void setUserRepository(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository,
+                           UserRoleRepository roleRepository,
+                           CustomerService customerService,
+                           PasswordEncoder passwordEncoder,
+                           RoleService roleService) {
         this.userRepository = userRepository;
-    }
-
-    @Autowired
-    public void setCustomerService(CustomerService customerService) {
+        this.roleRepository = roleRepository;
         this.customerService = customerService;
-    }
-
-    @Autowired
-    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
+        this.roleService = roleService;
     }
 
     @Override
@@ -108,5 +104,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<User> getAllUsers(Pageable pageable) {
         return userRepository.findAll(pageable);
+    }
+
+    @Override
+    @Transactional
+    public void setUserStatus(UserStatus status, Collection<Long> ids) {
+        List<User> users = userRepository.findAllById(ids);
+        users.forEach(x -> x.setUserStatus(status));
+        userRepository.saveAll(users);
     }
 }

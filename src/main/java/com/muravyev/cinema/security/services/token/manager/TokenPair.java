@@ -9,9 +9,11 @@ import java.util.Map;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE)
 public interface TokenPair {
     Token getAccessToken();
+
     Token getRefreshToken();
-    default Map<String, Object> result(){
-        return new LinkedHashMap<>(){{
+
+    default Map<String, Object> result() {
+        return new LinkedHashMap<>() {{
             put("accessToken", getAccessToken().compact());
             put("refreshToken", getRefreshToken().compact());
             put("tokenType", "bearer");

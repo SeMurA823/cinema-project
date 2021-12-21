@@ -132,7 +132,7 @@ public class AccessTokenService implements TokenService<UserDetails> {
 
     private class AccessTokenImpl implements Token {
         private final String token;
-        private final ResponseCookie responseCookie ;
+        private final ResponseCookie responseCookie;
         private final LinkedHashMap<String, Object> result;
         private final Date expiryDate;
 

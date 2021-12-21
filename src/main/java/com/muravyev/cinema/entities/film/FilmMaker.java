@@ -29,5 +29,4 @@ public class FilmMaker extends IdentityBaseEntity {
     private List<FilmMakerPost> postList;
 
 
-
 }

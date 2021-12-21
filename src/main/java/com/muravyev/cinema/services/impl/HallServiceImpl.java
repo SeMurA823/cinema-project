@@ -7,28 +7,27 @@ import com.muravyev.cinema.entities.hall.Seat;
 import com.muravyev.cinema.repo.HallRepository;
 import com.muravyev.cinema.repo.SeatRepository;
 import com.muravyev.cinema.services.HallService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
 public class HallServiceImpl implements HallService {
-    private SeatRepository seatRepository;
-    private HallRepository hallRepository;
+    private final SeatRepository seatRepository;
+    private final HallRepository hallRepository;
 
-    @Autowired
-    public void setSeatRepository(SeatRepository seatRepository) {
+    public HallServiceImpl(SeatRepository seatRepository, HallRepository hallRepository) {
         this.seatRepository = seatRepository;
-    }
-
-    @Autowired
-    public void setHallRepository(HallRepository hallRepository) {
         this.hallRepository = hallRepository;
     }
 
@@ -43,7 +42,7 @@ public class HallServiceImpl implements HallService {
     @Override
     public Hall createHall(HallDto hallDto) {
         Hall hall = new Hall();
-        hall.setName(hall.getName());
+        hall.setName(hallDto.getName());
         return hallRepository.save(hall);
     }
 
@@ -57,12 +56,15 @@ public class HallServiceImpl implements HallService {
     }
 
     @Override
-    public Seat addSeat(long hallId, int num, int row) {
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public Seat addSeat(long hallId, int row) {
         Hall hall = hallRepository.findById(hallId)
                 .orElseThrow(EntityNotFoundException::new);
         Seat seat = new Seat();
         seat.setHall(hall);
-        seat.setNumber(num);
+        Integer number = seatRepository.findLastSeatNumberInRow(row)
+                .orElse(0);
+        seat.setNumber(number + 1);
         seat.setRow(row);
         return seatRepository.save(seat);
     }
@@ -108,4 +110,24 @@ public class HallServiceImpl implements HallService {
                 .orElseThrow(EntityNotFoundException::new);
     }
 
+    @Override
+    public Map<Integer, List<Seat>> getAllSeats(long hallId) {
+        List<Seat> seats = seatRepository.findAllByHallId(hallId, Sort.by("row").and(Sort.by("number")));
+        return seats.stream()
+                .collect(Collectors.groupingBy(Seat::getRow,
+                        TreeMap::new,
+                        Collectors.toList()));
+    }
+
+    @Override
+    @Transactional
+    public void setUnUsedSeats(long hallId, List<Long> seatIds, boolean unUsed) {
+        seatRepository.setAllUnUsedStatus(hallId, seatIds, unUsed);
+    }
+
+    @Override
+    @Transactional
+    public void deleteSeats(long hallId, List<Long> seatIds) {
+        seatRepository.deleteSeatsByIdInAndHallId(seatIds, hallId);
+    }
 }

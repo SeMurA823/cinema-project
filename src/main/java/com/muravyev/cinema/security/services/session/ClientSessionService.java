@@ -12,7 +12,9 @@ public interface ClientSessionService<T> {
 
     interface HttpClientSessionable<T> {
         ResponseCookie toCookie(long maxAge);
+
         String compact();
+
         T get();
     }
 }

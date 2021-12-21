@@ -3,7 +3,6 @@ package com.muravyev.cinema.security.services.token;
 import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.session.ClientSession;
 import com.muravyev.cinema.entities.session.RefreshToken;
-import com.muravyev.cinema.entities.users.User;
 import com.muravyev.cinema.repo.RefreshTokenRepository;
 import com.muravyev.cinema.security.exceptions.InvalidTokenException;
 import com.muravyev.cinema.security.services.session.ClientSessionService;
@@ -16,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class RefreshTokenService implements TokenService<ClientSessionService.HttpClientSessionable<ClientSession>> {
@@ -130,7 +128,7 @@ public class RefreshTokenService implements TokenService<ClientSessionService.Ht
                     .httpOnly(true)
                     .path(cookiePath)
                     .sameSite("LAX")
-                   // .domain(cookieDomain)
+                    // .domain(cookieDomain)
                     .build();
         }
 

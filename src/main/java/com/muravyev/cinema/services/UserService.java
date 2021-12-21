@@ -4,9 +4,12 @@ import com.muravyev.cinema.dto.LoginDto;
 import com.muravyev.cinema.dto.RegistrationDto;
 import com.muravyev.cinema.dto.UserInfoDto;
 import com.muravyev.cinema.entities.users.User;
+import com.muravyev.cinema.entities.users.UserStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
+
+import java.util.Collection;
 
 public interface UserService extends UserDetailsService {
     User registration(RegistrationDto registrationForm);
@@ -20,4 +23,6 @@ public interface UserService extends UserDetailsService {
     User editUserInfo(UserInfoDto userInfo, User user);
 
     Page<User> getAllUsers(Pageable pageable);
+
+    void setUserStatus(UserStatus status, Collection<Long> ids);
 }

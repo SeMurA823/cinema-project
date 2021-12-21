@@ -22,7 +22,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Query("SELECT r FROM Reservation r " +
             "WHERE r.entityStatus = 'ACTIVE' AND r.customer = :customer AND r.expiryDate > current_timestamp ")
-    Page<Reservation> findAllActualByCustomer(@Param("customer")Customer customer,
+    Page<Reservation> findAllActualByCustomer(@Param("customer") Customer customer,
                                               Pageable pageable);
 
     Page<Reservation> findAllByCustomer(Customer customer, Pageable pageable);

@@ -29,7 +29,7 @@ public class Reservation extends IdentityBaseEntity {
     private Date expiryDate;
 
     @ManyToOne
-    @JoinColumn(name="film_screening_id", nullable = false)
+    @JoinColumn(name = "film_screening_id", nullable = false)
     private FilmScreening filmScreening;
 
     @Transient
