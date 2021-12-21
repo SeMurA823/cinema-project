@@ -1,10 +1,11 @@
-postgres:
-  image: postgres:latest
-  ports:
-    - "5432:5432"
-  environment:
-    - POSTGRES_PASSWORD=cinema
-    - POSTGRES_USER=cinema
-    - POSTGRES_DB=cinema
-  volumes:
-    - "$HOME/docker/volumes/postgres:/var/lib/postgresql/"
+services:
+  postgres:
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: cinema
+      POSTGRES_USER: cinema
+      POSTGRES_DB: cinema
+    volumes:
+      - "$HOME/docker/volumes/postgres:/var/lib/postgresql/"
