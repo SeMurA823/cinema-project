@@ -17,5 +17,5 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-      - name: Build with Maven
-        run: mvn --batch-mode --update-snapshots verify -D spring.profiles.active=test
+#      - name: Build with Maven
+#        run: mvn --batch-mode --update-snapshots compile -D spring.profiles.active=test
