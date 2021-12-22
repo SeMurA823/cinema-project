@@ -1,13 +1,14 @@
 package com.muravyev.cinema.entities.payment;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.muravyev.cinema.entities.IdentityBaseEntity;
 import com.muravyev.cinema.entities.hall.Seat;
 import com.muravyev.cinema.entities.screening.FilmScreening;
-import com.muravyev.cinema.entities.users.Customer;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
@@ -16,12 +17,15 @@ import java.util.Date;
 @Table(name = "tickets")
 public class Ticket extends IdentityBaseEntity {
     @ManyToOne
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
-
-    @ManyToOne
     @JoinColumn(name = "seat_id")
     private Seat seat;
+
+    private BigDecimal price;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "purchase_id")
+    private Purchase purchase;
 
     @ManyToOne
     @JoinColumn(name = "film_screening_id", nullable = false)

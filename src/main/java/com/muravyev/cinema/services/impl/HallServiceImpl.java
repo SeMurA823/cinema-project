@@ -130,4 +130,9 @@ public class HallServiceImpl implements HallService {
     public void deleteSeats(long hallId, List<Long> seatIds) {
         seatRepository.deleteSeatsByIdInAndHallId(seatIds, hallId);
     }
+
+    @Override
+    public Page<Hall> getHalls(String search, Pageable pageable) {
+        return hallRepository.findAllByNameContainsAndEntityStatus(search, EntityStatus.ACTIVE, pageable);
+    }
 }

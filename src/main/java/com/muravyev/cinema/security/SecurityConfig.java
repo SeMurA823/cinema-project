@@ -1,6 +1,5 @@
 package com.muravyev.cinema.security;
 
-import com.muravyev.cinema.entities.roles.Role;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -26,8 +26,11 @@ import java.lang.reflect.Proxy;
 @Log4j2
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true)
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
+
+    @Autowired
+    private AuthenticationEntryPoint authNEntryPoint;
 
     @Autowired
     private AuthTokenFilter authTokenFilter;
@@ -49,6 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     @Bean
     public AuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+
         provider.setPasswordEncoder(new PasswordEncoder() {
             @Override
             public String encode(CharSequence charSequence) {
@@ -60,16 +64,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 return charSequence.toString().equals(s);
             }
         });
+
         provider.setUserDetailsService(userDetailsService);
-        return (AuthenticationProvider) Proxy.newProxyInstance(provider.getClass().getClassLoader(), new Class[]{AuthenticationProvider.class}, (proxy, method, args) -> {
-            log.info("PROVIDER");
-            return method.invoke(provider, args);
-        });
+        return provider;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .exceptionHandling()
+                .authenticationEntryPoint(authNEntryPoint)
+                .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http
                 .cors().and()
@@ -78,10 +83,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .httpBasic().disable()
                 .authorizeRequests()
                 .antMatchers("/api/auth/logout/**", "/api/user/**").authenticated()
-                .antMatchers("/api/auth/*").permitAll()
-                .antMatchers("/api/admin/**").hasAuthority(Role.ADMIN.getAuthority())
-                .antMatchers("/api/reserve/**", "/api/payment/**").hasAuthority(Role.CUSTOMER.getAuthority())
-                .anyRequest().permitAll();
+                .antMatchers("/api/auth/*").permitAll();
         http
                 .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
 

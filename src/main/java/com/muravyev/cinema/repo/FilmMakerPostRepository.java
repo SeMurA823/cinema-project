@@ -6,6 +6,7 @@ import com.muravyev.cinema.entities.film.FilmMakerPost;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,4 +27,6 @@ public interface FilmMakerPostRepository extends JpaRepository<FilmMakerPost, Lo
     Page<FilmMakerPost> findAllByFilmMakerIdAndEntityStatus(Long filmMakerId,
                                                             EntityStatus entityStatus,
                                                             Pageable pageable);
+    @Modifying
+    void deleteAllByFilmMakerIdAndFilmIdAndName(Long filmMakerId, Long filmId, String post);
 }

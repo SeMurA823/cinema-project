@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/admin/halls")
+@RequestMapping({"/api/admin/halls", "/api/halls"})
 public class HallController {
     private final HallService hallService;
 
@@ -92,5 +92,11 @@ public class HallController {
     public ResponseEntity<?> setHall(@PathVariable("id") long id, @RequestBody HallDto hallDto) {
         Hall hall = hallService.editHall(id, hallDto);
         return ResponseEntity.ok(hall);
+    }
+
+    @GetMapping(params = "search")
+    public ResponseEntity<?> getHall(@RequestParam("search") String search, @PageableDefault Pageable pageable) {
+        Page<Hall> halls = hallService.getHalls(search, pageable);
+        return ResponseEntity.ok(halls);
     }
 }

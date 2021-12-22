@@ -1,6 +1,7 @@
 package com.muravyev.cinema.services;
 
 import com.muravyev.cinema.dto.FilmScreeningDto;
+import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.screening.FilmScreening;
 import com.muravyev.cinema.entities.screening.FilmScreeningSeat;
 import org.springframework.data.domain.Page;
@@ -13,7 +14,7 @@ import java.util.List;
 public interface FilmScreeningService {
 
 
-    Page<FilmScreening> getAllFilmScreening(Pageable pageable);
+    Page<FilmScreening> getAllFilmScreening(long filmId, Pageable pageable);
 
     List<FilmScreening> getFilmScreenings(List<Long> id);
 
@@ -25,8 +26,6 @@ public interface FilmScreeningService {
 
     Collection<FilmScreening> getFilmScreenings(long filmId);
 
-    void disableFilmScreening(long filmScreening);
-
     FilmScreening setFilmScreening(long screeningId, FilmScreeningDto screeningDto);
 
     FilmScreening addFilmScreening(FilmScreeningDto filmScreeningDto);
@@ -34,4 +33,8 @@ public interface FilmScreeningService {
     List<FilmScreeningSeat> getStatusSeats(long screeningId);
 
     List<FilmScreeningSeat> getStatusSeats(FilmScreening filmScreening);
+
+    FilmScreening getFilmScreening(long id);
+
+    void setStatusScreenings(Iterable<Long> ids, EntityStatus status);
 }

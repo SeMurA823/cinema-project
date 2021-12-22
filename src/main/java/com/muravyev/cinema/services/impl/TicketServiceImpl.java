@@ -1,83 +1,48 @@
 package com.muravyev.cinema.services.impl;
 
 import com.muravyev.cinema.entities.EntityStatus;
-import com.muravyev.cinema.entities.payment.Purchase;
-import com.muravyev.cinema.entities.payment.Reservation;
 import com.muravyev.cinema.entities.payment.Ticket;
-import com.muravyev.cinema.entities.users.User;
-import com.muravyev.cinema.repo.PurchaseRepository;
-import com.muravyev.cinema.repo.ReservationRepository;
 import com.muravyev.cinema.repo.TicketRepository;
-import com.muravyev.cinema.services.CustomerService;
 import com.muravyev.cinema.services.TicketService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
+import java.util.List;
 
+@Log4j2
 @Service
 public class TicketServiceImpl implements TicketService {
+
     private final TicketRepository ticketRepository;
-    private final PurchaseRepository purchaseRepository;
-    private final ReservationRepository reservationRepository;
-    private final CustomerService customerService;
 
-    public TicketServiceImpl(TicketRepository ticketRepository,
-                             PurchaseRepository purchaseRepository,
-                             ReservationRepository reservationRepository,
-                             CustomerService customerService) {
+    public TicketServiceImpl(TicketRepository ticketRepository) {
         this.ticketRepository = ticketRepository;
-        this.purchaseRepository = purchaseRepository;
-        this.reservationRepository = reservationRepository;
-        this.customerService = customerService;
     }
 
     @Override
-    public Purchase buyTicket(Reservation reservation, User user) {
-        if (!reservation.getCustomer().getUser().equals(user))
-            throw new RuntimeException();
-        Ticket ticket = new Ticket();
-        ticket.setCustomer(reservation.getCustomer());
-        ticket.setFilmScreening(reservation.getFilmScreening());
-        ticket.setSeat(reservation.getSeat());
-        Purchase purchase = new Purchase();
-        purchase.setCustomer(reservation.getCustomer());
-        purchase.setPrice(reservation.getFilmScreening().getPrice());
-        purchase.setTicket(ticketRepository.save(ticket));
-        purchaseRepository.save(purchase);
-        return purchase;
+    public Page<Ticket> getAllTickets(Pageable pageable) {
+        return ticketRepository.findAll(pageable);
     }
 
     @Override
-    public Purchase buyTicket(long reservationId, User user) {
-        Reservation reservation = reservationRepository.findByIdAndCustomer(reservationId, customerService.getCustomer(user)).orElseThrow(RuntimeException::new);
-        return buyTicket(reservation, user);
+    public Page<Ticket> getTickets(long purchaseId, Pageable pageable) {
+        return ticketRepository.findAllByPurchaseId(purchaseId, pageable);
     }
 
     @Override
-    public Page<Ticket> getActualTickets(User user, Pageable pageable) {
-        return ticketRepository.findAllByCustomerUserAndEntityStatusAndExpired(user,
-                EntityStatus.ACTIVE,
-                false,
-                pageable);
+    @Transactional
+    public List<Ticket> cancelTickets(Iterable<Long> ids) {
+        List<Ticket> tickets = ticketRepository.findAllById(ids);
+        tickets.forEach(this::disableTicket);
+        return ticketRepository.saveAll(tickets);
     }
 
-    @Override
-    public Page<Ticket> getArchiveTickets(User user, Pageable pageable) {
-        return ticketRepository.findAllByCustomerUserAndEntityStatusAndExpired(user,
-                EntityStatus.ACTIVE,
-                false,
-                pageable);
-    }
-
-    @Override
-    public Ticket cancelTicket(long ticketId, User user) {
-        Ticket ticket = ticketRepository.findByIdAndCustomerUserAndEntityStatus(ticketId, user, EntityStatus.ACTIVE)
-                .orElseThrow(EntityNotFoundException::new);
+    private Ticket disableTicket(Ticket ticket) {
         ticket.setEntityStatus(EntityStatus.NOT_ACTIVE);
-        return ticketRepository.save(ticket);
+        return ticket;
     }
-
 
 }

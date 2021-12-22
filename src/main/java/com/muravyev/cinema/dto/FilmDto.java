@@ -19,4 +19,5 @@ public class FilmDto {
     private String ageLimitId;
     @JsonProperty(value = "isActive", required = true)
     private boolean isActive;
+    private int duration;
 }

@@ -25,12 +25,15 @@ public class Film extends IdentityBaseEntity {
     @Column(name = "date_world_premiere")
     private Date worldPremiere;
 
+    @Column(name = "duration")
+    private int duration;
+
     @Lob
     @Type(type = "org.hibernate.type.TextType")
     @Column(name = "plot", nullable = false)
     private String plot;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "country_film",
             joinColumns = @JoinColumn(name = "film_id"),
@@ -44,7 +47,7 @@ public class Film extends IdentityBaseEntity {
     private AgeLimit ageLimit;
 
 
-    @OneToMany(mappedBy = "film", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "film")
     private Set<FilmPoster> posters;
 
 }

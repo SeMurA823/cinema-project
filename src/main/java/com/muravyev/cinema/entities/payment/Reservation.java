@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.muravyev.cinema.entities.IdentityBaseEntity;
 import com.muravyev.cinema.entities.hall.Seat;
 import com.muravyev.cinema.entities.screening.FilmScreening;
-import com.muravyev.cinema.entities.users.Customer;
+import com.muravyev.cinema.entities.users.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,8 +18,8 @@ import java.util.Date;
 public class Reservation extends IdentityBaseEntity {
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "customer_id", nullable = false)
-    private Customer customer;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "place_id", nullable = false)

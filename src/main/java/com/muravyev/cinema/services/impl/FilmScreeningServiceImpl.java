@@ -15,6 +15,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Calendar;
@@ -41,8 +42,8 @@ public class FilmScreeningServiceImpl implements FilmScreeningService {
     }
 
     @Override
-    public Page<FilmScreening> getAllFilmScreening(Pageable pageable) {
-        return screeningRepository.findAll(pageable);
+    public Page<FilmScreening> getAllFilmScreening(long filmId, Pageable pageable) {
+        return screeningRepository.findAllByFilmId(filmId, pageable);
     }
 
     @Override
@@ -72,22 +73,14 @@ public class FilmScreeningServiceImpl implements FilmScreeningService {
     }
 
     @Override
-    public void disableFilmScreening(long filmScreening) {
-        screeningRepository.findById(filmScreening)
-                .ifPresent(sc -> {
-                    sc.setEntityStatus(EntityStatus.NOT_ACTIVE);
-                    screeningRepository.save(sc);
-                });
-    }
-
-    @Override
     public FilmScreening setFilmScreening(long screeningId, FilmScreeningDto screeningDto) {
-        FilmScreening filmScreening = screeningRepository.findById(screeningId)
-                .orElse(new FilmScreening());
-        return configureFilmScreening(screeningDto, filmScreening);
+        FilmScreening filmScreening = merge(screeningDto,
+                screeningRepository.findAllByIdAndDateAfter(screeningId, new Date())
+                        .orElseThrow(EntityNotFoundException::new));
+        return screeningRepository.save(filmScreening);
     }
 
-    private FilmScreening configureFilmScreening(FilmScreeningDto screeningDto, FilmScreening filmScreening) {
+    private FilmScreening merge(FilmScreeningDto screeningDto, FilmScreening filmScreening) {
         Film film = filmRepository.findById(screeningDto.getFilmId())
                 .orElseThrow(EntityNotFoundException::new);
         Hall hall = hallRepository.findById(screeningDto.getHallId())
@@ -96,13 +89,15 @@ public class FilmScreeningServiceImpl implements FilmScreeningService {
         filmScreening.setHall(hall);
         filmScreening.setDate(screeningDto.getDate());
         filmScreening.setPrice(screeningDto.getPrice());
-        return screeningRepository.save(filmScreening);
+        filmScreening.setEntityStatus(screeningDto.isActive() ? EntityStatus.ACTIVE : EntityStatus.NOT_ACTIVE);
+        return filmScreening;
     }
 
     @Override
+    @Transactional
     public FilmScreening addFilmScreening(FilmScreeningDto filmScreeningDto) {
-        FilmScreening filmScreening = new FilmScreening();
-        return configureFilmScreening(filmScreeningDto, filmScreening);
+        FilmScreening filmScreening = merge(filmScreeningDto, new FilmScreening());
+        return screeningRepository.save(filmScreening);
     }
 
     @Override
@@ -113,6 +108,19 @@ public class FilmScreeningServiceImpl implements FilmScreeningService {
     @Override
     public List<FilmScreeningSeat> getStatusSeats(FilmScreening filmScreening) {
         return screeningSeatRepository.findAllByScreening(filmScreening);
+    }
+
+    @Override
+    public FilmScreening getFilmScreening(long id) {
+        return screeningRepository.findById(id)
+                .orElseThrow(EntityNotFoundException::new);
+    }
+
+    @Override
+    public void setStatusScreenings(Iterable<Long> ids, EntityStatus status) {
+        List<FilmScreening> screenings = screeningRepository.findAllById(ids);
+        screenings.forEach(x -> x.setEntityStatus(status));
+        screeningRepository.saveAll(screenings);
     }
 
 

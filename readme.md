@@ -3,10 +3,10 @@
 ## Methods:
 
 - **AuthN**
-  - [login](#login-post)
-  - [refresh](#refresh-post)
-  - [logout](#logout-post)
-  - [registration](#registration-post)
+    - [login](#login-post)
+    - [refresh](#refresh-post)
+    - [logout](#logout-post)
+    - [registration](#registration-post)
 
 ### AuthN
 
@@ -48,7 +48,7 @@ Set-Cookie: ```ClientID=68cde2df-58f7-4a20-8a49-88f4c5949f69; Path=/; Max-Age=21
 
 URL: ```/api/auth?refresh```
 
-request cookies: 
+request cookies:
 
 - ```ClientID=5eaec02f-d346-4819-8069-2f7522de0d60; Path=/; HttpOnly; Expires=Mon, 19 Dec 2089 22:21:08 GMT;```
 - ```Refresh=NzkwMjQ4MzFkNTZhNGQ2M2IxNDdkOTdhYjIyZDBhZWQ6Kzc5ODczODQ5ODE3; Path=/; HttpOnly; Expires=Mon, 24 May 2027 19:07:37 GMT;```
@@ -75,13 +75,14 @@ Set-Cookie: ```Refresh=NzkwMjQ4MzFkNTZhNGQ2M2IxNDdkOTdhYjIyZDBhZWQ6Kzc5ODczODQ5O
 URL: ```/api/auth/logout```
 
 request headers:
-- **Authorization**: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIrNzk4NzM4NDk4MTciLCJleHAiOjE2MzgzODg2NTcsImlhdCI6MTYzODM4NTY1N30.C_r1domvwFDDDFWRg0md1JNOSMshOZrbHQPhrqmGWhU
+
+- **Authorization**: Bearer
+  eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIrNzk4NzM4NDk4MTciLCJleHAiOjE2MzgzODg2NTcsImlhdCI6MTYzODM4NTY1N30.C_r1domvwFDDDFWRg0md1JNOSMshOZrbHQPhrqmGWhU
 
 request cookies:
 
 - ```ClientID=5eaec02f-d346-4819-8069-2f7522de0d60; Path=/; HttpOnly; Expires=Mon, 19 Dec 2089 22:21:08 GMT;```
 - ```Refresh=NzkwMjQ4MzFkNTZhNGQ2M2IxNDdkOTdhYjIyZDBhZWQ6Kzc5ODczODQ5ODE3; Path=/; HttpOnly; Expires=Mon, 24 May 2027 19:07:37 GMT;```
-
 
 response headers:
 

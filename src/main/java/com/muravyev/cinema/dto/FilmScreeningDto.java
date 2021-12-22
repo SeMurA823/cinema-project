@@ -18,6 +18,7 @@ public class FilmScreeningDto {
     @PositiveOrZero
     private BigDecimal price;
     @Future
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm z")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Date date;
+    private boolean active;
 }

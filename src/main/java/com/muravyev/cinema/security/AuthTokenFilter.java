@@ -60,7 +60,7 @@ public class AuthTokenFilter extends GenericFilterBean {
                         .setAuthentication(checkedAuthenticate);
             }
         } catch (Exception e) {
-            log.error(e);
+            log.error(e.getLocalizedMessage());
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }

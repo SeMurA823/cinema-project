@@ -48,15 +48,16 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Film addFilm(FilmDto filmDto) {
-        Film film = from(filmDto, new Film());
+        Film film = merge(filmDto, new Film());
         return filmRepository.save(film);
     }
 
-    private Film from(FilmDto filmDto, Film film) {
+    private Film merge(FilmDto filmDto, Film film) {
         film.setName(filmDto.getName());
         film.setLocalPremiere(filmDto.getLocalPremiere());
         film.setWorldPremiere(filmDto.getWorldPremiere());
         film.setPlot(filmDto.getPlot());
+        film.setDuration(filmDto.getDuration());
         AgeLimit ageLimit = ageLimitRepository.findById(filmDto.getAgeLimitId())
                 .orElseThrow(EntityNotFoundException::new);
         log.log(Level.DEBUG, "Age limit found : {}", ageLimit.getId());
@@ -100,12 +101,12 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public List<Film> setFilms(List<Long> id, FilmDto filmDto) {
         List<Film> allById = filmRepository.findAllById(id).stream()
-                .map(x -> from(filmDto, x))
+                .map(x -> merge(filmDto, x))
                 .collect(Collectors.toList());
         return filmRepository.saveAll(allById);
     }
 
-    private FilmDto from(Film film) {
+    private FilmDto merge(Film film) {
         FilmDto filmDto = new FilmDto();
         filmDto.setId(film.getId());
         filmDto.setCountriesId(film.getCountries().stream()

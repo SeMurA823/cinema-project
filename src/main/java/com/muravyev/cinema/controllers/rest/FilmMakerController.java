@@ -2,6 +2,7 @@ package com.muravyev.cinema.controllers.rest;
 
 import com.muravyev.cinema.dto.FilmMakerDto;
 import com.muravyev.cinema.dto.FilmMakerPostDto;
+import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.film.FilmMaker;
 import com.muravyev.cinema.entities.film.FilmMakerPost;
 import com.muravyev.cinema.services.FilmMakerService;
@@ -12,9 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping({"/api/filmmakers", "/api/admin/filmmakers"})
@@ -23,13 +24,6 @@ public class FilmMakerController {
 
     public FilmMakerController(FilmMakerService makerService) {
         this.makerService = makerService;
-    }
-
-    @GetMapping(params = {"film"})
-    public ResponseEntity<?> getMakers(@RequestParam("film") long filmId) {
-        Map<String, List<FilmMakerPost>> posts = makerService.getFilmMakerPosts(filmId).stream()
-                .collect(Collectors.groupingBy(FilmMakerPost::getName));
-        return ResponseEntity.ok(posts);
     }
 
     @GetMapping("/{maker}")
@@ -46,8 +40,8 @@ public class FilmMakerController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping("/add")
-    public ResponseEntity<?> add(@RequestBody FilmMakerDto filmMakerDto) {
+    @PostMapping("/create")
+    public ResponseEntity<?> create(@RequestBody FilmMakerDto filmMakerDto) {
         FilmMaker maker = makerService.addFilmMaker(filmMakerDto);
         return ResponseEntity.ok(maker);
     }
@@ -55,14 +49,15 @@ public class FilmMakerController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/relate")
     public ResponseEntity<?> relate(@RequestBody FilmMakerPostDto postDto) {
-        FilmMakerPost post = makerService.setFilmMaker(postDto);
+        FilmMakerPost post = makerService.setFilmMakerPost(postDto);
         return ResponseEntity.ok(post);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping("/{maker}/disable")
-    public ResponseEntity<?> disableMaker(@PathVariable("maker") long makerId) {
-        makerService.disableFilmMaker(makerId);
+    @PostMapping(params = {"status", "id"})
+    public ResponseEntity<?> setStatusMakers(@RequestParam("id") Collection<Long> ids,
+                                             @RequestParam("status") EntityStatus status) {
+        makerService.setFilmMakersStatus(ids, status);
         return ResponseEntity.ok()
                 .build();
     }
@@ -76,18 +71,38 @@ public class FilmMakerController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping(value = "/{maker}/disable", params = {"film"})
-    public ResponseEntity<?> delete(@PathVariable("maker") long makerId, @RequestParam("film") long filmId) {
-        makerService.deleteFilmMakerPost(filmId, makerId);
+    @GetMapping(params = {"page", "size"})
+    public ResponseEntity<?> getAllMakers(@PageableDefault Pageable pageable) {
+        Page<FilmMaker> allFilmMakers = makerService.getAllFilmMakers(pageable);
+        return ResponseEntity.ok(allFilmMakers);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping("/{id}")
+    public ResponseEntity<?> setFilmmaker(@PathVariable("id") long id, @RequestBody FilmMakerDto filmMakerDto) {
+        FilmMaker maker = makerService.setFilmMaker(id, filmMakerDto);
+        return ResponseEntity.ok(maker);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @DeleteMapping(params = {"maker", "film"})
+    public ResponseEntity<?> deletePost(@RequestParam("film") long filmId,
+                                        @RequestParam("maker") long makerId,
+                                        @RequestParam("post") String post) {
+        makerService.deleteFilmMakerPost(filmId, makerId, post);
         return ResponseEntity.ok()
                 .build();
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping("/{maker}/disable")
-    public ResponseEntity<?> deleteMaker(@PathVariable("maker") long makerId) {
-        makerService.disableFilmMaker(makerId);
-        return ResponseEntity.ok()
-                .build();
+    @GetMapping
+    public ResponseEntity<?> getPosts(@RequestParam("film") long filmId) {
+        Map<String, List<FilmMaker>> filmMakers = makerService.getFilmMakers(filmId);
+        return ResponseEntity.ok(filmMakers);
+    }
+
+    @GetMapping(params = "search")
+    public ResponseEntity<?> getMakers(@RequestParam("search") String search, @PageableDefault Pageable pageable) {
+        Page<FilmMaker> makers = makerService.getFilmMakers(search, pageable);
+        return ResponseEntity.ok(makers);
     }
 }

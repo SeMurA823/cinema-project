@@ -18,8 +18,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class FilmMakerServiceImpl implements FilmMakerService {
@@ -44,24 +44,17 @@ public class FilmMakerServiceImpl implements FilmMakerService {
 
     @Override
     public FilmMaker addFilmMaker(FilmMakerDto filmMakerDto) {
-        FilmMaker filmMaker = new FilmMaker();
-        filmMaker.setFirstName(filmMakerDto.getFirstName());
-        filmMaker.setLastName(filmMakerDto.getLastName());
-        filmMaker.setPatronymic(filmMakerDto.getPatronymic());
+        FilmMaker filmMaker = merge(new FilmMaker(), filmMakerDto);
         return makerRepository.save(filmMaker);
     }
 
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public FilmMakerPost setFilmMaker(FilmMakerPostDto makerPostDto) {
-        Optional<FilmMakerPost> optionalPost = postRepository.findByFilmMakerIdAndFilmId(makerPostDto.getFilm(),
-                makerPostDto.getMaker());
-        if (optionalPost.isPresent())
-            return optionalPost.get();
-        Film film = filmRepository.findByIdAndEntityStatus(makerPostDto.getFilm(), EntityStatus.ACTIVE)
-                .orElseThrow(EntityNotFoundException::new);
-        FilmMaker maker = makerRepository.findByIdAndEntityStatus(makerPostDto.getMaker(), EntityStatus.ACTIVE)
-                .orElseThrow(EntityNotFoundException::new);
+    public FilmMakerPost setFilmMakerPost(FilmMakerPostDto makerPostDto) {
+        Optional<FilmMakerPost> optionalPost = postRepository.findByFilmMakerIdAndFilmId(makerPostDto.getFilm(), makerPostDto.getMaker());
+        if (optionalPost.isPresent()) return optionalPost.get();
+        Film film = filmRepository.findByIdAndEntityStatus(makerPostDto.getFilm(), EntityStatus.ACTIVE).orElseThrow(EntityNotFoundException::new);
+        FilmMaker maker = makerRepository.findByIdAndEntityStatus(makerPostDto.getMaker(), EntityStatus.ACTIVE).orElseThrow(EntityNotFoundException::new);
         FilmMakerPost post = new FilmMakerPost();
         post.setFilmMaker(maker);
         post.setFilm(film);
@@ -70,39 +63,49 @@ public class FilmMakerServiceImpl implements FilmMakerService {
     }
 
     @Override
+    public FilmMaker setFilmMaker(long id, FilmMakerDto makerDto) {
+        FilmMaker filmMaker = merge(makerRepository.findById(id).orElseThrow(EntityNotFoundException::new), makerDto);
+        return makerRepository.save(filmMaker);
+    }
+
+    private FilmMaker merge(FilmMaker maker, FilmMakerDto makerDto) {
+        maker.setFirstName(makerDto.getFirstName());
+        maker.setLastName(makerDto.getLastName());
+        maker.setPatronymic(makerDto.getPatronymic());
+        maker.setId(makerDto.getId());
+        return maker;
+    }
+
+    @Override
     public void disableFilmMaker(long filmMakerId) {
-        makerRepository.findByIdAndEntityStatus(filmMakerId, EntityStatus.ACTIVE)
-                .ifPresent(maker -> {
-                    maker.setEntityStatus(EntityStatus.NOT_ACTIVE);
-                    makerRepository.save(maker);
-                });
+        makerRepository.findByIdAndEntityStatus(filmMakerId, EntityStatus.ACTIVE).ifPresent(maker -> {
+            maker.setEntityStatus(EntityStatus.NOT_ACTIVE);
+            makerRepository.save(maker);
+        });
     }
 
     @Override
     public void disableFilmMakerPost(long filmId, long makerId) {
-        postRepository.findByFilmIdAndFilmMakerIdAndEntityStatus(filmId, makerId, EntityStatus.ACTIVE)
-                .ifPresent(post -> {
-                    post.setEntityStatus(EntityStatus.NOT_ACTIVE);
-                    postRepository.save(post);
-                });
+        postRepository.findByFilmIdAndFilmMakerIdAndEntityStatus(filmId, makerId, EntityStatus.ACTIVE).ifPresent(post -> {
+            post.setEntityStatus(EntityStatus.NOT_ACTIVE);
+            postRepository.save(post);
+        });
     }
 
     @Override
-    public void removeFilmMaker(long filmMakerId) {
-        makerRepository.findByIdAndEntityStatus(filmMakerId, EntityStatus.ACTIVE)
-                .ifPresent(maker -> makerRepository.delete(maker));
+    public void deleteFilmMaker(long filmMakerId) {
+        makerRepository.findByIdAndEntityStatus(filmMakerId, EntityStatus.ACTIVE).ifPresent(maker -> makerRepository.delete(maker));
     }
 
+    @Transactional
     @Override
-    public void deleteFilmMakerPost(long filmId, long makerId) {
-        postRepository.findByFilmIdAndFilmMakerIdAndEntityStatus(filmId, makerId, EntityStatus.ACTIVE)
-                .ifPresent(post -> postRepository.delete(post));
+    public void deleteFilmMakerPost(long filmId, long makerId, String post) {
+        postRepository.deleteAllByFilmMakerIdAndFilmIdAndName(makerId, filmId, post);
     }
 
     @Override
     public FilmMaker getFilmMaker(long id) {
-        return makerRepository.findByIdAndEntityStatus(id, EntityStatus.ACTIVE)
-                .orElseThrow(EntityNotFoundException::new);
+        return makerRepository.findByIdAndEntityStatus(id, EntityStatus.ACTIVE).orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
@@ -113,5 +116,30 @@ public class FilmMakerServiceImpl implements FilmMakerService {
     @Override
     public Page<FilmMakerPost> getAllPosts(long filmMakerId, Pageable pageable) {
         return postRepository.findAllByFilmMakerIdAndEntityStatus(filmMakerId, EntityStatus.ACTIVE, pageable);
+    }
+
+    @Override
+    public Map<String, List<FilmMaker>> getFilmMakers(long filmId) {
+        return postRepository.findAllByFilmIdAndEntityStatus(filmId, EntityStatus.ACTIVE).stream().collect(Collectors.groupingBy(FilmMakerPost::getName, TreeMap::new, Collectors.mapping(FilmMakerPost::getFilmMaker, Collectors.toList())));
+    }
+
+    @Override
+    public Page<FilmMaker> getAllFilmMakers(Pageable pageable) {
+        return makerRepository.findAll(pageable);
+    }
+
+    @Override
+    public void setFilmMakersStatus(Collection<Long> ids, EntityStatus status) {
+        List<FilmMaker> allMakers = makerRepository.findAllById(ids);
+        allMakers.forEach(x -> x.setEntityStatus(status));
+        makerRepository.saveAll(allMakers);
+    }
+
+    @Override
+    public Page<FilmMaker> getFilmMakers(String search, Pageable pageable) {
+        return makerRepository.findAllByFirstNameContainsOrLastNameContainsAndEntityStatus(search,
+                search,
+                EntityStatus.ACTIVE,
+                pageable);
     }
 }

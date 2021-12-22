@@ -8,7 +8,6 @@ import com.muravyev.cinema.entities.users.User;
 import com.muravyev.cinema.entities.users.UserStatus;
 import com.muravyev.cinema.repo.UserRepository;
 import com.muravyev.cinema.repo.UserRoleRepository;
-import com.muravyev.cinema.services.CustomerService;
 import com.muravyev.cinema.services.RoleService;
 import com.muravyev.cinema.services.UserService;
 import org.springframework.data.domain.Page;
@@ -30,20 +29,16 @@ public class UserServiceImpl implements UserService {
 
     private final UserRoleRepository roleRepository;
 
-    private final CustomerService customerService;
-
     private final PasswordEncoder passwordEncoder;
 
     private final RoleService roleService;
 
     public UserServiceImpl(UserRepository userRepository,
                            UserRoleRepository roleRepository,
-                           CustomerService customerService,
                            PasswordEncoder passwordEncoder,
                            RoleService roleService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
-        this.customerService = customerService;
         this.passwordEncoder = passwordEncoder;
         this.roleService = roleService;
     }
@@ -68,7 +63,6 @@ public class UserServiceImpl implements UserService {
         user.setGender(registrationForm.getGender());
         user = userRepository.save(user);
         user.setUserRoles(Set.of(roleService.setRole(user, Role.CUSTOMER)));
-        customerService.registration(registrationForm, user);
         return user;
     }
 

@@ -1,5 +1,6 @@
 package com.muravyev.cinema.entities.film;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.muravyev.cinema.entities.IdentityBaseEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +26,7 @@ public class FilmMaker extends IdentityBaseEntity {
     @Column(name = "patronymic")
     private String patronymic;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "filmMaker")
     private List<FilmMakerPost> postList;
 

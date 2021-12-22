@@ -1,13 +1,18 @@
 package com.muravyev.cinema.controllers.rest;
 
 import com.muravyev.cinema.dto.FilmScreeningDto;
+import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.screening.FilmScreening;
 import com.muravyev.cinema.services.FilmScreeningService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.Date;
 
 @RestController
@@ -50,11 +55,19 @@ public class FilmScreeningController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping("/{screening}/disable")
-    public ResponseEntity<?> disableScreening(@PathVariable("screening") long screening) {
-        screeningService.disableFilmScreening(screening);
+    @PostMapping(params = {"status", "id"})
+    public ResponseEntity<?> setStatus(@RequestParam("id") Collection<Long> ids,
+                                       @RequestParam("status") EntityStatus status) {
+        screeningService.setStatusScreenings(ids, status);
         return ResponseEntity.ok()
                 .build();
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/{screening}")
+    public ResponseEntity<?> getScreening(@PathVariable("screening") long screening) {
+        FilmScreening filmScreening = screeningService.getFilmScreening(screening);
+        return ResponseEntity.ok(filmScreening);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -63,5 +76,12 @@ public class FilmScreeningController {
                                            @RequestBody FilmScreeningDto screeningDto) {
         FilmScreening filmScreening = screeningService.setFilmScreening(screening, screeningDto);
         return ResponseEntity.ok(filmScreening);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping
+    public ResponseEntity<?> getAllScreenings(@RequestParam("film") long filmId, @PageableDefault Pageable pageable) {
+        Page<FilmScreening> allFilmScreening = screeningService.getAllFilmScreening(filmId, pageable);
+        return ResponseEntity.ok(allFilmScreening);
     }
 }

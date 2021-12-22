@@ -31,4 +31,6 @@ public interface HallService {
     void setUnUsedSeats(long hallId, List<Long> seatIds, boolean b);
 
     void deleteSeats(long hallId, List<Long> seatIds);
+
+    Page<Hall> getHalls(String search, Pageable pageable);
 }
