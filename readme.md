@@ -129,3 +129,7 @@ response body:
   "credentialsNonExpired": true
 }
 ```
+
+## Database
+
+![](./erd.png)
