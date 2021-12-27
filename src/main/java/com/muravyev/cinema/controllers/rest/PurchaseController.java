@@ -35,7 +35,7 @@ public class PurchaseController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/cancel")
     public ResponseEntity<?> cancelPurchases(@RequestParam("id") List<Long> ids) {
-        purchaseService.cancelPurchases(ids);
+        purchaseService.cancelPurchasesById(ids);
         return ResponseEntity.ok()
                 .build();
     }

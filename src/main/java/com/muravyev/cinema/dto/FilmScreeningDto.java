@@ -1,8 +1,6 @@
 package com.muravyev.cinema.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.muravyev.cinema.events.Observer;
-import com.muravyev.cinema.events.cancel.EditFilmEvent;
 import lombok.Data;
 
 import javax.validation.constraints.Future;

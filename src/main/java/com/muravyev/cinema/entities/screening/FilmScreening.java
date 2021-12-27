@@ -45,4 +45,12 @@ public class FilmScreening extends IdentityBaseEntity {
     public int hashCode() {
         return Objects.hash(super.hashCode(), getId(), hall, date);
     }
+
+    @Override
+    public String toString() {
+        return "FilmScreening{" +
+                "id=" + getId() + "; " +
+                "date=" + date +
+                '}';
+    }
 }

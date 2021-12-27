@@ -1,7 +1,8 @@
 package com.muravyev.cinema.events;
 
-public interface NotificationManager<T> {
-    void subscribe(Observer<T> observer);
-    void unsubscribe(Observer<T> observer);
-    void notify(T event);
+import java.util.Collection;
+
+public interface NotificationManager {
+    void subscribe(Observer observer, Collection<Class<? extends Event<?>>> eventTypes);
+    void notify(Event<?> event, Class<? extends Event<?>> eventType);
 }

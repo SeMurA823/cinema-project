@@ -19,4 +19,11 @@ public class Purchase extends IdentityBaseEntity {
 
     @OneToMany(mappedBy = "purchase", cascade = {CascadeType.ALL})
     private List<Ticket> tickets;
+
+    @Override
+    public String toString() {
+        return "Purchase{" +
+                "id=" + getId() +
+                "}";
+    }
 }

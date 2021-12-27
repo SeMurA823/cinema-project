@@ -31,6 +31,9 @@ public class Ticket extends IdentityBaseEntity {
     @JoinColumn(name = "film_screening_id", nullable = false)
     private FilmScreening filmScreening;
 
+    @OneToOne(mappedBy = "ticket", cascade = CascadeType.ALL)
+    private TicketRefund ticketRefund;
+
     @Transient
     private boolean isExpired;
 

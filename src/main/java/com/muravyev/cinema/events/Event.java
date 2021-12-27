@@ -1,4 +1,5 @@
 package com.muravyev.cinema.events;
 
-public interface Event {
+public interface Event<T> {
+    T getValue();
 }

@@ -10,9 +10,11 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public interface FilmScreeningRepository extends JpaRepository<FilmScreening, Long> {
     @Query("SELECT f FROM FilmScreening f " +
@@ -38,9 +40,11 @@ public interface FilmScreeningRepository extends JpaRepository<FilmScreening, Lo
                                         @Param("status")EntityStatus status,
                                         Pageable pageable);
 
+    List<FilmScreening> findAllByIdInAndEntityStatusAndDateAfter(Collection<Long> id, EntityStatus entityStatus, Date date);
+
     Optional<FilmScreening> findByIdAndEntityStatus(long id, EntityStatus entityStatus);
 
-    @Modifying
-    @Query("update FilmScreening fs set fs.entityStatus = :status where fs.film = :film and fs.entityStatus <> :status")
-    void updateEntityStatusByFilm(@Param("film") Film film, @Param("status") EntityStatus status);
+    Stream<FilmScreening> streamAllByFilmAndDateAfterAndEntityStatus(Film film, Date date, EntityStatus entityStatus);
+
+
 }

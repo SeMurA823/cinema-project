@@ -5,9 +5,9 @@ import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.film.AgeLimit;
 import com.muravyev.cinema.entities.film.Country;
 import com.muravyev.cinema.entities.film.Film;
+import com.muravyev.cinema.events.CancelFilmEvent;
 import com.muravyev.cinema.events.NotificationManager;
 import com.muravyev.cinema.events.Observable;
-import com.muravyev.cinema.events.cancel.EditFilmEvent;
 import com.muravyev.cinema.repo.AgeLimitRepository;
 import com.muravyev.cinema.repo.CountryRepository;
 import com.muravyev.cinema.repo.FilmRepository;
@@ -26,12 +26,12 @@ import java.util.stream.Collectors;
 
 @Service
 @Log4j2
-public class FilmServiceImpl implements FilmService, Observable<EditFilmEvent> {
+public class FilmServiceImpl implements FilmService, Observable {
     private final FilmRepository filmRepository;
     private final AgeLimitRepository ageLimitRepository;
     private final CountryRepository countryRepository;
 
-    private NotificationManager<EditFilmEvent> editFilmEventNotificationManager;
+    private NotificationManager notificationManager;
 
     public FilmServiceImpl(FilmRepository filmRepository,
                            AgeLimitRepository ageLimitRepository,
@@ -39,6 +39,12 @@ public class FilmServiceImpl implements FilmService, Observable<EditFilmEvent> {
         this.filmRepository = filmRepository;
         this.ageLimitRepository = ageLimitRepository;
         this.countryRepository = countryRepository;
+    }
+
+    @Autowired
+    @Override
+    public void setNotificationManager(NotificationManager notificationManager) {
+        this.notificationManager = notificationManager;
     }
 
     @Override
@@ -92,7 +98,7 @@ public class FilmServiceImpl implements FilmService, Observable<EditFilmEvent> {
                 .orElseThrow(EntityNotFoundException::new);
         film.setEntityStatus(EntityStatus.NOT_ACTIVE);
         Film savedFilm = filmRepository.save(film);
-        editFilmEventNotificationManager.notify(new EditFilmEvent(savedFilm));
+        notificationManager.notify(new CancelFilmEvent(savedFilm), CancelFilmEvent.class);
         return savedFilm;
     }
 
@@ -110,13 +116,7 @@ public class FilmServiceImpl implements FilmService, Observable<EditFilmEvent> {
         List<Film> savedFilms = filmRepository.saveAll(allById);
         savedFilms.stream()
                 .parallel()
-                .forEach(x->editFilmEventNotificationManager.notify(new EditFilmEvent(x)));
+                .forEach(x->notificationManager.notify(new CancelFilmEvent(x), CancelFilmEvent.class));
         return savedFilms;
-    }
-
-    @Autowired
-    @Override
-    public void setNotificationManager(NotificationManager<EditFilmEvent> notificationManager) {
-        this.editFilmEventNotificationManager = notificationManager;
     }
 }

@@ -6,9 +6,9 @@ import com.muravyev.cinema.entities.film.Film;
 import com.muravyev.cinema.entities.hall.Hall;
 import com.muravyev.cinema.entities.screening.FilmScreening;
 import com.muravyev.cinema.entities.screening.FilmScreeningSeat;
-import com.muravyev.cinema.events.NotificationManager;
+import com.muravyev.cinema.events.Observable;
 import com.muravyev.cinema.events.Observer;
-import com.muravyev.cinema.events.cancel.EditFilmEvent;
+import com.muravyev.cinema.events.*;
 import com.muravyev.cinema.repo.FilmRepository;
 import com.muravyev.cinema.repo.FilmScreeningRepository;
 import com.muravyev.cinema.repo.FilmScreeningSeatRepository;
@@ -22,19 +22,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.function.Consumer;
 
 @Service
 @Log4j2
-public class FilmScreeningServiceImpl implements FilmScreeningService, Observer<EditFilmEvent> {
+public class FilmScreeningServiceImpl implements FilmScreeningService, Observer, Observable {
     private final FilmScreeningRepository screeningRepository;
     private final FilmRepository filmRepository;
     private final HallRepository hallRepository;
     private final FilmScreeningSeatRepository screeningSeatRepository;
 
-    private NotificationManager<EditFilmEvent> editFilmEventNotificationManager;
+    private NotificationManager notificationManager;
+
+    private final Map<Class<? extends Event<?>>, Consumer<Event<?>>> eventActions = new HashMap<>() {{
+
+        put(CancelFilmEvent.class, event -> cancelScreenings(((CancelFilmEvent) event).getValue()));
+
+    }};
 
     public FilmScreeningServiceImpl(FilmScreeningRepository screeningRepository,
                                     FilmRepository filmRepository,
@@ -44,6 +49,13 @@ public class FilmScreeningServiceImpl implements FilmScreeningService, Observer<
         this.filmRepository = filmRepository;
         this.hallRepository = hallRepository;
         this.screeningSeatRepository = screeningSeatRepository;
+    }
+
+    @Autowired
+    @Override
+    public void setNotificationManager(NotificationManager notificationManager) {
+        this.notificationManager = notificationManager;
+        notificationManager.subscribe(this, eventActions.keySet());
     }
 
     @Override
@@ -68,7 +80,10 @@ public class FilmScreeningServiceImpl implements FilmScreeningService, Observer<
         FilmScreening filmScreening = merge(screeningDto,
                 screeningRepository.findByIdAndDateAfter(screeningId, new Date())
                         .orElseThrow(EntityNotFoundException::new));
-        return screeningRepository.save(filmScreening);
+        FilmScreening savedScreening = screeningRepository.save(filmScreening);
+        if (!savedScreening.isActive())
+            notificationManager.notify(new CancelScreeningEvent(savedScreening), CancelScreeningEvent.class);
+        return savedScreening;
     }
 
     private FilmScreening merge(FilmScreeningDto screeningDto, FilmScreening filmScreening) {
@@ -108,10 +123,15 @@ public class FilmScreeningServiceImpl implements FilmScreeningService, Observer<
     }
 
     @Override
-    public void setStatusScreenings(Iterable<Long> ids, EntityStatus status) {
-        List<FilmScreening> screenings = screeningRepository.findAllById(ids);
+    public void setStatusScreenings(Collection<Long> ids, EntityStatus status) {
+        List<FilmScreening> screenings =
+                screeningRepository.findAllByIdInAndEntityStatusAndDateAfter(ids, EntityStatus.ACTIVE, new Date());
         screenings.forEach(x -> x.setEntityStatus(status));
         screeningRepository.saveAll(screenings);
+        if (status.equals(EntityStatus.NOT_ACTIVE))
+            screenings.stream()
+                    .parallel()
+                    .forEach(x->notify(new CancelScreeningEvent(x), CancelScreeningEvent.class));
     }
 
     @Override
@@ -127,6 +147,18 @@ public class FilmScreeningServiceImpl implements FilmScreeningService, Observer<
         return screeningRepository.findByIdAndEntityStatus(screeningId, EntityStatus.ACTIVE)
                 .map(FilmScreening::getFilm)
                 .orElseThrow(EntityNotFoundException::new);
+    }
+
+    @Override
+    public void cancelScreenings(Film film) {
+        Date now = new Date();
+        screeningRepository.streamAllByFilmAndDateAfterAndEntityStatus(film, now, EntityStatus.ACTIVE)
+                .peek(screening -> screening.setEntityStatus(EntityStatus.NOT_ACTIVE))
+                .peek(screeningRepository::save)
+                .parallel()
+                .forEach(screening -> notificationManager.notify(new CancelScreeningEvent(screening),
+                        CancelScreeningEvent.class));
+
     }
 
     private Date getTodayDay(Date date) {
@@ -150,15 +182,7 @@ public class FilmScreeningServiceImpl implements FilmScreeningService, Observer<
     }
 
     @Override
-    public void notify(EditFilmEvent event) {
-        Film film = event.getValue();
-        screeningRepository.updateEntityStatusByFilm(film, film.getEntityStatus());
-    }
-
-    @Autowired
-    @Override
-    public void setNotificationManager(NotificationManager<EditFilmEvent> notificationManager) {
-        this.editFilmEventNotificationManager = notificationManager;
-        notificationManager.subscribe(this);
+    public void notify(Event<?> event, Class<? extends Event<?>> eventType) {
+        eventActions.get(eventType).accept(event);
     }
 }

@@ -4,11 +4,14 @@ import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.payment.Purchase;
 import com.muravyev.cinema.entities.payment.Reservation;
 import com.muravyev.cinema.entities.payment.Ticket;
+import com.muravyev.cinema.entities.screening.FilmScreening;
 import com.muravyev.cinema.entities.users.User;
+import com.muravyev.cinema.events.*;
 import com.muravyev.cinema.repo.PurchaseRepository;
 import com.muravyev.cinema.repo.ReservationRepository;
 import com.muravyev.cinema.services.PurchaseService;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -17,14 +20,25 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Service
 @Log4j2
-public class PurchaseServiceImpl implements PurchaseService {
+public class PurchaseServiceImpl implements PurchaseService, Observer, Observable {
     private final PurchaseRepository purchaseRepository;
     private final ReservationRepository reservationRepository;
+
+    private final Map<Class<? extends Event<?>>, Consumer<Event<?>>> eventActions = new HashMap<>() {{
+
+        put(CancelScreeningEvent.class, event -> cancelPurchases(((CancelScreeningEvent) event).getValue()));
+
+    }};
+
+    private NotificationManager notificationManager;
 
     public PurchaseServiceImpl(PurchaseRepository purchaseRepository, ReservationRepository reservationRepository) {
         this.purchaseRepository = purchaseRepository;
@@ -32,16 +46,42 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     @Override
+    public void notify(Event<?> event, Class<? extends Event<?>> eventType) {
+        eventActions.get(eventType).accept(event);
+    }
+
+    @Autowired
+    @Override
+    public void setNotificationManager(NotificationManager notificationManager) {
+        this.notificationManager = notificationManager;
+        notificationManager.subscribe(this, eventActions.keySet());
+    }
+
+    @Override
     public Page<Purchase> getAllPurchases(@PageableDefault Pageable pageable) {
         return purchaseRepository.findAll(pageable);
     }
 
+    private void cancelPurchases(FilmScreening screening) {
+        List<Purchase> purchases = purchaseRepository.findAllByScreeningAndEntityStatus(screening, EntityStatus.ACTIVE);
+        cancelPurchases(purchases);
+    }
+
     @Override
-    public void cancelPurchases(List<Long> ids) {
-        List<Purchase> purchases = purchaseRepository.findAllById(ids);
-        purchases.forEach(this::cancelPurchase);
-        if (purchaseRepository.saveAll(purchases).size() != ids.size())
+    public void cancelPurchasesById(List<Long> ids) {
+        List<Purchase> purchases = purchaseRepository.findAllByIdInAndEntityStatus(ids, EntityStatus.ACTIVE);
+        cancelPurchases(purchases);
+    }
+
+    @Override
+    public void cancelPurchases(List<Purchase> purchases) {
+        purchases.forEach(purchase -> purchase.setEntityStatus(EntityStatus.NOT_ACTIVE));
+        List<Purchase> savedPurchases = purchaseRepository.saveAll(purchases);
+        if (savedPurchases.size() != purchases.size())
             throw new IllegalArgumentException("invalid purchases");
+        savedPurchases.stream()
+                .parallel()
+                .forEach(x->notificationManager.notify(new ReturnPurchaseEvent(x), ReturnPurchaseEvent.class));
     }
 
     @Override
@@ -71,10 +111,5 @@ public class PurchaseServiceImpl implements PurchaseService {
         ticket.setSeat(reservation.getSeat());
         ticket.setPrice(reservation.getFilmScreening().getPrice());
         return ticket;
-    }
-
-    private Purchase cancelPurchase(Purchase purchase) {
-        purchase.setEntityStatus(EntityStatus.ACTIVE);
-        return purchase;
     }
 }

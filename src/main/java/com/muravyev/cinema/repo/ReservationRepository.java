@@ -26,4 +26,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<FilmScreening> findAllByUserAndFilmScreeningFilmIdAndEntityStatus(@Param("user") User user,
                                                                            @Param("film") Long filmId,
                                                                            @Param("status") EntityStatus entityStatus);
+
+    List<Reservation> findAllByFilmScreeningAndEntityStatusAndExpiryDateAfter(FilmScreening filmScreening,
+                                                                               EntityStatus entityStatus,
+                                                                               Date date);
 }

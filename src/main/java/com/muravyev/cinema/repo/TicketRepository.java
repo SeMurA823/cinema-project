@@ -1,6 +1,7 @@
 package com.muravyev.cinema.repo;
 
 import com.muravyev.cinema.entities.EntityStatus;
+import com.muravyev.cinema.entities.payment.Purchase;
 import com.muravyev.cinema.entities.payment.Ticket;
 import com.muravyev.cinema.entities.users.User;
 import org.springframework.data.domain.Page;
@@ -12,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
     Page<Ticket> findAllByPurchaseId(Long purchaseId, Pageable pageable);
@@ -37,5 +39,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
                                                                                Date filmScreeningDate,
                                                                                EntityStatus entityStatus,
                                                                                Pageable pageable);
+
+    List<Ticket> findAllByPurchaseAndEntityStatus(Purchase purchase, EntityStatus entityStatus);
 
 }
