@@ -1,5 +1,9 @@
 # Cinema project
 
+[ADMIN-UI](https://github.com/SeMurA823/cinema-ui-admin)
+
+[CLIENT-UI](https://github.com/SeMurA823/cinema-ui)
+
 ## Methods:
 
 - **AuthN**

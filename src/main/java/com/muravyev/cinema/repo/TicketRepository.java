@@ -28,10 +28,10 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     @Modifying
     @Query("update Ticket t " +
             "set t.entityStatus = :status " +
-            "where t.id in :ids " +
+            "where t.id in (:ids) " +
             "and t.filmScreening.date < current_timestamp and t.entityStatus = 'ACTIVE'")
-    int updateStatusAllByIdsAndStatus(@Param("ids") Collection<Long> id,
-                                      @Param("status") EntityStatus status);
+    int updateStatusAllByIds(@Param("ids") Collection<Long> id,
+                             @Param("status") EntityStatus status);
 
     Page<Ticket> findAllByPurchaseUserAndFilmScreeningDateAfterAndEntityStatus(User purchaseUser,
                                                                                Date filmScreeningDate,

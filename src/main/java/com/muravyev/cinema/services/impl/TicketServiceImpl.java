@@ -37,7 +37,7 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional
     public void cancelTickets(Collection<Long> ids) {
-        int amount = ticketRepository.updateStatusAllByIdsAndStatus(ids, EntityStatus.ACTIVE);
+        int amount = ticketRepository.updateStatusAllByIds(ids, EntityStatus.ACTIVE);
         if (amount != ids.size())
             throw new IllegalArgumentException("illegal tickets");
     }

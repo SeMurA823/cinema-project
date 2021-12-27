@@ -37,10 +37,11 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     @Override
-    public List<Purchase> cancelPurchases(Iterable<Long> ids) {
+    public void cancelPurchases(List<Long> ids) {
         List<Purchase> purchases = purchaseRepository.findAllById(ids);
         purchases.forEach(this::cancelPurchase);
-        return purchaseRepository.saveAll(purchases);
+        if (purchaseRepository.saveAll(purchases).size() != ids.size())
+            throw new IllegalArgumentException("invalid purchases");
     }
 
     @Override

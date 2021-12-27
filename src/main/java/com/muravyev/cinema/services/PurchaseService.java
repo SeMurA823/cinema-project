@@ -12,7 +12,7 @@ import java.util.List;
 public interface PurchaseService {
     Page<Purchase> getAllPurchases(@PageableDefault Pageable pageable);
 
-    List<Purchase> cancelPurchases(Iterable<Long> ids);
+    void cancelPurchases(List<Long> ids);
 
     Purchase buy(Collection<Long> reservationId, User user);
 }

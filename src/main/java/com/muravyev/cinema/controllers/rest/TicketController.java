@@ -3,6 +3,7 @@ package com.muravyev.cinema.controllers.rest;
 import com.muravyev.cinema.entities.payment.Ticket;
 import com.muravyev.cinema.entities.users.User;
 import com.muravyev.cinema.services.TicketService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -11,8 +12,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Stream;
 
+@Log4j2
 @RestController
 @RequestMapping("/api/tickets")
 public class TicketController {
@@ -31,7 +36,7 @@ public class TicketController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/cancel", params = {"id"})
-    public ResponseEntity<?> cancelTickets(@RequestParam("id") Collection<Long> ids) {
+    public ResponseEntity<?> cancelTickets(@RequestParam("id") List<Long> ids) {
         ticketService.cancelTickets(ids);
         return ResponseEntity.ok()
                 .build();
