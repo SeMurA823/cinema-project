@@ -62,7 +62,7 @@ public class HallServiceImpl implements HallService {
                 .orElseThrow(EntityNotFoundException::new);
         Seat seat = new Seat();
         seat.setHall(hall);
-        Integer number = seatRepository.findLastSeatNumberInRow(row)
+        Integer number = seatRepository.findLastSeatNumberInRow(row, hall)
                 .orElse(0);
         seat.setNumber(number + 1);
         seat.setRow(row);
@@ -84,9 +84,7 @@ public class HallServiceImpl implements HallService {
 
     @Override
     public void setUnUsedSeat(long hallId, int num, int row, boolean unused) {
-        Hall hall = hallRepository.findById(hallId)
-                .orElseThrow(EntityNotFoundException::new);
-        seatRepository.findByRowAndNumberAndHall(row, num, hall)
+        seatRepository.findByRowAndNumberAndHallIdAndEntityStatus(row, num, hallId, EntityStatus.ACTIVE)
                 .ifPresent(seat -> {
                     seat.setUnUsed(unused);
                     seatRepository.save(seat);

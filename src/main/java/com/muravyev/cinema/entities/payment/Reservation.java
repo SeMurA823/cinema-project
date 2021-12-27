@@ -5,7 +5,9 @@ import com.muravyev.cinema.entities.IdentityBaseEntity;
 import com.muravyev.cinema.entities.hall.Seat;
 import com.muravyev.cinema.entities.screening.FilmScreening;
 import com.muravyev.cinema.entities.users.User;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -14,6 +16,8 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "reservations")
 public class Reservation extends IdentityBaseEntity {
     @JsonIgnore

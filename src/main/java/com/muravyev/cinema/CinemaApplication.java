@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -25,5 +26,18 @@ public class CinemaApplication implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler(handlerPath + "/**")
                 .addResourceLocations("file:///" + fileStoragePath + "/");
+    }
+
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/api/**")
+                .allowedOrigins("http://localhost:3000", "http://localhost:3001")
+                .allowedMethods("POST", "GET", "DELETE", "OPTIONS")
+                .allowCredentials(true);
+        registry.addMapping("/files/**")
+                .allowedOrigins("http://localhost:3000", "http://localhost:3001")
+                .allowedMethods("GET")
+                .allowCredentials(true);
     }
 }

@@ -2,6 +2,7 @@ package com.muravyev.cinema.controllers.rest;
 
 import com.muravyev.cinema.dto.FilmScreeningDto;
 import com.muravyev.cinema.entities.EntityStatus;
+import com.muravyev.cinema.entities.film.Film;
 import com.muravyev.cinema.entities.screening.FilmScreening;
 import com.muravyev.cinema.services.FilmScreeningService;
 import org.springframework.data.domain.Page;
@@ -16,7 +17,7 @@ import java.util.Collection;
 import java.util.Date;
 
 @RestController
-@RequestMapping({"/api/screenings", "/api/admin/screening"})
+@RequestMapping({"/api/screenings"})
 public class FilmScreeningController {
     private final FilmScreeningService screeningService;
 
@@ -24,22 +25,16 @@ public class FilmScreeningController {
         this.screeningService = screeningService;
     }
 
-    @GetMapping(value = "/", params = {"film", "start", "end"})
-    public ResponseEntity<?> screenings(@RequestParam("film") long filmId,
-                                        @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd") Date start,
-                                        @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd") Date end) {
-        return ResponseEntity.ok(screeningService.getFilmScreenings(filmId, start, end));
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(params = {"film", "page", "size", "anystatus"})
+    public ResponseEntity<?> screenings(@RequestParam("film") long filmId, @PageableDefault Pageable pageable) {
+        return ResponseEntity.ok(screeningService.getAllFilmScreening(filmId, pageable));
     }
 
-    @GetMapping(value = "/", params = {"film"})
-    public ResponseEntity<?> screenings(@RequestParam("film") long filmId) {
-        return ResponseEntity.ok(screeningService.getFilmScreenings(filmId));
-    }
-
-    @GetMapping(value = "/", params = {"start", "film"})
+    @GetMapping(params = {"film", "date"})
     public ResponseEntity<?> screenings(@RequestParam("film") long filmId,
-                                        @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd") Date start) {
-        return ResponseEntity.ok(screeningService.getFilmScreenings(filmId, start));
+                                        @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date date) {
+        return ResponseEntity.ok(screeningService.getFilmScreeningsInDay(filmId, date));
     }
 
     @GetMapping("/{screening}/seats")
@@ -47,14 +42,19 @@ public class FilmScreeningController {
         return ResponseEntity.ok(screeningService.getStatusSeats(screeningId));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/{screening}/film")
+    public ResponseEntity<?> film(@PathVariable("screening") long screeningId) {
+        return ResponseEntity.ok(screeningService.getFilmByScreening(screeningId));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
     public ResponseEntity<?> addScreening(@RequestBody FilmScreeningDto filmScreeningDto) {
         FilmScreening filmScreening = screeningService.addFilmScreening(filmScreeningDto);
         return ResponseEntity.ok(filmScreening);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(params = {"status", "id"})
     public ResponseEntity<?> setStatus(@RequestParam("id") Collection<Long> ids,
                                        @RequestParam("status") EntityStatus status) {
@@ -63,14 +63,20 @@ public class FilmScreeningController {
                 .build();
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/{screening}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(value = "/{screening}", params = "anystatus")
     public ResponseEntity<?> getScreening(@PathVariable("screening") long screening) {
         FilmScreening filmScreening = screeningService.getFilmScreening(screening);
         return ResponseEntity.ok(filmScreening);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping(value = "/{screening}")
+    public ResponseEntity<?> getActiveScreening(@PathVariable("screening") long screening) {
+        FilmScreening filmScreening = screeningService.getFilmScreening(screening);
+        return ResponseEntity.ok(filmScreening);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{screening}")
     public ResponseEntity<?> editScreening(@PathVariable("screening") long screening,
                                            @RequestBody FilmScreeningDto screeningDto) {
@@ -78,10 +84,16 @@ public class FilmScreeningController {
         return ResponseEntity.ok(filmScreening);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<?> getAllScreenings(@RequestParam("film") long filmId, @PageableDefault Pageable pageable) {
         Page<FilmScreening> allFilmScreening = screeningService.getAllFilmScreening(filmId, pageable);
         return ResponseEntity.ok(allFilmScreening);
+    }
+
+    @GetMapping("/todayfilms")
+    public ResponseEntity<?> getTodayFilms(@PageableDefault Pageable pageable) {
+        Page<Film> todayFilms = screeningService.getTodayFilms(pageable);
+        return ResponseEntity.ok(todayFilms);
     }
 }

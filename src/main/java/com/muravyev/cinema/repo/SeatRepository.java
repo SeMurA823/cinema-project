@@ -1,5 +1,6 @@
 package com.muravyev.cinema.repo;
 
+import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.hall.Hall;
 import com.muravyev.cinema.entities.hall.Seat;
 import org.springframework.data.domain.Sort;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SeatRepository extends JpaRepository<Seat, Long> {
-    Optional<Seat> findByRowAndNumberAndHall(int row, int number, Hall hall);
+    Optional<Seat> findByRowAndNumberAndHallIdAndEntityStatus(int row, int number, long hallId, EntityStatus status);
 
     List<Seat> findAllByHallId(Long hallId, Sort sort);
 
@@ -25,6 +26,6 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
                             @Param("ids") Collection<Long> ids,
                             @Param("unUsed") boolean unUsed);
 
-    @Query("select max(s.number) from Seat s where s.row = :row")
-    Optional<Integer> findLastSeatNumberInRow(@Param("row") int row);
+    @Query("select max(s.number) from Seat s where s.row = :row and s.hall = :hall")
+    Optional<Integer> findLastSeatNumberInRow(@Param("row") int row, @Param("hall") Hall hall);
 }

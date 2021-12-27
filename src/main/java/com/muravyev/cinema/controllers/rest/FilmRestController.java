@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -45,45 +46,47 @@ public class FilmRestController {
 
     //admin
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
     public ResponseEntity<?> createFilms(@RequestBody FilmDto filmAddingDto) {
         return ResponseEntity.ok(filmService.addFilm(filmAddingDto));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{film}/disable")
     public ResponseEntity<?> disableFilm(@PathVariable("film") long filmId) {
         return ResponseEntity.ok(filmService.disableFilm(filmId));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{film}")
     public ResponseEntity<?> deleteFilm(@PathVariable("film") long filmId) {
         return ResponseEntity.ok(filmService.deleteFilms(List.of(filmId)).get(0));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping
     public ResponseEntity<?> deleteFilms(@RequestParam("id") List<Long> id) {
         return ResponseEntity.ok(filmService.deleteFilms(id));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{film}")
     public ResponseEntity<?> setFilm(@PathVariable("film") long id, @RequestBody FilmDto filmDto) {
         return ResponseEntity.ok(filmService.setFilms(List.of(id), filmDto).get(0));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<?> setFilms(@RequestParam("id") List<Long> id, @RequestBody FilmDto filmDto) {
         return ResponseEntity.ok(filmService.setFilms(id, filmDto));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<?> getFilms(@PageableDefault Pageable pageable) {
         return ResponseEntity.ok(filmService.getAllFilms(pageable));
     }
+
+
 }

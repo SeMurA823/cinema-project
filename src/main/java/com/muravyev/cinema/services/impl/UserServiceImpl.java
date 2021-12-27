@@ -3,13 +3,14 @@ package com.muravyev.cinema.services.impl;
 import com.muravyev.cinema.dto.LoginDto;
 import com.muravyev.cinema.dto.RegistrationDto;
 import com.muravyev.cinema.dto.UserInfoDto;
+import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.roles.Role;
 import com.muravyev.cinema.entities.users.User;
 import com.muravyev.cinema.entities.users.UserStatus;
 import com.muravyev.cinema.repo.UserRepository;
-import com.muravyev.cinema.repo.UserRoleRepository;
 import com.muravyev.cinema.services.RoleService;
 import com.muravyev.cinema.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -25,27 +26,30 @@ import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private final UserRepository userRepository;
+    private UserRepository userRepository;
 
-    private final UserRoleRepository roleRepository;
+    private PasswordEncoder passwordEncoder;
 
-    private final PasswordEncoder passwordEncoder;
+    private RoleService roleService;
 
-    private final RoleService roleService;
-
-    public UserServiceImpl(UserRepository userRepository,
-                           UserRoleRepository roleRepository,
-                           PasswordEncoder passwordEncoder,
-                           RoleService roleService) {
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
+    }
+
+    @Autowired
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
+    }
+
+    @Autowired
+    public void setRoleService(RoleService roleService) {
         this.roleService = roleService;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username)
+        return userRepository.findByUsernameAndEntityStatusAndUserStatus(username, EntityStatus.ACTIVE, UserStatus.ACTIVE)
                 .orElseThrow(() -> new UsernameNotFoundException("User '" + username + "' not found"));
     }
 
@@ -53,7 +57,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User registration(RegistrationDto registrationForm) {
         User user = new User();
-        user.setUsername(registrationForm.getUsername());
+        user.setUsername(registrationForm.getTel());
         user.setPassword(passwordEncoder.encode(registrationForm.getPassword()));
         user.setUserStatus(UserStatus.ACTIVE);
         user.setFirstName(registrationForm.getFirstName());
@@ -68,7 +72,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User login(String username, String password) {
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByUsernameAndEntityStatusAndUserStatus(username, EntityStatus.ACTIVE, UserStatus.ACTIVE)
                 .orElseThrow(() -> new UsernameNotFoundException("User '" + username + "' not found"));
         if (!passwordEncoder.matches(password, user.getPassword()))
             throw new AuthenticationServiceException("Password is illegal");
@@ -92,6 +96,8 @@ public class UserServiceImpl implements UserService {
         user.setLastName(userInfo.getLastName());
         user.setPatronymic(userInfo.getPatronymic());
         user.setBirthDate(userInfo.getBirthDate());
+        user.setUsername(userInfo.getTel());
+        user.setGender(userInfo.getGender());
         return userRepository.save(user);
     }
 

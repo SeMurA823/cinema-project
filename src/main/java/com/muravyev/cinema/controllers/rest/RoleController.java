@@ -19,14 +19,14 @@ public class RoleController {
         this.roleService = roleService;
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<?> getActiveRoles(@RequestParam("user") long userId) {
         List<UserRole> activeRoles = roleService.getActiveRoles(userId);
         return ResponseEntity.ok(activeRoles);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/demote")
     public ResponseEntity<?> demote(@RequestParam("id") List<Long> ids) {
         roleService.setRolesStatus(ids, EntityStatus.NOT_ACTIVE);
@@ -34,7 +34,7 @@ public class RoleController {
                 .build();
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestParam("role") Role role, @RequestParam("user") long userId) {
         UserRole userRole = roleService.setRole(userId, role);

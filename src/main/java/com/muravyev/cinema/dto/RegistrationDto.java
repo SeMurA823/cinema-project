@@ -11,7 +11,7 @@ import java.util.Date;
 @Data
 public class RegistrationDto {
     @Size(min = 6)
-    private String username;
+    private String tel;
     @Size(min = 6)
     private String password;
     @NotEmpty

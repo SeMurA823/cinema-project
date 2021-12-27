@@ -1,5 +1,6 @@
 package com.muravyev.cinema.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -18,6 +19,7 @@ public class BaseEntity {
     @Column(name = "update_date")
     private Date updated;
 
+    @JsonIgnore
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private EntityStatus entityStatus = EntityStatus.ACTIVE;

@@ -12,4 +12,6 @@ public class UserInfoDto {
     private String lastName;
     private String patronymic;
     private Date birthDate;
+    private String gender;
+    private String tel;
 }

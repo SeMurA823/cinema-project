@@ -5,15 +5,20 @@ import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.film.AgeLimit;
 import com.muravyev.cinema.entities.film.Country;
 import com.muravyev.cinema.entities.film.Film;
+import com.muravyev.cinema.events.NotificationManager;
+import com.muravyev.cinema.events.Observable;
+import com.muravyev.cinema.events.cancel.EditFilmEvent;
 import com.muravyev.cinema.repo.AgeLimitRepository;
 import com.muravyev.cinema.repo.CountryRepository;
 import com.muravyev.cinema.repo.FilmRepository;
 import com.muravyev.cinema.services.FilmService;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Level;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -21,10 +26,12 @@ import java.util.stream.Collectors;
 
 @Service
 @Log4j2
-public class FilmServiceImpl implements FilmService {
+public class FilmServiceImpl implements FilmService, Observable<EditFilmEvent> {
     private final FilmRepository filmRepository;
     private final AgeLimitRepository ageLimitRepository;
     private final CountryRepository countryRepository;
+
+    private NotificationManager<EditFilmEvent> editFilmEventNotificationManager;
 
     public FilmServiceImpl(FilmRepository filmRepository,
                            AgeLimitRepository ageLimitRepository,
@@ -60,16 +67,10 @@ public class FilmServiceImpl implements FilmService {
         film.setDuration(filmDto.getDuration());
         AgeLimit ageLimit = ageLimitRepository.findById(filmDto.getAgeLimitId())
                 .orElseThrow(EntityNotFoundException::new);
-        log.log(Level.DEBUG, "Age limit found : {}", ageLimit.getId());
         film.setAgeLimit(ageLimit);
         List<Country> countryList = countryRepository.findAllById(filmDto.getCountriesId());
-        log.log(Level.DEBUG, "Countries found : {}", countryList.stream()
-                .map(Country::getId)
-                .collect(Collectors.toList()));
         film.setCountries(countryList);
-        log.info("DTO {}", filmDto.isActive());
         film.setEntityStatus((filmDto.isActive()) ? EntityStatus.ACTIVE : EntityStatus.NOT_ACTIVE);
-        log.info("Entity {}", film.getEntityStatus());
         return film;
     }
 
@@ -90,7 +91,9 @@ public class FilmServiceImpl implements FilmService {
         Film film = filmRepository.findById(filmId)
                 .orElseThrow(EntityNotFoundException::new);
         film.setEntityStatus(EntityStatus.NOT_ACTIVE);
-        return filmRepository.save(film);
+        Film savedFilm = filmRepository.save(film);
+        editFilmEventNotificationManager.notify(new EditFilmEvent(savedFilm));
+        return savedFilm;
     }
 
     @Override
@@ -99,26 +102,21 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
+    @Transactional
     public List<Film> setFilms(List<Long> id, FilmDto filmDto) {
         List<Film> allById = filmRepository.findAllById(id).stream()
                 .map(x -> merge(filmDto, x))
                 .collect(Collectors.toList());
-        return filmRepository.saveAll(allById);
+        List<Film> savedFilms = filmRepository.saveAll(allById);
+        savedFilms.stream()
+                .parallel()
+                .forEach(x->editFilmEventNotificationManager.notify(new EditFilmEvent(x)));
+        return savedFilms;
     }
 
-    private FilmDto merge(Film film) {
-        FilmDto filmDto = new FilmDto();
-        filmDto.setId(film.getId());
-        filmDto.setCountriesId(film.getCountries().stream()
-                .map(Country::getId)
-                .collect(Collectors.toList()));
-        filmDto.setName(film.getName());
-        filmDto.setLocalPremiere(film.getLocalPremiere());
-        filmDto.setWorldPremiere(film.getWorldPremiere());
-        filmDto.setPlot(film.getPlot());
-        filmDto.setAgeLimitId(film.getAgeLimit().getId());
-        filmDto.setActive(film.isActive());
-        return filmDto;
+    @Autowired
+    @Override
+    public void setNotificationManager(NotificationManager<EditFilmEvent> notificationManager) {
+        this.editFilmEventNotificationManager = notificationManager;
     }
-
 }

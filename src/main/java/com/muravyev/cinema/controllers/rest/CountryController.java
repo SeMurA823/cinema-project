@@ -41,14 +41,14 @@ public class CountryController {
         return ResponseEntity.ok(countryService.getAllCountries(pageable));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
     public ResponseEntity<?> addCountry(@RequestBody CountryDto countryDto) {
         Country country = countryService.createCountry(countryDto);
         return ResponseEntity.ok(country);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{id}")
     public ResponseEntity<?> setCountry(@PathVariable("id") String code, @RequestBody CountryDto countryDto) {
         countryDto.setId(code);
@@ -56,7 +56,7 @@ public class CountryController {
         return ResponseEntity.ok(country);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCountry(@PathVariable("id") String code) {
         deleteCountries(List.of(code));
@@ -64,7 +64,7 @@ public class CountryController {
                 .build();
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping
     public ResponseEntity<?> deleteCountries(@RequestParam("id") List<String> codes) {
         countryService.deleteCountries(codes);

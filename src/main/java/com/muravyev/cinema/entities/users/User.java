@@ -1,6 +1,7 @@
 package com.muravyev.cinema.entities.users;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.muravyev.cinema.entities.BaseEntity;
 import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.IdentityBaseEntity;
@@ -34,7 +35,7 @@ public class User extends IdentityBaseEntity implements UserDetails {
     @Column(name = "hash_password")
     private String password;
 
-    @JsonIgnore
+    @JsonProperty("tel")
     @Column(name = "username", unique = true)
     private String username;
 
@@ -91,11 +92,11 @@ public class User extends IdentityBaseEntity implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return userStatus.equals(UserStatus.ACTIVE);
     }
 
     @Override
     public boolean isEnabled() {
-        return getEntityStatus().equals(EntityStatus.ACTIVE);
+        return userStatus.equals(UserStatus.ACTIVE) && getEntityStatus().equals(EntityStatus.ACTIVE);
     }
 }

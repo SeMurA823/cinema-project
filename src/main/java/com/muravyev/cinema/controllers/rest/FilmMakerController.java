@@ -39,21 +39,21 @@ public class FilmMakerController {
         return ResponseEntity.ok(posts);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody FilmMakerDto filmMakerDto) {
         FilmMaker maker = makerService.addFilmMaker(filmMakerDto);
         return ResponseEntity.ok(maker);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/relate")
     public ResponseEntity<?> relate(@RequestBody FilmMakerPostDto postDto) {
         FilmMakerPost post = makerService.setFilmMakerPost(postDto);
         return ResponseEntity.ok(post);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(params = {"status", "id"})
     public ResponseEntity<?> setStatusMakers(@RequestParam("id") Collection<Long> ids,
                                              @RequestParam("status") EntityStatus status) {
@@ -62,7 +62,7 @@ public class FilmMakerController {
                 .build();
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/{maker}/disable", params = {"film"})
     public ResponseEntity<?> disable(@PathVariable("maker") long makerId, @RequestParam("film") long filmId) {
         makerService.disableFilmMakerPost(filmId, makerId);
@@ -70,21 +70,21 @@ public class FilmMakerController {
                 .build();
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(params = {"page", "size"})
     public ResponseEntity<?> getAllMakers(@PageableDefault Pageable pageable) {
         Page<FilmMaker> allFilmMakers = makerService.getAllFilmMakers(pageable);
         return ResponseEntity.ok(allFilmMakers);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{id}")
     public ResponseEntity<?> setFilmmaker(@PathVariable("id") long id, @RequestBody FilmMakerDto filmMakerDto) {
         FilmMaker maker = makerService.setFilmMaker(id, filmMakerDto);
         return ResponseEntity.ok(maker);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(params = {"maker", "film"})
     public ResponseEntity<?> deletePost(@RequestParam("film") long filmId,
                                         @RequestParam("maker") long makerId,

@@ -339,9 +339,9 @@ SELECT DISTINCT s.id,
                     END::character varying(8) AS status_seat
 FROM seats s
          JOIN halls h ON h.id = s.hall_id
-         JOIN film_screenings fs ON s.hall_id = fs.hall_id
-         LEFT JOIN tickets t ON s.id = t.seat_id
-         LEFT JOIN reservations r ON s.id = r.place_id
+         JOIN film_screenings fs ON h.id = fs.hall_id
+         LEFT JOIN tickets t ON s.id = t.seat_id and t.film_screening_id = fs.id and t.status = 'ACTIVE'
+         LEFT JOIN reservations r ON s.id = r.place_id and r.film_screening_id = fs.id and r.expiry_date > CURRENT_TIMESTAMP and r.status = 'ACTIVE'
 WHERE s.status::text = 'ACTIVE'::text
   AND fs.status::text = 'ACTIVE'::text
   AND h.status::text = 'ACTIVE'::text;
@@ -356,7 +356,8 @@ $$
 begin
     update seats
     set number = number - 1
-    where number > old.number and row = old.row;
+    where number > old.number
+      and row = old.row;
     return old;
 end
 $$;
@@ -369,6 +370,21 @@ create trigger re_numeric_seats
     for each row
 execute procedure re_numeric_seats();
 
+drop function get_duration(film_id bigint);
+create or replace function get_duration(film_id bigint)
+    returns interval
+    language plpgsql as
+$$
+declare
+    d integer;
+begin
+    select duration into d from films
+    where film_id = id;
+    return make_interval(mins := d);
+end
+$$;
+
+
 create or replace function check_free() returns trigger
     language plpgsql
 as
@@ -376,10 +392,15 @@ $$
 declare
     c int;
 begin
-    select count(*) into c from film_screenings fs
-                                    join films f on fs.film_id = f.id
-    where (new.date between fs.date and fs.date + make_interval(mins := f.duration))
-      and fs.hall_id = new.hall_id and fs.status = 'ACTIVE' and new.status = 'ACTIVE';
+    select count(*)
+    into c
+    from film_screenings fs
+             join films f on fs.film_id = f.id
+    where ((new.date between fs.date and fs.date + make_interval(mins := f.duration)) or (fs.date between new.date and new.date + get_duration(new.film_id)))
+      and fs.id != new.id
+      and fs.hall_id = new.hall_id
+      and fs.status = 'ACTIVE'
+      and new.status = 'ACTIVE';
     if (c != 0) then
         raise exception 'hall busy in %', new.date;
     end if;
@@ -389,9 +410,17 @@ $$;
 
 alter function check_free() owner to cinema;
 
-create trigger check_free
-    before insert or update
+
+create trigger check_free_insert
+    before insert
     on film_screenings
     for each row
+execute procedure check_free();
+
+create trigger check_free_update
+    before update
+    on film_screenings
+    for each row
+    when ( old.status != new.status or old.date != new.date)
 execute procedure check_free();
 

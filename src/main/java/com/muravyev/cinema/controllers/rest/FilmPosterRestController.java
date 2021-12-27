@@ -26,14 +26,14 @@ public class FilmPosterRestController {
         return ResponseEntity.ok(poster);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
     public ResponseEntity<?> uploadPoster(@RequestBody PosterDto posterDto) {
         FilmPoster poster = posterService.createPoster(posterDto);
         return ResponseEntity.ok(poster);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("{poster}")
     public ResponseEntity<?> deletePoster(@PathVariable("poster") long posterId) {
         posterService.delete(List.of(posterId));
@@ -41,7 +41,7 @@ public class FilmPosterRestController {
                 .build();
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(params = "id")
     public ResponseEntity<?> deletePosters(@RequestParam("id") List<Long> postersId) {
         posterService.delete(postersId);
@@ -54,7 +54,7 @@ public class FilmPosterRestController {
         return ResponseEntity.ok(posterService.getPosters(filmId, pageable));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{id}")
     public ResponseEntity<?> updatePoster(@PathVariable("id") long posterId, @RequestBody PosterDto posterDto) {
         return ResponseEntity.ok(posterService.updatePoster(posterId, posterDto));

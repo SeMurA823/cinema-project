@@ -23,21 +23,21 @@ public class HallController {
         this.hallService = hallService;
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<?> getAllHalls(@PageableDefault Pageable pageable) {
         Page<Hall> allHalls = hallService.getAllHalls(pageable);
         return ResponseEntity.ok(allHalls);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
     public ResponseEntity<?> createHall(@RequestBody HallDto hallDto) {
         Hall hall = hallService.createHall(hallDto);
         return ResponseEntity.ok(hall);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "{hall}/seats/create")
     public ResponseEntity<?> addSeat(@PathVariable("hall") long hallId,
                                      @RequestParam("row") int row) {
@@ -45,7 +45,7 @@ public class HallController {
         return ResponseEntity.ok(seat);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(value = "{hall}/seats", params = "id")
     public ResponseEntity<?> deleteSeats(@PathVariable("hall") long hallId,
                                          @RequestParam("id") List<Long> seatIds) {
@@ -54,7 +54,7 @@ public class HallController {
                 .build();
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "{hall}/seats", params = {"id", "used"})
     public ResponseEntity<?> setStatusSeats(@PathVariable("hall") long hallId,
                                             @RequestParam("id") List<Long> seatIds,
@@ -64,7 +64,7 @@ public class HallController {
                 .build();
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "{hall}/seats", params = {"row", "size"})
     public ResponseEntity<?> addSeats(@PathVariable("hall") long hallId,
                                       @RequestParam("row") int row,
@@ -73,21 +73,21 @@ public class HallController {
         return ResponseEntity.ok(seats);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("{hall}/seats")
     public ResponseEntity<?> getSeats(@PathVariable("hall") long hallId) {
         Map<Integer, List<Seat>> seats = hallService.getAllSeats(hallId);
         return ResponseEntity.ok(seats.values());
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<?> getHall(@PathVariable("id") long hallId) {
         Hall hall = hallService.getHall(hallId);
         return ResponseEntity.ok(hall);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{id}")
     public ResponseEntity<?> setHall(@PathVariable("id") long id, @RequestBody HallDto hallDto) {
         Hall hall = hallService.editHall(id, hallDto);

@@ -39,25 +39,25 @@ public class AgeLimitController {
         return ResponseEntity.ok(limitService.getAgeLimits(List.of(id)).get(0));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{ageLimit}")
     public ResponseEntity<?> setAgeLimit(@PathVariable("ageLimit") String ageLimit, @RequestBody AgeLimitDto ageLimitDto) {
         return ResponseEntity.ok(limitService.setAgeLimits(List.of(ageLimit), ageLimitDto).get(0));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<?> setAgeLimits(@RequestParam("id") List<String> id, @RequestBody AgeLimitDto ageLimitDto) {
         return ResponseEntity.ok(limitService.setAgeLimits(id, ageLimitDto));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
     public ResponseEntity<?> addAgeLimit(@RequestBody AgeLimitDto ageLimitDto) {
         return setAgeLimit(ageLimitDto.getName(), ageLimitDto);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteAgeLimit(@PathVariable("id") String id) {
         limitService.deleteAgeLimits(List.of(id));
@@ -65,7 +65,7 @@ public class AgeLimitController {
                 .build();
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping
     public ResponseEntity<?> deleteAgeLimits(@RequestParam("id") List<String> id) {
         limitService.deleteAgeLimits(id);
