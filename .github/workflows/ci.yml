@@ -22,6 +22,6 @@ jobs:
       - name: Build with Maven
         run: mvn package -D spring.profiles.active=test
       - name: Build Docker
-        run: docker build -t cinema/cinema-back .
+        run: docker build --tag ${{ secrets.USERNAME_HUB }}/cinema-back:latest .
       - name: Push into DockerHub
         run: docker push ${{ secrets.USERNAME_HUB }}/cinema-back:latest
