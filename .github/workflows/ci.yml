@@ -26,8 +26,8 @@ jobs:
       - name: Push into DockerHub
         run: docker push ${{ secrets.USERNAME_HUB }}/cinema-back:latest
   deploy:
+    needs: [build]
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
       - name: Create SSH key file
