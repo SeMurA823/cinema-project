@@ -37,4 +37,4 @@ jobs:
             chmod 400 ~/.ssh/id_rsa
             eval $(ssh-agent)
             ssh-add ~/.ssh/id_rsa
-            ssh -o StrictHostKeyChecking=no -A azureuser@semura.eastus.cloudapp.azure.com 'sudo docker stop ${{ secrets.USERNAME_HUB }}/cinema-back; sudo docker run ${{ secrets.USERNAME_HUB }}/cinema-back;'
+            ssh -o StrictHostKeyChecking=no -A azureuser@semura.eastus.cloudapp.azure.com 'sudo docker stop ${{ secrets.USERNAME_HUB }}/cinema-back; sudo docker run semura823/cinema-back:latest;'
