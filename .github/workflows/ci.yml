@@ -17,5 +17,7 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-#      - name: Build with Maven
-#        run: mvn --batch-mode --update-snapshots compile -D spring.profiles.active=test
+      - name: Build with Maven
+        run: mvn package -D spring.profiles.active=test
+      - name: Build Docker
+        run: docker build -t cinema/cinema-back .

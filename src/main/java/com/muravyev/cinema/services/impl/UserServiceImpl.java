@@ -10,6 +10,7 @@ import com.muravyev.cinema.entities.users.UserStatus;
 import com.muravyev.cinema.repo.UserRepository;
 import com.muravyev.cinema.services.RoleService;
 import com.muravyev.cinema.services.UserService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 
 @Service
+@Log4j2
 public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
@@ -74,6 +76,7 @@ public class UserServiceImpl implements UserService {
     public User login(String username, String password) {
         User user = userRepository.findByUsernameAndEntityStatusAndUserStatus(username, EntityStatus.ACTIVE, UserStatus.ACTIVE)
                 .orElseThrow(() -> new UsernameNotFoundException("User '" + username + "' not found"));
+        log.info(": {}", passwordEncoder.matches(password, user.getPassword()));
         if (!passwordEncoder.matches(password, user.getPassword()))
             throw new AuthenticationServiceException("Password is illegal");
         return user;
@@ -86,7 +89,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User editPassword(String newPassword, User user) {
+        log.info("User ({}) is editing password {}", user.getUsername(), newPassword);
         user.setPassword(passwordEncoder.encode(newPassword));
+        log.info("Hashed password {}", user.getPassword());
         return userRepository.save(user);
     }
 

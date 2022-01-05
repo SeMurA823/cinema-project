@@ -341,7 +341,9 @@ FROM seats s
          JOIN halls h ON h.id = s.hall_id
          JOIN film_screenings fs ON h.id = fs.hall_id
          LEFT JOIN tickets t ON s.id = t.seat_id and t.film_screening_id = fs.id and t.status = 'ACTIVE'
-         LEFT JOIN reservations r ON s.id = r.place_id and r.film_screening_id = fs.id and r.expiry_date > CURRENT_TIMESTAMP and r.status = 'ACTIVE'
+         LEFT JOIN reservations r
+                   ON s.id = r.place_id and r.film_screening_id = fs.id and r.expiry_date > CURRENT_TIMESTAMP and
+                      r.status = 'ACTIVE'
 WHERE s.status::text = 'ACTIVE'::text
   AND fs.status::text = 'ACTIVE'::text
   AND h.status::text = 'ACTIVE'::text;
@@ -378,7 +380,9 @@ $$
 declare
     d integer;
 begin
-    select duration into d from films
+    select duration
+    into d
+    from films
     where film_id = id;
     return make_interval(mins := d);
 end
@@ -396,7 +400,8 @@ begin
     into c
     from film_screenings fs
              join films f on fs.film_id = f.id
-    where ((new.date between fs.date and fs.date + make_interval(mins := f.duration)) or (fs.date between new.date and new.date + get_duration(new.film_id)))
+    where ((new.date between fs.date and fs.date + make_interval(mins := f.duration)) or
+           (fs.date between new.date and new.date + get_duration(new.film_id)))
       and fs.id != new.id
       and fs.hall_id = new.hall_id
       and fs.status = 'ACTIVE'
@@ -423,4 +428,43 @@ create trigger check_free_update
     for each row
     when ( old.status != new.status or old.date != new.date)
 execute procedure check_free();
+
+create or replace view box_office_receipts as
+select row_number() over (order by f.id) as rowid,
+       extract(year from fs.date)        as year,
+       extract(quarter from fs.date)     as quarter,
+       extract(month from fs.date)       as month,
+       f.id                              as film_id,
+       sum(t.price)                      as sum,
+       avg(t.price)                      as avg
+from tickets t
+         join film_screenings fs on t.film_screening_id = fs.id
+         join films f on f.id = fs.film_id
+where t.status = 'ACTIVE'
+group by grouping sets (rollup (f.id, year, quarter, month), (year, quarter, month), (year, quarter), (year));
+
+create or replace view sold_tickets as
+select (date_trunc('month', p.insert_date))                            as start_period,
+       (date_trunc('month', p.insert_date) + interval '1 month')       as end_period,
+       p.id                                                            as purchase_id,
+       count(*)                                                        as count,
+       avg(t.price)                                                    as avg_price,
+       row_number() over (order by date_trunc('month', p.insert_date)) as rowid
+from tickets t
+         join purchases p on p.id = t.purchase_id
+where p.status = 'ACTIVE'
+group by rollup ((start_period, end_period), p.id);
+
+create or replace view occupancy_hall as
+select row_number() over (order by fs.id) as rowid,
+       fs.id                              as screening_id,
+       h.id                               as hall_id,
+       count(t.id)::real / count(s.id)    as avg_occupancy,
+       count(t.id)                        as count_busy,
+       count(s.id)                        as count_all
+from film_screenings fs
+         join halls h on h.id = fs.hall_id
+         join seats s on h.id = s.hall_id
+         left join tickets t on s.id = t.seat_id and fs.id = t.film_screening_id
+group by rollup (h.id, fs.id);
 

@@ -40,11 +40,12 @@ public interface FilmScreeningRepository extends JpaRepository<FilmScreening, Lo
                                         @Param("status")EntityStatus status,
                                         Pageable pageable);
 
+    List<FilmScreening> findAllByFilmIdAndDateBetween(Long filmId, Date start, Date end);
+
     List<FilmScreening> findAllByIdInAndEntityStatusAndDateAfter(Collection<Long> id, EntityStatus entityStatus, Date date);
 
     Optional<FilmScreening> findByIdAndEntityStatus(long id, EntityStatus entityStatus);
 
     Stream<FilmScreening> streamAllByFilmAndDateAfterAndEntityStatus(Film film, Date date, EntityStatus entityStatus);
-
 
 }
