@@ -36,10 +36,12 @@ public class CinemaApplication implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
                 .allowedOrigins("http://localhost:3000", "http://cinema.eastus.cloudapp.azure.com/")
+                .allowedHeaders("*")
                 .allowedMethods("*")
                 .allowCredentials(true);
         registry.addMapping("/files/**")
                 .allowedOrigins("http://localhost:3000", "http://cinema.eastus.cloudapp.azure.com/")
+                .allowedHeaders("*")
                 .allowedMethods("GET")
                 .allowCredentials(true);
     }
