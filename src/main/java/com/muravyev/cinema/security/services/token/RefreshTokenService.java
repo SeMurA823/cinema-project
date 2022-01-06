@@ -128,7 +128,7 @@ public class RefreshTokenService implements TokenService<ClientSessionService.Ht
                     .httpOnly(true)
                     .path(cookiePath)
                     .sameSite("LAX")
-                    // .domain(cookieDomain)
+                    .domain(cookieDomain)
                     .build();
         }
 
