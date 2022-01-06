@@ -54,7 +54,7 @@ public class FilmPosterServiceImpl implements FilmPosterService {
     private FilmPoster save(FilmPoster poster, String data, String filename) {
         File defaultDir = new File(DEFAULT_PATH);
         if (!defaultDir.exists())
-            defaultDir.mkdir();
+            defaultDir.mkdirs();
         File file = new File(DEFAULT_PATH + '/' + filename);
         try {
             posterRepository.save(poster);
