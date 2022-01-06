@@ -15,6 +15,7 @@ import com.muravyev.cinema.events.Observer;
 import com.muravyev.cinema.repo.FilmScreeningRepository;
 import com.muravyev.cinema.repo.ReservationRepository;
 import com.muravyev.cinema.repo.SeatRepository;
+import com.muravyev.cinema.repo.TicketRepository;
 import com.muravyev.cinema.services.ReservationService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,7 @@ public class ReservationServiceImpl implements ReservationService, Observer {
     private long reserveExpiration;
 
     private final ReservationRepository reservationRepository;
+    private final TicketRepository ticketRepository;
     private final FilmScreeningRepository screeningRepository;
     private final SeatRepository seatRepository;
 
@@ -49,9 +51,11 @@ public class ReservationServiceImpl implements ReservationService, Observer {
     }};
 
     public ReservationServiceImpl(ReservationRepository reservationRepository,
+                                  TicketRepository ticketRepository,
                                   FilmScreeningRepository screeningRepository,
                                   SeatRepository seatRepository) {
         this.reservationRepository = reservationRepository;
+        this.ticketRepository = ticketRepository;
         this.screeningRepository = screeningRepository;
         this.seatRepository = seatRepository;
     }
@@ -68,7 +72,9 @@ public class ReservationServiceImpl implements ReservationService, Observer {
         List<Reservation> reservations = reservationDtos.stream()
                 .map(reservationDto -> toReservation(reservationDto, user))
                 .collect(Collectors.toList());
+
         try {
+
             return reservationRepository.saveAll(reservations);
         } catch (Exception e) {
             log.error(e);
@@ -100,7 +106,7 @@ public class ReservationServiceImpl implements ReservationService, Observer {
                         EntityStatus.ACTIVE,
                         new Date());
         reservations.stream()
-                .peek(x->x.setEntityStatus(EntityStatus.NOT_ACTIVE))
+                .peek(x -> x.setEntityStatus(EntityStatus.NOT_ACTIVE))
                 .forEach(reservationRepository::save);
     }
 
@@ -117,6 +123,13 @@ public class ReservationServiceImpl implements ReservationService, Observer {
                         hall.getId(),
                         EntityStatus.ACTIVE)
                 .orElseThrow(EntityNotFoundException::new);
+        if (reservationRepository.existsBySeatAndFilmScreeningAndEntityStatusAndExpiryDateAfter(seat,
+                filmScreening,
+                EntityStatus.ACTIVE,
+                new Date()))
+            throw new IllegalArgumentException("This seat is busy");
+        if (ticketRepository.existsBySeatAndFilmScreeningAndEntityStatus(seat, filmScreening, EntityStatus.ACTIVE))
+            throw new IllegalArgumentException("This seat is busy");
         reservation.setSeat(seat);
         Date autoExpiryDate = createExpiryDate();
         reservation.setExpiryDate(autoExpiryDate.before(filmScreening.getDate())

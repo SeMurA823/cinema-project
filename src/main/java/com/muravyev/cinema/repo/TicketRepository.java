@@ -1,8 +1,10 @@
 package com.muravyev.cinema.repo;
 
 import com.muravyev.cinema.entities.EntityStatus;
+import com.muravyev.cinema.entities.hall.Seat;
 import com.muravyev.cinema.entities.payment.Purchase;
 import com.muravyev.cinema.entities.payment.Ticket;
+import com.muravyev.cinema.entities.screening.FilmScreening;
 import com.muravyev.cinema.entities.users.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,5 +43,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
                                                                                Pageable pageable);
 
     List<Ticket> findAllByPurchaseAndEntityStatus(Purchase purchase, EntityStatus entityStatus);
+
+    boolean existsBySeatAndFilmScreeningAndEntityStatus(Seat seat, FilmScreening filmScreening, EntityStatus entityStatus);
 
 }
