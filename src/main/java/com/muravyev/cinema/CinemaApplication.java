@@ -34,8 +34,10 @@ public class CinemaApplication implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**");
-        registry.addMapping("/files/**");
+        registry.addMapping("/api/**")
+                .allowCredentials(true);
+        registry.addMapping("/files/**")
+                .allowCredentials(true);
     }
 
     @Bean
