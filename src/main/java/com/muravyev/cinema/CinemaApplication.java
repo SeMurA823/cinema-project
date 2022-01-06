@@ -37,7 +37,7 @@ public class CinemaApplication implements WebMvcConfigurer {
         registry.addMapping("/api/**")
                 .allowedOrigins("http://localhost:3000", "http://cinema.eastus.cloudapp.azure.com/")
                 .allowedHeaders("*")
-                .allowedMethods("*")
+                .allowedMethods("GET", "POST", "DELETE", "PUT")
                 .allowCredentials(true);
         registry.addMapping("/files/**")
                 .allowedOrigins("http://localhost:3000", "http://cinema.eastus.cloudapp.azure.com/")
