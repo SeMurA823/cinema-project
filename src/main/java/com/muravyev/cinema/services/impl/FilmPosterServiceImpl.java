@@ -53,7 +53,7 @@ public class FilmPosterServiceImpl implements FilmPosterService {
 
     private FilmPoster save(FilmPoster poster, String data, String filename) {
         File defaultDir = new File(DEFAULT_PATH);
-        if (defaultDir.exists())
+        if (!defaultDir.exists())
             defaultDir.mkdir();
         File file = new File(DEFAULT_PATH + '/' + filename);
         try {
