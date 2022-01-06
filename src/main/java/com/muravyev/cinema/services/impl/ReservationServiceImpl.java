@@ -20,6 +20,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
@@ -62,7 +63,7 @@ public class ReservationServiceImpl implements ReservationService, Observer {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public List<Reservation> createReservations(List<ReservationDto> reservationDtos, User user) {
         List<Reservation> reservations = reservationDtos.stream()
                 .map(reservationDto -> toReservation(reservationDto, user))
