@@ -67,7 +67,7 @@ public class ClientSessionServiceImpl implements ClientSessionService<ClientSess
         public ResponseCookie toCookie(long maxAge) {
             return ResponseCookie.from(cookieName, clientSession.getId().toString())
                     .path(cookiePath)
-                    .domain(cookieDomain)
+                    //.domain(cookieDomain)
                     .maxAge(maxAge)
                     .httpOnly(true)
                     .sameSite("LAX")
