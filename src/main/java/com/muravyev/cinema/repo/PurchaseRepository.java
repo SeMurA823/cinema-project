@@ -20,19 +20,19 @@ public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
     List<Purchase> findAllByScreeningAndEntityStatus(@Param("screening") FilmScreening screening,
                                                      @Param("status") EntityStatus status);
 
-    @Query(nativeQuery = true,
-            value = "select avg(st.count) \n" +
-                    "from sold_tickets st\n" +
-                    "join purchases p on p.id = st.purchase_id\n" +
-                    "join tickets t on p.id = t.purchase_id\n" +
-                    "join film_screenings fs on fs.id = t.film_screening_id\n" +
-                    "where p.status = 'ACTIVE' and fs.film_id = :filmId and fs.date between :startDate and :endDate")
-    Optional<Double> getAverageTicketsInPurchase(@Param("filmId") long filmId, @Param("startDate") Date start, @Param("endDate") Date end);
+//    @Query(nativeQuery = true,
+//            value = "select avg(st.count) \n" +
+//                    "from sold_tickets st\n" +
+//                    "join purchases p on p.id = st.purchase_id\n" +
+//                    "join tickets t on p.id = t.purchase_id\n" +
+//                    "join film_screenings fs on fs.id = t.film_screening_id\n" +
+//                    "where p.status = 'ACTIVE' and fs.film_id = :filmId and fs.date between :startDate and :endDate")
+//    Optional<Double> getAverageTicketsInPurchase(@Param("filmId") long filmId, @Param("startDate") Date start, @Param("endDate") Date end);
 
-    @Query(nativeQuery = true,
-    value = "select count(t.id)\n" +
-            "from tickets t\n" +
-            "         join film_screenings fs on fs.id = t.film_screening_id\n" +
-            "where t.status = 'ACTIVE' and fs.film_id = :filmId and fs.date between :startDate and :endDate")
-    Optional<Integer> getCountTickets(@Param("filmId") long filmId, @Param("startDate") Date start, @Param("endDate") Date end);
+//    @Query(nativeQuery = true,
+//    value = "select count(t.id)\n" +
+//            "from tickets t\n" +
+//            "         join film_screenings fs on fs.id = t.film_screening_id\n" +
+//            "where t.status = 'ACTIVE' and fs.film_id = :filmId and fs.date between :startDate and :endDate")
+//    Optional<Integer> getCountTickets(@Param("filmId") long filmId, @Param("startDate") Date start, @Param("endDate") Date end);
 }

@@ -1,8 +1,6 @@
-package com.muravyev.cinema.controllers.rest;
+package com.muravyev.cinema.stat;
 
-import com.muravyev.cinema.dto.StatisticsObject;
-import com.muravyev.cinema.services.StatisticsService;
-import org.springframework.data.repository.query.Param;
+import com.muravyev.cinema.stat.StatisticsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,31 +34,24 @@ public class StatisticsController {
     public ResponseEntity<?> occupancyScreenings(@RequestParam("film") long filmId,
                                                  @RequestParam("start") Date start,
                                                  @RequestParam("end") Date end) {
-        StatisticsObject<Double> statistics = statisticsService.getOccupancyScreenings(filmId, start, end);
-        return ResponseEntity.ok(statistics);
+        return ResponseEntity.ok(statisticsService.getOccupancyScreenings(filmId, start, end));
     }
 
     @GetMapping(value = "/amounttickets", params = {"film", "start", "end"})
     public ResponseEntity<?> countTickets(@RequestParam("film") long filmId,
                                                  @RequestParam("start") Date start,
                                                  @RequestParam("end") Date end) {
-        StatisticsObject<Integer> statistics = statisticsService.getCountTickets(filmId, start, end);
-        return ResponseEntity.ok(statistics);
+        return ResponseEntity.ok(statisticsService.getCountTickets(filmId, start, end));
     }
 
-    @GetMapping("/filmcountries")
-    public ResponseEntity<?> countriesFilms() {
-        return ResponseEntity.ok(statisticsService.getCountryCountStatistics());
+    @GetMapping(value = "/filmcountries", params = {"start", "end"})
+    public ResponseEntity<?> countriesFilms(@RequestParam("start") Date startDate, @RequestParam("end") Date endDate) {
+        return ResponseEntity.ok(statisticsService.getCountryCountStatistics(startDate, endDate));
     }
 
-    @GetMapping("/filmlimits")
-    public ResponseEntity<?> limitsFilms() {
-        return ResponseEntity.ok(statisticsService.getAgeLimitCountStatistics());
-    }
-
-    @GetMapping(value = "/occupancyweek", params = {"film"})
-    public ResponseEntity<?> occupancyWeek(@RequestParam("film") long filmId) {
-        return ResponseEntity.ok(statisticsService.getOccupancyInPreviousWeek(filmId));
+    @GetMapping(value = "/filmlimits", params = {"start", "end"})
+    public ResponseEntity<?> limitsFilms(@RequestParam("start") Date startDate, @RequestParam("end") Date endDate) {
+        return ResponseEntity.ok(statisticsService.getAgeLimitCountStatistics(startDate, endDate));
     }
 
 }
