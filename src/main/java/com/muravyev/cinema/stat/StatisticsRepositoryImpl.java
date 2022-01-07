@@ -58,7 +58,7 @@ public class StatisticsRepositoryImpl implements StatisticsRepository {
                 .setParameter("endDate", endDate)
                 .setParameter("film", filmId)
                 .getSingleResult();
-        return Optional.of(avg);
+        return Optional.ofNullable(avg);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class StatisticsRepositoryImpl implements StatisticsRepository {
                 .setParameter("endDate", endDate)
                 .setParameter("film", filmId)
                 .getSingleResult();
-        return Optional.of(avg).map(BigDecimal::doubleValue);
+        return Optional.ofNullable(avg).map(BigDecimal::doubleValue);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class StatisticsRepositoryImpl implements StatisticsRepository {
                 .setParameter("endDate", endDate)
                 .setParameter("film", filmId)
                 .getSingleResult();
-        return Optional.of(count).map(BigInteger::longValue);
+        return Optional.ofNullable(count).map(BigInteger::longValue);
     }
 
     @Override
