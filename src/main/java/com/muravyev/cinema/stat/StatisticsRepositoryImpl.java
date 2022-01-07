@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -77,7 +78,7 @@ public class StatisticsRepositoryImpl implements StatisticsRepository {
 
     @Override
     public Optional<Long> getCountTickets(long filmId, Date startDate, Date endDate) {
-        Long count = (Long) manager.createNativeQuery("select count(t.id)\n" +
+        BigInteger count = (BigInteger) manager.createNativeQuery("select count(t.id)\n" +
                                 "from tickets t\n" +
                                 "         join film_screenings fs on fs.id = t.film_screening_id\n" +
                                 "where t.status = 'ACTIVE' and fs.film_id = :film and fs.date between :startDate and :endDate")
@@ -85,7 +86,7 @@ public class StatisticsRepositoryImpl implements StatisticsRepository {
                 .setParameter("endDate", endDate)
                 .setParameter("film", filmId)
                 .getSingleResult();
-        return Optional.of(count);
+        return Optional.of(count).map(BigInteger::longValue);
     }
 
     @Override
