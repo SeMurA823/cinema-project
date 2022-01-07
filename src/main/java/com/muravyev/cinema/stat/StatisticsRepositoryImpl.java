@@ -45,7 +45,7 @@ public class StatisticsRepositoryImpl implements StatisticsRepository {
 
     @Override
     public Optional<Double> getOccupancyScreeningId(long filmId, Date startDate, Date endDate) {
-        BigDecimal avg = (BigDecimal) manager.createNativeQuery("select case when avg(ocf.occupancy)<>0 then avg(ocf.occupancy) else 0 end" +
+        Double avg = (Double) manager.createNativeQuery("select case when avg(ocf.occupancy)<>0 then avg(ocf.occupancy) else 0 end" +
                         "                    from occupancy_film ocf" +
                         "                            join films f on f.id = ocf.film_id" +
                         "                            join halls h on h.id = ocf.hall_id" +
@@ -57,7 +57,7 @@ public class StatisticsRepositoryImpl implements StatisticsRepository {
                 .setParameter("endDate", endDate)
                 .setParameter("film", filmId)
                 .getSingleResult();
-        return Optional.of(avg).map(BigDecimal::doubleValue);
+        return Optional.of(avg);
     }
 
     @Override
