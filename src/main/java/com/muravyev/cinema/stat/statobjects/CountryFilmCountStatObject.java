@@ -1,6 +1,5 @@
 package com.muravyev.cinema.stat.statobjects;
 
-import com.muravyev.cinema.entities.film.Country;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

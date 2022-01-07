@@ -51,7 +51,7 @@ public class StatisticsRepositoryImpl implements StatisticsRepository {
                         "                            join seats s on h.id = s.hall_id" +
                         "                            left outer join tickets t on ocf.id = t.film_screening_id" +
                         "                               and s.id = t.seat_id and (t.status = 'ACTIVE')" +
-                        "                    where f.id = :film and (ocf.date between :startDate and :endDate)", Double.class)
+                        "                    where f.id = :film and (ocf.date between :startDate and :endDate)")
                 .setParameter("startDate", startDate)
                 .setParameter("endDate", endDate)
                 .setParameter("film", filmId)
@@ -66,8 +66,7 @@ public class StatisticsRepositoryImpl implements StatisticsRepository {
                                 "join purchases p on p.id = st.purchase_id\n" +
                                 "join tickets t on p.id = t.purchase_id\n" +
                                 "join film_screenings fs on fs.id = t.film_screening_id\n" +
-                                "where p.status = 'ACTIVE' and fs.film_id = :film and fs.date between :startDate and :endDate",
-                        Double.class)
+                                "where p.status = 'ACTIVE' and fs.film_id = :film and fs.date between :startDate and :endDate")
                 .setParameter("startDate", startDate)
                 .setParameter("endDate", endDate)
                 .setParameter("film", filmId)
@@ -80,8 +79,7 @@ public class StatisticsRepositoryImpl implements StatisticsRepository {
         Long count = (Long) manager.createNativeQuery("select count(t.id)\n" +
                                 "from tickets t\n" +
                                 "         join film_screenings fs on fs.id = t.film_screening_id\n" +
-                                "where t.status = 'ACTIVE' and fs.film_id = :film and fs.date between :startDate and :endDate"
-                        , Long.class)
+                                "where t.status = 'ACTIVE' and fs.film_id = :film and fs.date between :startDate and :endDate")
                 .setParameter("startDate", startDate)
                 .setParameter("endDate", endDate)
                 .setParameter("film", filmId)
@@ -90,14 +88,18 @@ public class StatisticsRepositoryImpl implements StatisticsRepository {
     }
 
     @Override
-    public List<AgeLimitFilmCountStatObject> getStatisticsLimitsFilm() {
+    public List<AgeLimitFilmCountStatObject> getStatisticsLimitsFilm(Date startDate, Date endDate) {
         return manager.createQuery("select " +
                                 "new com.muravyev.cinema.stat.statobjects.AgeLimitFilmCountStatObject(al.name, count(f)) " +
                                 "from AgeLimit al " +
-                                "join al.films f where f.entityStatus = 'ACTIVE' and al.entityStatus = 'ACTIVE' " +
+                                "join al.films f " +
+                                "where f.entityStatus = 'ACTIVE' and al.entityStatus = 'ACTIVE' " +
+                                "and (f.localPremiere between :startDate and :endDate) " +
                                 "group by al " +
                                 "order by al.startAge",
                         AgeLimitFilmCountStatObject.class)
+                .setParameter("startDate", startDate)
+                .setParameter("endDate", endDate)
                 .getResultList();
     }
 }

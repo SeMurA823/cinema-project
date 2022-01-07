@@ -16,5 +16,5 @@ public interface StatisticsRepository {
 
     Optional<Long> getCountTickets(long filmId, Date startDate, Date endDate);
 
-    List<AgeLimitFilmCountStatObject> getStatisticsLimitsFilm();
+    List<AgeLimitFilmCountStatObject> getStatisticsLimitsFilm(Date startDate, Date endDate);
 }

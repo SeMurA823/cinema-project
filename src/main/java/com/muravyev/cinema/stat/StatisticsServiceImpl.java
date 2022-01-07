@@ -40,6 +40,6 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     public List<AgeLimitFilmCountStatObject> getAgeLimitCountStatistics(Date start, Date end) {
-        return statisticsRepository.getStatisticsLimitsFilm();
+        return statisticsRepository.getStatisticsLimitsFilm(start, end);
     }
 }
