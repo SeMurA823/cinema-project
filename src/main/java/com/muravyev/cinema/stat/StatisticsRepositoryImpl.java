@@ -6,6 +6,7 @@ import com.muravyev.cinema.stat.statobjects.CountryFilmCountStatObject;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -44,7 +45,7 @@ public class StatisticsRepositoryImpl implements StatisticsRepository {
 
     @Override
     public Optional<Double> getOccupancyScreeningId(long filmId, Date startDate, Date endDate) {
-        Double avg = (Double) manager.createNativeQuery("select case when avg(ocf.occupancy)<>0 then avg(ocf.occupancy) else 0 end" +
+        BigDecimal avg = (BigDecimal) manager.createNativeQuery("select case when avg(ocf.occupancy)<>0 then avg(ocf.occupancy) else 0 end" +
                         "                    from occupancy_film ocf" +
                         "                            join films f on f.id = ocf.film_id" +
                         "                            join halls h on h.id = ocf.hall_id" +
@@ -56,12 +57,12 @@ public class StatisticsRepositoryImpl implements StatisticsRepository {
                 .setParameter("endDate", endDate)
                 .setParameter("film", filmId)
                 .getSingleResult();
-        return Optional.of(avg);
+        return Optional.of(avg).map(BigDecimal::doubleValue);
     }
 
     @Override
     public Optional<Double> getAverageTicketsInPurchase(long filmId, Date startDate, Date endDate) {
-        Double avg = (Double) manager.createNativeQuery("select avg(st.count) \n" +
+        BigDecimal avg = (BigDecimal) manager.createNativeQuery("select avg(st.count) \n" +
                                 "from sold_tickets st\n" +
                                 "join purchases p on p.id = st.purchase_id\n" +
                                 "join tickets t on p.id = t.purchase_id\n" +
@@ -71,7 +72,7 @@ public class StatisticsRepositoryImpl implements StatisticsRepository {
                 .setParameter("endDate", endDate)
                 .setParameter("film", filmId)
                 .getSingleResult();
-        return Optional.of(avg);
+        return Optional.of(avg).map(BigDecimal::doubleValue);
     }
 
     @Override
