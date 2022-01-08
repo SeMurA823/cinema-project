@@ -31,6 +31,7 @@ public class Ticket extends IdentityBaseEntity {
     @JoinColumn(name = "film_screening_id", nullable = false)
     private FilmScreening filmScreening;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "ticket", cascade = CascadeType.ALL)
     private TicketRefund ticketRefund;
 
@@ -39,7 +40,6 @@ public class Ticket extends IdentityBaseEntity {
 
     @PostLoad
     private void checkExpired() {
-        Date now = new Date();
-        isExpired = filmScreening.getDate().before(now);
+        isExpired = filmScreening.getDate().before(new Date()) || !isActive();
     }
 }

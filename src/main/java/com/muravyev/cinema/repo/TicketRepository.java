@@ -16,6 +16,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
     Page<Ticket> findAllByPurchaseId(Long purchaseId, Pageable pageable);
@@ -24,18 +25,23 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     @Query("update Ticket t " +
             "set t.entityStatus = :status " +
             "where t.purchase.user = :user and t.id = :id " +
-            "and t.filmScreening.date < current_timestamp and t.entityStatus = 'ACTIVE'")
+            "and t.entityStatus = 'ACTIVE'")
     int updateStatusByIdAndUserAndEntityStatus(@Param("id") long id,
                                                @Param("user") User user,
                                                @Param("status") EntityStatus status);
 
-    @Modifying
-    @Query("update Ticket t " +
-            "set t.entityStatus = :status " +
-            "where t.id in (:ids) " +
-            "and t.filmScreening.date < current_timestamp and t.entityStatus = 'ACTIVE'")
-    int updateStatusAllByIds(@Param("ids") Collection<Long> id,
-                             @Param("status") EntityStatus status);
+    Optional<Ticket> findByIdAndPurchaseUserAndEntityStatus(Long id, User purchaseUser, EntityStatus entityStatus);
+
+    List<Ticket> findAllByIdInAndEntityStatus(Collection<Long> id,
+                                              EntityStatus entityStatus);
+
+//    @Modifying
+//    @Query("update Ticket t " +
+//            "set t.entityStatus = :status " +
+//            "where t.id in (:ids) " +
+//            "and t.entityStatus = 'ACTIVE'")
+//    int updateStatusAllByIds(@Param("ids") Collection<Long> id,
+//                             @Param("status") EntityStatus status);
 
     Page<Ticket> findAllByPurchaseUserAndFilmScreeningDateAfterAndEntityStatus(User purchaseUser,
                                                                                Date filmScreeningDate,

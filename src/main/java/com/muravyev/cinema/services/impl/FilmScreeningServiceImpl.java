@@ -14,8 +14,10 @@ import com.muravyev.cinema.repo.FilmScreeningRepository;
 import com.muravyev.cinema.repo.FilmScreeningSeatRepository;
 import com.muravyev.cinema.repo.HallRepository;
 import com.muravyev.cinema.services.FilmScreeningService;
+import com.muravyev.cinema.services.NotificationService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,8 @@ public class FilmScreeningServiceImpl implements FilmScreeningService, Observer,
     private final FilmRepository filmRepository;
     private final HallRepository hallRepository;
     private final FilmScreeningSeatRepository screeningSeatRepository;
+    private final NotificationService notificationService;
+    private final MessageSource messageSource;
 
     private NotificationManager notificationManager;
 
@@ -44,11 +48,15 @@ public class FilmScreeningServiceImpl implements FilmScreeningService, Observer,
     public FilmScreeningServiceImpl(FilmScreeningRepository screeningRepository,
                                     FilmRepository filmRepository,
                                     HallRepository hallRepository,
-                                    FilmScreeningSeatRepository screeningSeatRepository) {
+                                    FilmScreeningSeatRepository screeningSeatRepository,
+                                    NotificationService notificationService,
+                                    MessageSource messageSource) {
         this.screeningRepository = screeningRepository;
         this.filmRepository = filmRepository;
         this.hallRepository = hallRepository;
         this.screeningSeatRepository = screeningSeatRepository;
+        this.notificationService = notificationService;
+        this.messageSource = messageSource;
     }
 
     @Autowired
@@ -153,9 +161,9 @@ public class FilmScreeningServiceImpl implements FilmScreeningService, Observer,
     public void cancelScreenings(Film film) {
         Date now = new Date();
         screeningRepository.streamAllByFilmAndDateAfterAndEntityStatus(film, now, EntityStatus.ACTIVE)
+                .parallel()
                 .peek(screening -> screening.setEntityStatus(EntityStatus.NOT_ACTIVE))
                 .peek(screeningRepository::save)
-                .parallel()
                 .forEach(screening -> notificationManager.notify(new CancelScreeningEvent(screening),
                         CancelScreeningEvent.class));
 

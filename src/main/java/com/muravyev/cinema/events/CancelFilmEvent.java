@@ -13,4 +13,5 @@ public class CancelFilmEvent implements Event<Film>{
     public Film getValue() {
         return film;
     }
+
 }

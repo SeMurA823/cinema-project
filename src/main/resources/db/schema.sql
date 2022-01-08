@@ -468,3 +468,12 @@ from film_screenings fs
          left join tickets t on s.id = t.seat_id and fs.id = t.film_screening_id
 group by rollup (h.id, fs.id);
 
+create table if not exists user_notifications (
+    id bigint generated always as identity primary key,
+    user_id bigint references users(id) not null,
+    message varchar(500) not null,
+    insert_date timestamptz not null default current_timestamp,
+    update_date timestamptz,
+    status varchar(255) not null default 'ACTIVE',
+    notification_status varchar(255) not null check ( notification_status in ('VIEWED', 'NOT_VIEWED')) default 'NOT_VIEWED'
+)

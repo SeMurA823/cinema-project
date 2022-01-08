@@ -3,10 +3,13 @@ package com.muravyev.cinema;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -35,12 +38,12 @@ public class CinemaApplication implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
-                .allowedOrigins("http://localhost:3000", "http://cinema.eastus.cloudapp.azure.com/")
+                .allowedOrigins("http://localhost:3000", "http://localhost:3001", "http://cinema.eastus.cloudapp.azure.com/")
                 .allowedHeaders("*")
                 .allowedMethods("GET", "POST", "DELETE", "PUT", "OPTIONS")
                 .allowCredentials(true);
         registry.addMapping("/files/**")
-                .allowedOrigins("http://localhost:3000", "http://cinema.eastus.cloudapp.azure.com/")
+                .allowedOrigins("http://localhost:3000", "http://localhost:3001", "http://cinema.eastus.cloudapp.azure.com/")
                 .allowedHeaders("*")
                 .allowedMethods("GET")
                 .allowCredentials(true);

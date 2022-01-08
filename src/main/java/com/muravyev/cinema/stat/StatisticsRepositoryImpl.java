@@ -23,7 +23,15 @@ public class StatisticsRepositoryImpl implements StatisticsRepository {
     @Override
     public List<CountryFilmCountStatObject> getStatisticsCountryFilm(Date startDate, Date endDate) {
         final int top = 6;
-        List<CountryFilmCountStatObject> list = manager.createQuery(
+        //        List<CountryFilmCountStatObject> topCountries = list.stream()
+//                .limit(top)
+//                .collect(Collectors.toList());
+//        long otherCount = list.stream()
+//                .skip(top)
+//                .mapToLong(CountryFilmCountStatObject::getCount)
+//                .sum();
+//        topCountries.add(new CountryFilmCountStatObject("Другое", otherCount));
+        return manager.createQuery(
                         "SELECT new com.muravyev.cinema.stat.statobjects.CountryFilmCountStatObject(c.shortName, count(f)) FROM Country c left join c.films f " +
                                 "where c.entityStatus = :status and f.entityStatus = :status " +
                                 "and (f.localPremiere between :startDate and :endDate) " +
@@ -33,15 +41,6 @@ public class StatisticsRepositoryImpl implements StatisticsRepository {
                 .setParameter("startDate", startDate)
                 .setParameter("endDate", endDate)
                 .getResultList();
-//        List<CountryFilmCountStatObject> topCountries = list.stream()
-//                .limit(top)
-//                .collect(Collectors.toList());
-//        long otherCount = list.stream()
-//                .skip(top)
-//                .mapToLong(CountryFilmCountStatObject::getCount)
-//                .sum();
-//        topCountries.add(new CountryFilmCountStatObject("Другое", otherCount));
-        return list;
     }
 
     @Override

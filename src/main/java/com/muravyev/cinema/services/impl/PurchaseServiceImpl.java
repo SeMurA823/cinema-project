@@ -7,11 +7,15 @@ import com.muravyev.cinema.entities.payment.Ticket;
 import com.muravyev.cinema.entities.screening.FilmScreening;
 import com.muravyev.cinema.entities.users.User;
 import com.muravyev.cinema.events.*;
+import com.muravyev.cinema.events.Observable;
+import com.muravyev.cinema.events.Observer;
 import com.muravyev.cinema.repo.PurchaseRepository;
 import com.muravyev.cinema.repo.ReservationRepository;
+import com.muravyev.cinema.services.NotificationService;
 import com.muravyev.cinema.services.PurchaseService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -19,10 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -31,6 +32,8 @@ import java.util.stream.Collectors;
 public class PurchaseServiceImpl implements PurchaseService, Observer, Observable {
     private final PurchaseRepository purchaseRepository;
     private final ReservationRepository reservationRepository;
+    private final NotificationService notificationService;
+    private final MessageSource messageSource;
 
     private final Map<Class<? extends Event<?>>, Consumer<Event<?>>> eventActions = new HashMap<>() {{
 
@@ -40,9 +43,13 @@ public class PurchaseServiceImpl implements PurchaseService, Observer, Observabl
 
     private NotificationManager notificationManager;
 
-    public PurchaseServiceImpl(PurchaseRepository purchaseRepository, ReservationRepository reservationRepository) {
+    public PurchaseServiceImpl(PurchaseRepository purchaseRepository,
+                               ReservationRepository reservationRepository,
+                               NotificationService notificationService, MessageSource messageSource) {
         this.purchaseRepository = purchaseRepository;
         this.reservationRepository = reservationRepository;
+        this.notificationService = notificationService;
+        this.messageSource = messageSource;
     }
 
     @Override
@@ -79,9 +86,13 @@ public class PurchaseServiceImpl implements PurchaseService, Observer, Observabl
         List<Purchase> savedPurchases = purchaseRepository.saveAll(purchases);
         if (savedPurchases.size() != purchases.size())
             throw new IllegalArgumentException("invalid purchases");
+
         savedPurchases.stream()
                 .parallel()
-                .forEach(x->notificationManager.notify(new ReturnPurchaseEvent(x), ReturnPurchaseEvent.class));
+                .peek(x -> notificationService.notifyUser(messageSource.getMessage("purchase.canceled",
+                        new Object[]{x.getId()},
+                        Locale.getDefault()), x.getUser()))
+                .forEach(x -> notificationManager.notify(new ReturnPurchaseEvent(x), ReturnPurchaseEvent.class));
     }
 
     @Override
