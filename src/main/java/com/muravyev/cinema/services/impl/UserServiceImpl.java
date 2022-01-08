@@ -8,10 +8,12 @@ import com.muravyev.cinema.entities.roles.Role;
 import com.muravyev.cinema.entities.users.User;
 import com.muravyev.cinema.entities.users.UserStatus;
 import com.muravyev.cinema.repo.UserRepository;
+import com.muravyev.cinema.services.NotificationService;
 import com.muravyev.cinema.services.RoleService;
 import com.muravyev.cinema.services.UserService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -23,16 +25,27 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 @Service
 @Log4j2
 public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
-
     private PasswordEncoder passwordEncoder;
-
     private RoleService roleService;
+    private NotificationService notificationService;
+    private MessageSource messageSource;
+
+    @Autowired
+    public void setNotificationService(NotificationService notificationService) {
+        this.notificationService = notificationService;
+    }
+
+    @Autowired
+    public void setMessageSource(MessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
 
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
@@ -79,6 +92,10 @@ public class UserServiceImpl implements UserService {
         log.info(": {}", passwordEncoder.matches(password, user.getPassword()));
         if (!passwordEncoder.matches(password, user.getPassword()))
             throw new AuthenticationServiceException("Password is illegal");
+        notificationService.notifyUser(messageSource.getMessage("welcome",
+                        new Object[]{user.getFirstName()},
+                        Locale.getDefault()),
+                user);
         return user;
     }
 
