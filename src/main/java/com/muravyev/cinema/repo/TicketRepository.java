@@ -21,14 +21,14 @@ import java.util.Optional;
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
     Page<Ticket> findAllByPurchaseId(Long purchaseId, Pageable pageable);
 
-    @Modifying
-    @Query("update Ticket t " +
-            "set t.entityStatus = :status " +
-            "where t.purchase.user = :user and t.id = :id " +
-            "and t.entityStatus = 'ACTIVE'")
-    int updateStatusByIdAndUserAndEntityStatus(@Param("id") long id,
-                                               @Param("user") User user,
-                                               @Param("status") EntityStatus status);
+//    @Modifying
+//    @Query("update Ticket t " +
+//            "set t.entityStatus = :status " +
+//            "where t.purchase.user = :user and t.id = :id " +
+//            "and t.entityStatus = 'ACTIVE'")
+//    int updateStatusByIdAndUserAndEntityStatus(@Param("id") long id,
+//                                               @Param("user") User user,
+//                                               @Param("status") EntityStatus status);
 
     Optional<Ticket> findByIdAndPurchaseUserAndEntityStatus(Long id, User purchaseUser, EntityStatus entityStatus);
 

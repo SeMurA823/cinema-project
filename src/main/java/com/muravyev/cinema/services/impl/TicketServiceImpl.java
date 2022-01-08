@@ -95,6 +95,8 @@ public class TicketServiceImpl implements TicketService, Observer {
 
 
     private Ticket disableTicket(Ticket ticket) {
+        if (ticket.isExpired())
+            throw new IllegalStateException("Ticket expired");
         ticket.setEntityStatus(EntityStatus.NOT_ACTIVE);
         ticket.setTicketRefund(createRefund(ticket));
         Ticket savedTicket = ticketRepository.save(ticket);
