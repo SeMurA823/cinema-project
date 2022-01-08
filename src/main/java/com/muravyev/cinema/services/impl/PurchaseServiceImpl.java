@@ -75,6 +75,7 @@ public class PurchaseServiceImpl implements PurchaseService, Observer, Observabl
     }
 
     @Override
+    @Transactional
     public void cancelPurchasesById(List<Long> ids) {
         List<Purchase> purchases = purchaseRepository.findAllByIdInAndEntityStatus(ids, EntityStatus.ACTIVE);
         cancelPurchases(purchases);
