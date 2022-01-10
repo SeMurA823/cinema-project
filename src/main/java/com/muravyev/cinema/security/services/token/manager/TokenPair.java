@@ -17,7 +17,7 @@ public interface TokenPair {
             put("accessToken", getAccessToken().compact());
             put("refreshToken", getRefreshToken().compact());
             put("tokenType", "bearer");
-            put("expiresIn", getAccessToken().getExpiryDate().getTime());
+            put("expiresIn", getAccessToken().getExpirationDate().getTime());
         }};
     }
 }

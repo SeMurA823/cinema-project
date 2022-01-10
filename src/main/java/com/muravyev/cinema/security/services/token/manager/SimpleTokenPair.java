@@ -1,5 +1,6 @@
 package com.muravyev.cinema.security.services.token.manager;
 
+import com.muravyev.cinema.security.services.token.CookieToken;
 import com.muravyev.cinema.security.services.token.Token;
 
 public class SimpleTokenPair implements TokenPair {

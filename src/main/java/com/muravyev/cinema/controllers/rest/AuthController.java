@@ -3,6 +3,10 @@ package com.muravyev.cinema.controllers.rest;
 import com.muravyev.cinema.dto.LoginDto;
 import com.muravyev.cinema.dto.RegistrationDto;
 import com.muravyev.cinema.entities.users.User;
+import com.muravyev.cinema.security.services.token.Token;
+import com.muravyev.cinema.security.services.token.cookieConfigurator.ClientSessionCookieConfigurator;
+import com.muravyev.cinema.security.services.token.cookieConfigurator.CookieConfigurator;
+import com.muravyev.cinema.security.services.token.cookieConfigurator.RefreshTokenCookieConfigurator;
 import com.muravyev.cinema.security.services.token.manager.TokenManager;
 import com.muravyev.cinema.security.services.token.manager.TokenPair;
 import com.muravyev.cinema.security.services.token.manager.TokenPairClientable;
@@ -12,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,15 +29,17 @@ import javax.validation.Valid;
 public class AuthController {
     private UserService userService;
     private TokenManager tokenManager;
+    private RefreshTokenCookieConfigurator tokenCookieConfigurator;
+    private ClientSessionCookieConfigurator sessionCookieConfigurator;
 
-    @Autowired
-    public void setUserService(UserService userService) {
+    public AuthController(UserService userService,
+                          TokenManager tokenManager,
+                          RefreshTokenCookieConfigurator tokenCookieConfigurator,
+                          ClientSessionCookieConfigurator sessionCookieConfigurator) {
         this.userService = userService;
-    }
-
-    @Autowired
-    public void setTokenManager(TokenManager tokenManager) {
         this.tokenManager = tokenManager;
+        this.tokenCookieConfigurator = tokenCookieConfigurator;
+        this.sessionCookieConfigurator = sessionCookieConfigurator;
     }
 
     @PostMapping("/registration")
@@ -44,25 +51,25 @@ public class AuthController {
     public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto) {
         User user = userService.login(loginDto);
         TokenPairClientable tokenPair = tokenManager.createTokenClientSession(user);
-        ResponseCookie tokenCookie = (loginDto.isRememberMe())
-                ? tokenPair.getRefreshToken().toCookie()
-                : tokenPair.getRefreshToken().toCookie(-1);
-        ResponseCookie sessionCookie = (loginDto.isRememberMe())
-                ? tokenPair.getClient().toCookie(Integer.MAX_VALUE)
-                : tokenPair.getClient().toCookie(-1);
+        String tokenCookie = (loginDto.isRememberMe())
+                ? tokenCookieConfigurator.configure(tokenPair.getRefreshToken())
+                : tokenCookieConfigurator.configureSession(tokenPair.getRefreshToken());
+        String sessionCookie = (loginDto.isRememberMe())
+                ? sessionCookieConfigurator.configure(tokenPair.getClient())
+                : sessionCookieConfigurator.configureSession(tokenPair.getClient());
         return ResponseEntity
                 .ok()
-                .header(HttpHeaders.SET_COOKIE, tokenCookie.toString())
-                .header(HttpHeaders.SET_COOKIE, sessionCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, tokenCookie)
+                .header(HttpHeaders.SET_COOKIE, sessionCookie)
                 .body(tokenPair.result());
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping(value = "/logout")
-    public ResponseEntity<?> logout(@CookieValue("Refresh") String refreshToken, @CookieValue("ClientID") String clientID) {
-        TokenPair tokenPair = tokenManager.disable(refreshToken, clientID);
+    public ResponseEntity<?> logout(@CookieValue("Refresh") String refreshToken, @RequestHeader("Authorization") String authorizationHeader) {
+        TokenPair tokenPair = tokenManager.disable(refreshToken, authorizationHeader.substring(7));
         return ResponseEntity
                 .ok()
-                .header(HttpHeaders.SET_COOKIE, tokenPair.getRefreshToken().toCookie(0).toString())
                 .body("Successfully");
     }
 
@@ -73,26 +80,23 @@ public class AuthController {
                 .ok("Successfully");
     }
 
-//    @PostMapping(value = "/", params = {"refresh","refresh_token"})
-//    public ResponseEntity<?> profile(@RequestParam("refresh_token") String refreshToken) {
-//        return ResponseEntity.ok(tokenManager.refresh(refreshToken).toResult());
-//    }
-
     @PostMapping(params = {"refresh"})
     public ResponseEntity<?> profile(@CookieValue(name = "Refresh") Cookie cookie) {
         String refreshToken = cookie.getValue();
-        return profile(refreshToken);
+        TokenPair refreshedPair = tokenManager.refresh(refreshToken);
+        String refreshTokenCookie = cookie.getMaxAge() == -1
+                ? tokenCookieConfigurator.configureSession(refreshedPair.getRefreshToken())
+                : tokenCookieConfigurator.configure(refreshedPair.getRefreshToken());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, refreshTokenCookie)
+                .body(refreshedPair.getAccessToken().result());
     }
 
-    @PostMapping(params = {"refresh", "refreshToken"})
-    public ResponseEntity<?> profile(@RequestParam("refreshToken") String refreshToken) {
+    @PostMapping(params = {"refresh", "token"})
+    public ResponseEntity<?> profile(@RequestParam("token") String refreshToken) {
         TokenPair tokenPair = tokenManager.
                 refresh(refreshToken);
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE,
-                        tokenPair.getRefreshToken()
-                                .toCookie().toString())
-                .body(tokenPair.result());
+        return ResponseEntity.ok(tokenPair.result());
     }
 
 }

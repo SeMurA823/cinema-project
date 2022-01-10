@@ -24,7 +24,7 @@ public interface TokenService<T> {
 
     String extractUsername(String token);
 
-    Date extractExpiryDate(String token);
+    Date extractExpirationDate(String token);
 
     /**
      * Disable token
@@ -33,4 +33,6 @@ public interface TokenService<T> {
      * @return token with age = 0
      */
     Token disableToken(String token);
+
+    String extractSubject(String token);
 }
