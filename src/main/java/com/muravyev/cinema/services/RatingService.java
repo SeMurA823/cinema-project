@@ -1,5 +1,12 @@
 package com.muravyev.cinema.services;
 
-public interface RatingService {
+import com.muravyev.cinema.entities.film.FilmMark;
+import com.muravyev.cinema.entities.users.User;
 
+public interface RatingService {
+    FilmMark setMark(int mark, long filmId, User user);
+
+    double getRating(long filmId);
+
+    FilmMark getMark(long filmId, User user);
 }

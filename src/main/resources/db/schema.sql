@@ -279,7 +279,7 @@ create table if not exists film_ratings
         references users,
     film_id     bigint                                             not null
         references films,
-    rating      integer                                            not null
+    mark      integer                                            not null
         constraint film_ratings_rating_check
             check ((rating > 0) AND (rating <= 10)),
     insert_date timestamp with time zone default CURRENT_TIMESTAMP not null,
