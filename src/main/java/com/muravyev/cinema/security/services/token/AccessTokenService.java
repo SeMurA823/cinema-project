@@ -1,5 +1,9 @@
 package com.muravyev.cinema.security.services.token;
 
+import com.muravyev.cinema.entities.EntityStatus;
+import com.muravyev.cinema.entities.session.ClientSessionEntity;
+import com.muravyev.cinema.repo.ClientSessionRepository;
+import com.muravyev.cinema.security.services.session.ClientSession;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
@@ -7,9 +11,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseCookie;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -18,8 +20,8 @@ import java.util.*;
 /**
  * Service for processing access token
  */
-@Component
-public class AccessTokenService implements TokenService<UserDetails> {
+@Service
+public class AccessTokenService implements TokenService<ClientSession> {
     @Value("${token.access.age}")
     private long maxAge;
 
@@ -35,91 +37,50 @@ public class AccessTokenService implements TokenService<UserDetails> {
     @Value("${app.cookie.path}")
     private String cookiePath;
 
-    private Token dummyToken;
-
     @Autowired
-    private void setDefaultToken(@Value("${token.access.cookie}") String cookieKey) {
-        Date now = new Date();
-        dummyToken = new Token() {
-            @Override
-            public String compact() {
-                return "empty";
-            }
+    private ClientSessionRepository sessionRepository;
 
-            @Override
-            public ResponseCookie toCookie() {
-                return ResponseCookie.from(cookieKey, compact())
-                        .maxAge(0)
-                        .build();
-            }
-
-            @Override
-            public ResponseCookie toCookie(long maxAge) {
-                return ResponseCookie.from(cookieKey, compact())
-                        .maxAge(0)
-                        .build();
-            }
-
-            @Override
-            public Date getExpiryDate() {
-                return now;
-            }
-
-            @Override
-            public Map<String, Object> result() {
-                return new LinkedHashMap<>() {{
-                    put("access_token", compact());
-                    put("expires_in", getExpiryDate().getTime());
-                    put("token_type", "bearer");
-                }};
-            }
-        };
+    @Override
+    public Token createToken(ClientSession clientSession) {
+        return generateToken(clientSession.compact(), new Date(new Date().getTime() + this.maxAge));
     }
 
-
-    private Key getKey() {
-        return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
-    }
-
-    public Token createToken(UserDetails user) {
-        return generateToken(user.getUsername());
+    @Override
+    public Token refreshToken(String clientSession) {
+        return generateToken(clientSession, new Date(new Date().getTime() + this.maxAge));
     }
 
     @Override
     public String extractUsername(String token) {
-        return extractAllClaims(token).getSubject();
+        String sessionStr = extractAllClaims(token).getSubject();
+        ClientSessionEntity session = sessionRepository.findByIdAndEntityStatus(UUID.fromString(sessionStr),
+                        EntityStatus.ACTIVE)
+                .orElseThrow(() -> new IllegalArgumentException("Illegal session"));
+        return session.getUser().getUsername();
     }
 
     @Override
-    public Date extractExpiryDate(String token) {
+    public Date extractExpirationDate(String token) {
         return extractAllClaims(token).getExpiration();
     }
 
     @Override
     public Token disableToken(String token) {
-        return dummyToken;
+        return generateToken(extractSession(token), new Date());
     }
 
     @Override
-    public Token refreshToken(String token) {
-        return generateToken(extractUsername(token));
+    public String extractSubject(String token) {
+        return extractSession(token);
     }
 
-    private Token generateToken(String username) {
-        String id = UUID.randomUUID().toString().replace("-", "");
-        Date now = new Date();
-        Date expiration = new Date(now.getTime() + this.maxAge);
-        String compact = Jwts.builder()
-                .setId(id)
-                .setClaims(new HashMap<>())
-                .setSubject(username)
-                .setExpiration(expiration)
-                .setIssuedAt(new Date())
-                .signWith(getKey(), SignatureAlgorithm.HS256)
-                .compact();
-        return new AccessTokenImpl(compact);
+    private String extractSession(String token) {
+        return extractAllClaims(token).getSubject();
     }
 
+    private Key getKey() {
+        return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+    }
 
     private Claims extractAllClaims(String token) {
         JwtParser jwtParser = Jwts.parserBuilder()
@@ -130,54 +91,56 @@ public class AccessTokenService implements TokenService<UserDetails> {
                 .getBody();
     }
 
-    private class AccessTokenImpl implements Token {
-        private final String token;
-        private final ResponseCookie responseCookie;
-        private final LinkedHashMap<String, Object> result;
-        private final Date expiryDate;
 
+    private Token generateToken(String clientSession, Date expiration) {
+        String id = UUID.randomUUID().toString().replace("-", "");
+        Date now = new Date();
+        String compact = Jwts.builder()
+                .setId(id)
+                .setClaims(new HashMap<>())
+                .setSubject(clientSession)
+                .setExpiration(expiration)
+                .setIssuedAt(now)
+                .signWith(getKey(), SignatureAlgorithm.HS256)
+                .compact();
+        return new AccessToken(compact, expiration, clientSession);
+    }
 
-        public AccessTokenImpl(String token) {
-            this.token = token;
-            this.expiryDate = extractExpiryDate(token);
-            result = new LinkedHashMap<>() {{
-                put("access_token", token);
-                put("expires_in", getExpiryDate().getTime());
-                put("token_type", "bearer");
-            }};
-            responseCookie = toCookie(maxAge);
+    private static class AccessToken implements Token {
+
+        private final String compact;
+        private final Date expiration;
+        private final String subject;
+
+        public AccessToken(String compact, Date expiration, String subject) {
+            this.compact = compact;
+            this.expiration = expiration;
+            this.subject = subject;
         }
 
         @Override
         public String compact() {
-            return token;
+            return compact;
         }
 
         @Override
-        public ResponseCookie toCookie() {
-            return responseCookie;
+        public String getSubject() {
+            return subject;
         }
 
         @Override
-        public ResponseCookie toCookie(long maxAge) {
-            return ResponseCookie.from(AccessTokenService.this.cookieKey, token)
-                    .maxAge(maxAge)
-                    .httpOnly(true)
-                    .path(cookiePath)
-                    //.domain(cookieDomain)
-                    .build();
-        }
-
-        @Override
-        public Date getExpiryDate() {
-            return expiryDate;
+        public Date getExpirationDate() {
+            return expiration;
         }
 
         @Override
         public Map<String, Object> result() {
-            return result;
+            return new LinkedHashMap<>() {{
+                put("accessToken", compact);
+                put("expiresIn", expiration.getTime());
+                put("tokenType", "bearer");
+            }};
         }
     }
-
-
 }
+

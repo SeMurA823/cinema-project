@@ -1,6 +1,6 @@
 package com.muravyev.cinema.controllers.rest;
 
-import com.muravyev.cinema.security.exceptions.InvalidTokenException;
+import com.muravyev.cinema.security.exceptions.IllegalTokenException;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -43,7 +43,7 @@ public class RestExceptionHandler {
                 .body(generateResponse(e, HttpStatus.UNAUTHORIZED));
     }
 
-    @ExceptionHandler({InvalidTokenException.class})
+    @ExceptionHandler({IllegalTokenException.class})
     public ResponseEntity<?> handleInvalidToken(Exception e) {
         log.error(e);
         return ResponseEntity

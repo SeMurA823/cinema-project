@@ -9,6 +9,5 @@ public interface TokenManager {
 
     TokenPair disable(String refreshTokenStr, String clientId);
 
-
     void disableAll(User user);
 }

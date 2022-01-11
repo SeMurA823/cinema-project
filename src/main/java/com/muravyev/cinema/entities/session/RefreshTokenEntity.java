@@ -11,7 +11,7 @@ import java.util.Date;
 @Entity
 @Data
 @Table(name = "refresh_tokens")
-public class RefreshToken extends IdentityBaseEntity {
+public class RefreshTokenEntity extends IdentityBaseEntity {
     @Column(name = "token")
     private String token;
 
@@ -20,5 +20,5 @@ public class RefreshToken extends IdentityBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")
-    private ClientSession clientSession;
+    private ClientSessionEntity clientSession;
 }

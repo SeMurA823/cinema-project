@@ -1,13 +1,13 @@
 package com.muravyev.cinema.security.services.token.manager;
 
-import com.muravyev.cinema.security.services.session.ClientSessionService;
+import com.muravyev.cinema.security.services.session.ClientSession;
 import com.muravyev.cinema.security.services.token.Token;
 
 public class ClientSessionTokenPair implements TokenPairClientable {
-    private final ClientSessionService.HttpClientSessionable<?> client;
+    private final ClientSession client;
     private final TokenPair tokenPair;
 
-    public ClientSessionTokenPair(ClientSessionService.HttpClientSessionable<?> client, TokenPair tokenPair) {
+    public ClientSessionTokenPair(ClientSession client, TokenPair tokenPair) {
         this.client = client;
         this.tokenPair = tokenPair;
     }
@@ -23,7 +23,7 @@ public class ClientSessionTokenPair implements TokenPairClientable {
     }
 
     @Override
-    public ClientSessionService.HttpClientSessionable<?> getClient() {
+    public ClientSession getClient() {
         return client;
     }
 }

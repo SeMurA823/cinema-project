@@ -13,7 +13,7 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Table(name = "client_sessions")
-public class ClientSession extends BaseEntity {
+public class ClientSessionEntity extends BaseEntity {
     @Id
     @GeneratedValue
     @Column(name = "id")

@@ -1,14 +1,13 @@
 package com.muravyev.cinema.security.services.token;
 
 import com.muravyev.cinema.entities.EntityStatus;
-import com.muravyev.cinema.entities.session.ClientSession;
-import com.muravyev.cinema.entities.session.RefreshToken;
+import com.muravyev.cinema.entities.session.RefreshTokenEntity;
+import com.muravyev.cinema.repo.ClientSessionRepository;
 import com.muravyev.cinema.repo.RefreshTokenRepository;
-import com.muravyev.cinema.security.exceptions.InvalidTokenException;
-import com.muravyev.cinema.security.services.session.ClientSessionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.muravyev.cinema.security.exceptions.IllegalSessionException;
+import com.muravyev.cinema.security.exceptions.IllegalTokenException;
+import com.muravyev.cinema.security.services.session.ClientSession;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,46 +16,45 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Service
-public class RefreshTokenService implements TokenService<ClientSessionService.HttpClientSessionable<ClientSession>> {
+public class RefreshTokenService implements TokenService<ClientSession> {
+
     @Value("${token.refresh.age}")
     private long maxAge;
-    @Value("${token.refresh.cookie}")
-    private String cookieName;
-    @Value("${app.cookie.path}")
-    private String cookiePath;
-    @Value("${app.cookie.domain}")
-    private String cookieDomain;
-    @Autowired
-    private RefreshTokenRepository tokenRepository;
+
+
+    private final RefreshTokenRepository tokenRepository;
+    private final ClientSessionRepository sessionRepository;
+
+    public RefreshTokenService(RefreshTokenRepository tokenRepository, ClientSessionRepository sessionRepository) {
+        this.tokenRepository = tokenRepository;
+        this.sessionRepository = sessionRepository;
+    }
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public Token createToken(ClientSessionService.HttpClientSessionable<ClientSession> httpClientSessionable) {
-        ClientSession clientSession = httpClientSessionable.get();
-        tokenRepository.setStatusAllByClientSession(clientSession, EntityStatus.NOT_ACTIVE);
-        RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setToken(generateTokenStr(clientSession.getUser().getUsername()));
+    public Token createToken(ClientSession session) {
+        tokenRepository.disableAllByClientSession(UUID.fromString(session.compact()));
+        RefreshTokenEntity refreshToken = new RefreshTokenEntity();
+        refreshToken.setToken(generateTokenStr(session.getSubject()));
         refreshToken.setExpiryDate(generateExpiryDate());
-        refreshToken.setClientSession(clientSession);
-        return new RefreshTokenImpl(tokenRepository.save(refreshToken));
+        refreshToken.setClientSession(sessionRepository.findByIdAndEntityStatus(UUID.fromString(session.compact()),
+                        EntityStatus.ACTIVE)
+                .orElseThrow(IllegalSessionException::new));
+        return new RefreshToken(tokenRepository.save(refreshToken));
     }
 
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public Token refreshToken(String token) {
-        Optional<RefreshToken> optionalRefreshToken =
-                tokenRepository.findByTokenAndEntityStatus(token, EntityStatus.ACTIVE);
-        if (optionalRefreshToken.isEmpty())
-            throw new InvalidTokenException();
-        RefreshToken oldRefreshToken = optionalRefreshToken.get();
-        tokenRepository.setStatusAllByClientSession(oldRefreshToken.getClientSession(), EntityStatus.NOT_ACTIVE);
+        RefreshTokenEntity oldRefreshToken = tokenRepository.findByTokenAndEntityStatus(token, EntityStatus.ACTIVE)
+                .orElseThrow(IllegalTokenException::new);
         if (oldRefreshToken.getClientSession().getEntityStatus() == EntityStatus.NOT_ACTIVE) {
-            throw new InvalidTokenException();
+            throw new IllegalTokenException();
         }
-        RefreshToken refreshToken = refreshToken(oldRefreshToken);
+        RefreshTokenEntity refreshToken = refreshToken(oldRefreshToken);
         disableToken(oldRefreshToken);
-        return new RefreshTokenImpl(tokenRepository.save(refreshToken));
+        return new RefreshToken(tokenRepository.save(refreshToken));
     }
 
     @Override
@@ -66,13 +64,13 @@ public class RefreshTokenService implements TokenService<ClientSessionService.Ht
     }
 
     @Override
-    public Date extractExpiryDate(String token) {
+    public Date extractExpirationDate(String token) {
         return tokenRepository.findByTokenAndEntityStatus(token, EntityStatus.ACTIVE)
-                .orElseThrow(InvalidTokenException::new).getExpiryDate();
+                .orElseThrow(IllegalTokenException::new).getExpiryDate();
     }
 
-    private RefreshToken refreshToken(RefreshToken refreshToken) {
-        RefreshToken newRefreshToken = new RefreshToken();
+    private RefreshTokenEntity refreshToken(RefreshTokenEntity refreshToken) {
+        RefreshTokenEntity newRefreshToken = new RefreshTokenEntity();
         String username = extractUsername(refreshToken.getToken());
         newRefreshToken.setToken(generateTokenStr(username));
         newRefreshToken.setClientSession(refreshToken.getClientSession());
@@ -82,10 +80,21 @@ public class RefreshTokenService implements TokenService<ClientSessionService.Ht
 
     @Override
     public Token disableToken(String token) {
-        RefreshToken refreshToken = tokenRepository.findByTokenAndEntityStatus(token, EntityStatus.ACTIVE)
-                .orElseThrow(InvalidTokenException::new);
+        RefreshTokenEntity refreshToken = tokenRepository.findByTokenAndEntityStatus(token, EntityStatus.ACTIVE)
+                .orElseThrow(IllegalTokenException::new);
+        return new RefreshToken(disableToken(refreshToken));
+    }
+
+    @Override
+    public String extractSubject(String token) {
+        return tokenRepository.findByTokenAndEntityStatus(token, EntityStatus.ACTIVE)
+                .orElseThrow(IllegalTokenException::new)
+                .getClientSession().getId().toString();
+    }
+
+    private RefreshTokenEntity disableToken(RefreshTokenEntity refreshToken) {
         refreshToken.setEntityStatus(EntityStatus.NOT_ACTIVE);
-        return new RefreshTokenImpl(tokenRepository.save(refreshToken));
+        return tokenRepository.save(refreshToken);
     }
 
     private Date generateExpiryDate() {
@@ -98,16 +107,10 @@ public class RefreshTokenService implements TokenService<ClientSessionService.Ht
         return new String(Base64.getEncoder().encode((uuid + ':' + username).getBytes(StandardCharsets.UTF_8)));
     }
 
-    private RefreshToken disableToken(RefreshToken refreshToken) {
-        refreshToken.setEntityStatus(EntityStatus.NOT_ACTIVE);
-        return refreshToken;
-    }
+    private class RefreshToken implements Token {
+        private final RefreshTokenEntity refreshToken;
 
-
-    private class RefreshTokenImpl implements Token {
-        private final RefreshToken refreshToken;
-
-        public RefreshTokenImpl(RefreshToken refreshToken) {
+        public RefreshToken(RefreshTokenEntity refreshToken) {
             this.refreshToken = refreshToken;
         }
 
@@ -117,32 +120,22 @@ public class RefreshTokenService implements TokenService<ClientSessionService.Ht
         }
 
         @Override
-        public ResponseCookie toCookie() {
-            return toCookie(maxAge);
+        public String getSubject() {
+            return refreshToken.getClientSession().getId().toString();
         }
 
         @Override
-        public ResponseCookie toCookie(long maxAge) {
-            return ResponseCookie.from(cookieName, refreshToken.getToken())
-                    .maxAge(maxAge)
-                    .httpOnly(true)
-                    .path(cookiePath)
-                    .sameSite("LAX")
-                    .domain(cookieDomain)
-                    .build();
-        }
-
-        @Override
-        public Date getExpiryDate() {
+        public Date getExpirationDate() {
             return refreshToken.getExpiryDate();
         }
 
         @Override
         public Map<String, Object> result() {
             return new LinkedHashMap<>() {{
-                put("refresh_token", refreshToken.getToken());
-                put("expires_in", refreshToken.getExpiryDate().getTime());
+                put("refreshToken", refreshToken.getToken());
+                put("expiresIn", refreshToken.getExpiryDate().getTime());
             }};
         }
     }
+
 }
