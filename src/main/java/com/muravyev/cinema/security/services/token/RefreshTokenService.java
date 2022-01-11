@@ -132,8 +132,8 @@ public class RefreshTokenService implements TokenService<ClientSession> {
         @Override
         public Map<String, Object> result() {
             return new LinkedHashMap<>() {{
-                put("refresh_token", refreshToken.getToken());
-                put("expires_in", refreshToken.getExpiryDate().getTime());
+                put("refreshToken", refreshToken.getToken());
+                put("expiresIn", refreshToken.getExpiryDate().getTime());
             }};
         }
     }

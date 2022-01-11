@@ -46,8 +46,8 @@ public class AccessTokenService implements TokenService<ClientSession> {
     }
 
     @Override
-    public Token refreshToken(String token) {
-        return generateToken(extractSession(token), new Date(new Date().getTime() + this.maxAge));
+    public Token refreshToken(String clientSession) {
+        return generateToken(clientSession, new Date(new Date().getTime() + this.maxAge));
     }
 
     @Override
@@ -136,9 +136,9 @@ public class AccessTokenService implements TokenService<ClientSession> {
         @Override
         public Map<String, Object> result() {
             return new LinkedHashMap<>() {{
-                put("access_token", compact);
-                put("expires_in", expiration.getTime());
-                put("token_type", "bearer");
+                put("accessToken", compact);
+                put("expiresIn", expiration.getTime());
+                put("tokenType", "bearer");
             }};
         }
     }
