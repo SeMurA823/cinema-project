@@ -27,10 +27,10 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-    private UserService userService;
-    private TokenManager tokenManager;
-    private RefreshTokenCookieConfigurator tokenCookieConfigurator;
-    private ClientSessionCookieConfigurator sessionCookieConfigurator;
+    private final UserService userService;
+    private final TokenManager tokenManager;
+    private final RefreshTokenCookieConfigurator tokenCookieConfigurator;
+    private final ClientSessionCookieConfigurator sessionCookieConfigurator;
 
     public AuthController(UserService userService,
                           TokenManager tokenManager,
@@ -51,12 +51,8 @@ public class AuthController {
     public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto) {
         User user = userService.login(loginDto);
         TokenPairClientable tokenPair = tokenManager.createTokenClientSession(user);
-        String tokenCookie = (loginDto.isRememberMe())
-                ? tokenCookieConfigurator.configure(tokenPair.getRefreshToken())
-                : tokenCookieConfigurator.configureSession(tokenPair.getRefreshToken());
-        String sessionCookie = (loginDto.isRememberMe())
-                ? sessionCookieConfigurator.configure(tokenPair.getClient())
-                : sessionCookieConfigurator.configureSession(tokenPair.getClient());
+        String tokenCookie = tokenCookieConfigurator.configure(tokenPair.getRefreshToken());
+        String sessionCookie = sessionCookieConfigurator.configure(tokenPair.getClient());
         return ResponseEntity
                 .ok()
                 .header(HttpHeaders.SET_COOKIE, tokenCookie)
@@ -84,9 +80,7 @@ public class AuthController {
     public ResponseEntity<?> profile(@CookieValue(name = "Refresh") Cookie cookie) {
         String refreshToken = cookie.getValue();
         TokenPair refreshedPair = tokenManager.refresh(refreshToken);
-        String refreshTokenCookie = cookie.getMaxAge() == -1
-                ? tokenCookieConfigurator.configureSession(refreshedPair.getRefreshToken())
-                : tokenCookieConfigurator.configure(refreshedPair.getRefreshToken());
+        String refreshTokenCookie = tokenCookieConfigurator.configure(refreshedPair.getRefreshToken());
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie)
                 .body(refreshedPair.getAccessToken().result());
