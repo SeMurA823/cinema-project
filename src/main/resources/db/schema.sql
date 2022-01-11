@@ -326,6 +326,25 @@ create table if not exists refresh_tokens
 alter table refresh_tokens
     owner to cinema;
 
+create or replace function disable_previous_tokens() returns trigger
+    language plpgsql
+as
+$$
+begin
+    update refresh_tokens
+    set status = 'NOT_ACTIVE'
+    where status = 'ACTIVE' and client_id = new.client_id;
+    return new;
+end
+$$;
+
+create trigger disable_previous_tokens
+    before insert on refresh_tokens
+    for each row
+execute function disable_previous_tokens();
+
+
+
 create or replace view screening_seats(id, number, row, screening_id, status_seat) as
 SELECT DISTINCT s.id,
                 s.number,

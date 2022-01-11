@@ -7,7 +7,7 @@ public interface TokenManager {
 
     TokenPair refresh(String refreshToken);
 
-    TokenPair disable(String refreshTokenStr, String clientId);
+    void disable(String accessTokenStr);
 
     void disableAll(User user);
 }

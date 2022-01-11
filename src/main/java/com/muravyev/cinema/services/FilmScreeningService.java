@@ -1,6 +1,7 @@
 package com.muravyev.cinema.services;
 
 import com.muravyev.cinema.dto.FilmScreeningDto;
+import com.muravyev.cinema.dto.ScreeningTime;
 import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.film.Film;
 import com.muravyev.cinema.entities.screening.FilmScreening;
@@ -38,4 +39,6 @@ public interface FilmScreeningService {
     Film getFilmByScreening(long screeningId);
 
     void cancelScreenings(Film film);
+
+    List<ScreeningTime> getScheduleFilmScreening(long hallId, Date date);
 }

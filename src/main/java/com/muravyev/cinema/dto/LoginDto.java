@@ -11,6 +11,4 @@ public class LoginDto {
     private String username;
     @NotEmpty
     private String password;
-    @JsonProperty("rememberMe")
-    private boolean rememberMe;
 }

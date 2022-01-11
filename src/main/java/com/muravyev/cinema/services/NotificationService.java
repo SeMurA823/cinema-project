@@ -10,9 +10,13 @@ import java.util.List;
 public interface NotificationService {
     void notifyUser(String message, User user);
 
+    void notifyUser(String message, long userId);
+
     void setViewedNotifications(List<Long> ids, User user);
 
     List<UserNotification> getNotViewedNotifications(User user);
 
     Page<UserNotification> getAllNotifications(User user, Pageable pageable);
+
+    Page<UserNotification> getAllNotifications(long userId, Pageable pageable);
 }

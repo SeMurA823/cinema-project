@@ -47,19 +47,12 @@ public class RestExceptionHandler {
     public ResponseEntity<?> handleInvalidToken(Exception e) {
         log.error(e);
         return ResponseEntity
-                .status(HttpStatus.FORBIDDEN)
+                .status(HttpStatus.UNAUTHORIZED)
                 .body(generateResponse(e,
                         "Invalid token",
-                        HttpStatus.FORBIDDEN));
+                        HttpStatus.UNAUTHORIZED));
     }
 
-    @ExceptionHandler({MethodArgumentNotValidException.class})
-    public ResponseEntity<?> handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
-        log.error(e);
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(generateResponse(e, HttpStatus.BAD_REQUEST));
-    }
 
     private Map<Object, Object> generateResponse(Exception e, String message, HttpStatus status) {
         return Map.of("status_code", status.value(),

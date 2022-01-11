@@ -20,7 +20,7 @@ public interface UserNotificationRepository extends JpaRepository<UserNotificati
                                                                              NotificationStatus notificationStatus,
                                                                              Sort sort);
 
-    Page<UserNotification> findAllByUserAndEntityStatus(User user, EntityStatus entityStatus, Pageable pageable);
+    Page<UserNotification> findAllByUserIdAndEntityStatus(Long userId, EntityStatus entityStatus, Pageable pageable);
 
     @Modifying
     @Query("update UserNotification un set un.notificationStatus = 'VIEWED' where un.user = :user and un.id in (:ids) and un.notificationStatus = 'NOT_VIEWED'")

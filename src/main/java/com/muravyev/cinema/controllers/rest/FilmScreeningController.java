@@ -37,6 +37,11 @@ public class FilmScreeningController {
         return ResponseEntity.ok(screeningService.getFilmScreeningsInDay(filmId, date));
     }
 
+    @GetMapping(params = {"hall", "date"})
+    public ResponseEntity<?> getScheduleFilmScreening(@RequestParam("hall") long hallId, @RequestParam("date") Date date) {
+        return ResponseEntity.ok(screeningService.getScheduleFilmScreening(hallId, date));
+    }
+
     @GetMapping("/{screening}/seats")
     public ResponseEntity<?> seats(@PathVariable("screening") long screeningId) {
         return ResponseEntity.ok(screeningService.getStatusSeats(screeningId));

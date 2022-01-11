@@ -13,13 +13,14 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.*;
 
 @Service
 public class RefreshTokenService implements TokenService<ClientSession> {
 
     @Value("${token.refresh.age}")
-    private long maxAge;
+    private long maxAgeDays;
 
 
     private final RefreshTokenRepository tokenRepository;
@@ -98,7 +99,7 @@ public class RefreshTokenService implements TokenService<ClientSession> {
     }
 
     private Date generateExpiryDate() {
-        return new Date(new Date().getTime() + maxAge);
+        return new Date(new Date().getTime() + Duration.ofDays(maxAgeDays).toMillis());
     }
 
     private String generateTokenStr(String username) {
@@ -108,32 +109,42 @@ public class RefreshTokenService implements TokenService<ClientSession> {
     }
 
     private class RefreshToken implements Token {
-        private final RefreshTokenEntity refreshToken;
+        private final Date expiration;
+        private final String compact;
+        private final String subject;
+
+        public RefreshToken(Date expiration, String compact, String subject) {
+            this.expiration = expiration;
+            this.compact = compact;
+            this.subject = subject;
+        }
 
         public RefreshToken(RefreshTokenEntity refreshToken) {
-            this.refreshToken = refreshToken;
+            this.expiration = refreshToken.getExpiryDate();
+            this.compact = refreshToken.getToken();
+            this.subject = refreshToken.getClientSession().getId().toString();
         }
 
         @Override
         public String compact() {
-            return refreshToken.getToken();
+            return compact;
         }
 
         @Override
         public String getSubject() {
-            return refreshToken.getClientSession().getId().toString();
+            return subject;
         }
 
         @Override
         public Date getExpirationDate() {
-            return refreshToken.getExpiryDate();
+            return expiration;
         }
 
         @Override
         public Map<String, Object> result() {
             return new LinkedHashMap<>() {{
-                put("refreshToken", refreshToken.getToken());
-                put("expiresIn", refreshToken.getExpiryDate().getTime());
+                put("refreshToken", compact);
+                put("expiresIn", expiration.getTime());
             }};
         }
     }

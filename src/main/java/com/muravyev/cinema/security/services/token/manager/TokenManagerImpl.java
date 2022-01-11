@@ -40,11 +40,8 @@ public class TokenManagerImpl implements TokenManager {
     }
 
     @Override
-    public TokenPair disable(String refreshTokenStr, String accessTokenStr) {
+    public void disable(String accessTokenStr) {
         clientSessionService.disableClient(accessTokenService.extractSubject(accessTokenStr));
-        Token refreshToken = refreshTokenService.disableToken(refreshTokenStr);
-        Token accessToken = accessTokenService.disableToken(accessTokenStr);
-        return new SimpleTokenPair(accessToken, refreshToken);
     }
 
     @Override

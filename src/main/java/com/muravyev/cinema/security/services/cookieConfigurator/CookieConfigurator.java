@@ -1,4 +1,4 @@
-package com.muravyev.cinema.security.services.token.cookieConfigurator;
+package com.muravyev.cinema.security.services.cookieConfigurator;
 
 import com.muravyev.cinema.security.services.token.Token;
 import org.springframework.http.ResponseCookie;

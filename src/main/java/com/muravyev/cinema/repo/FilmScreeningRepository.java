@@ -48,4 +48,9 @@ public interface FilmScreeningRepository extends JpaRepository<FilmScreening, Lo
 
     Stream<FilmScreening> streamAllByFilmAndDateAfterAndEntityStatus(Film film, Date date, EntityStatus entityStatus);
 
+    List<FilmScreening> findAllByDateBetweenAndEntityStatusAndHallId(Date date,
+                                                                     Date date2,
+                                                                     EntityStatus entityStatus,
+                                                                     Long hallId);
+
 }

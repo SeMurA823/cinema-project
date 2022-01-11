@@ -1,6 +1,7 @@
 package com.muravyev.cinema.services.impl;
 
 import com.muravyev.cinema.dto.FilmScreeningDto;
+import com.muravyev.cinema.dto.ScreeningTime;
 import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.film.Film;
 import com.muravyev.cinema.entities.hall.Hall;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
@@ -169,8 +171,25 @@ public class FilmScreeningServiceImpl implements FilmScreeningService, Observer,
 
     }
 
+    @Override
+    public List<ScreeningTime> getScheduleFilmScreening(long hallId, Date date) {
+        Date startDay = getCalendarDay(date).getTime();
+        Date endDay = getNextDay(date);
+        List<FilmScreening> screenings = screeningRepository.findAllByDateBetweenAndEntityStatusAndHallId(startDay,
+                endDay,
+                EntityStatus.ACTIVE,
+                hallId);
+        return screenings.stream()
+                .map(x->new ScreeningTime(x.getFilm().getName(),
+                        x.getDate(),
+                        new Date(x.getDate().getTime() + (long) x.getFilm().getDuration() *  60 * 1000)))
+                .collect(Collectors.toList());
+    }
+
     private Date getTodayDay(Date date) {
-        return getCalendarDay(date).getTime();
+        Date today = getCalendarDay(date).getTime();
+        log.info("Today: {}", today);
+        return today;
     }
 
     private Calendar getCalendarDay(Date date) {
@@ -180,13 +199,16 @@ public class FilmScreeningServiceImpl implements FilmScreeningService, Observer,
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
+        log.info("Start day: {}", calendar.getTime());
         return calendar;
     }
 
     private Date getNextDay(Date date) {
         Calendar calendar = getCalendarDay(date);
         calendar.add(Calendar.DAY_OF_YEAR, 1);
-        return calendar.getTime();
+        Date nextDay = calendar.getTime();
+        log.info("Next day: {}", nextDay);
+        return nextDay;
     }
 
     @Override

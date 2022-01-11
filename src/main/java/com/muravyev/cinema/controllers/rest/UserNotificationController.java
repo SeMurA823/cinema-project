@@ -1,5 +1,6 @@
 package com.muravyev.cinema.controllers.rest;
 
+import com.muravyev.cinema.dto.NotificationFormDto;
 import com.muravyev.cinema.entities.users.User;
 import com.muravyev.cinema.services.NotificationService;
 import org.springframework.data.domain.Pageable;
@@ -28,16 +29,33 @@ public class UserNotificationController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping
+    @GetMapping(params = {"size", "page"})
     public ResponseEntity<?> getAllNotifications(@PageableDefault(sort = "created", direction = Sort.Direction.DESC)
                                                          Pageable pageable,
                                                  Authentication authentication) {
         return ResponseEntity.ok(notificationService.getAllNotifications((User) authentication.getPrincipal(), pageable));
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/viewed")
     public ResponseEntity<?> setViewed(@RequestBody List<Long> ids, Authentication authentication) {
         notificationService.setViewedNotifications(ids, (User) authentication.getPrincipal());
         return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(params = {"page", "size", "user"})
+    public ResponseEntity<?> getAllNotifications(@PageableDefault(sort = "created", direction = Sort.Direction.DESC)
+                                                         Pageable pageable,
+                                                 @RequestParam("user") long userId) {
+        return ResponseEntity.ok(notificationService.getAllNotifications(userId, pageable));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/create")
+    public ResponseEntity<?> createNotification(@RequestBody NotificationFormDto notification) {
+        notificationService.notifyUser(notification.getMessage(), notification.getUser());
+        return ResponseEntity.ok()
+                .build();
     }
 }
