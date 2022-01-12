@@ -8,9 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
     List<Purchase> findAllByIdInAndEntityStatus(Collection<Long> ids, EntityStatus entityStatus);

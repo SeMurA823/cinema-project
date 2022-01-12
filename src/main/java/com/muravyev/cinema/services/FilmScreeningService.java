@@ -38,7 +38,5 @@ public interface FilmScreeningService {
 
     Film getFilmByScreening(long screeningId);
 
-    void cancelScreenings(Film film);
-
     List<ScreeningTime> getScheduleFilmScreening(long hallId, Date start, Date end);
 }

@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Date;
 
 @Service
 public class RatingServiceImpl implements RatingService {
@@ -29,6 +30,7 @@ public class RatingServiceImpl implements RatingService {
                 .orElse(new FilmMark());
         filmMark.setMark(mark);
         filmMark.setFilm(filmRepository.findByIdAndEntityStatus(filmId, EntityStatus.ACTIVE)
+                        .filter(x->x.getLocalPremiere().before(new Date()))
                 .orElseThrow(EntityNotFoundException::new));
         filmMark.setUser(user);
         return ratingRepository.save(filmMark);

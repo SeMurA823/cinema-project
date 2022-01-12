@@ -7,6 +7,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+
 @RestController
 @RequestMapping("/api/rating")
 public class RatingController {
@@ -30,7 +34,7 @@ public class RatingController {
 
     @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping(value = "/mark", params = {"film"})
-    public ResponseEntity<?> setMark(@RequestParam("film") long filmId, @RequestBody int mark, Authentication authentication) {
+    public ResponseEntity<?> setMark(@RequestParam("film") long filmId, @RequestBody @Valid @Min(1) @Max(10) int mark, Authentication authentication) {
         return ResponseEntity.ok(ratingService.setMark(mark, filmId, (User) authentication.getPrincipal()));
     }
 

@@ -46,6 +46,7 @@ public class HallServiceImpl implements HallService, Observable {
     }
 
     @Override
+    @Transactional
     public Hall editStatus(long hallId, EntityStatus status) {
         Hall hall = hallRepository.findById(hallId)
                 .orElseThrow(EntityNotFoundException::new);

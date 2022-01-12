@@ -2,11 +2,11 @@ package com.muravyev.cinema.repo;
 
 import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.film.Film;
+import com.muravyev.cinema.entities.hall.Hall;
 import com.muravyev.cinema.entities.screening.FilmScreening;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -21,8 +21,7 @@ public interface FilmScreeningRepository extends JpaRepository<FilmScreening, Lo
             "WHERE f.entityStatus = 'ACTIVE' " +
             "AND f.film.id = :filmId " +
             "AND f.date > current_timestamp " +
-            "AND f.date >= :startDate " +
-            "AND f.date < :endDate " +
+            "AND f.date BETWEEN :startDate AND :endDate " +
             "ORDER BY f.date ASC")
     List<FilmScreening> getActiveFilmScreeningsInDayInterval(@Param("filmId") long filmId,
                                                              @Param("startDate") Date startDate,
@@ -48,9 +47,12 @@ public interface FilmScreeningRepository extends JpaRepository<FilmScreening, Lo
 
     Stream<FilmScreening> streamAllByFilmAndDateAfterAndEntityStatus(Film film, Date date, EntityStatus entityStatus);
 
-    List<FilmScreening> findAllByDateBetweenAndEntityStatusAndHallId(Date date,
-                                                                     Date date2,
-                                                                     EntityStatus entityStatus,
-                                                                     Long hallId);
+    Stream<FilmScreening> streamAllByHallAndDateAfterAndEntityStatus(Hall hall, Date date, EntityStatus entityStatus);
+
+
+    List<FilmScreening> findAllByDateBetweenAndEntityStatusAndHallIdOrderByDate(Date date,
+                                                                                Date date2,
+                                                                                EntityStatus entityStatus,
+                                                                                Long hallId);
 
 }

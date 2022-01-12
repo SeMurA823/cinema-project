@@ -33,8 +33,8 @@ public class FilmScreeningController {
 
     @GetMapping(params = {"film", "start", "end"})
     public ResponseEntity<?> screenings(@RequestParam("film") long filmId,
-                                        @RequestParam("start") Date start,
-                                        @RequestParam("end") Date end) {
+                                        @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date start,
+                                        @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date end) {
         return ResponseEntity.ok(screeningService.getFilmScreeningsInDay(filmId, start, end));
     }
 
@@ -100,7 +100,9 @@ public class FilmScreeningController {
     }
 
     @GetMapping("/films")
-    public ResponseEntity<?> getFilmsInPeriod(@RequestParam("start") Date start, @RequestParam("end") Date end, @PageableDefault Pageable pageable) {
+    public ResponseEntity<?> getFilmsInPeriod(@RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date start,
+                                              @RequestParam("end")  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date end,
+                                              @PageableDefault Pageable pageable) {
         Page<Film> todayFilms = screeningService.getFilms(start, end, pageable);
         return ResponseEntity.ok(todayFilms);
     }

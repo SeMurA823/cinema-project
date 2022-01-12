@@ -100,7 +100,7 @@ public class FilmMakerController {
         return ResponseEntity.ok(filmMakers);
     }
 
-    @GetMapping(params = "search")
+    @GetMapping(params = {"search", "page", "size"})
     public ResponseEntity<?> getMakers(@RequestParam("search") String search, @PageableDefault Pageable pageable) {
         Page<FilmMaker> makers = makerService.getFilmMakers(search, pageable);
         return ResponseEntity.ok(makers);

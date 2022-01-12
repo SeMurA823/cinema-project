@@ -1,14 +1,11 @@
 package com.muravyev.cinema.stat;
 
-import com.muravyev.cinema.entities.film.AgeLimit;
 import com.muravyev.cinema.stat.statobjects.AgeLimitFilmCountStatObject;
 import com.muravyev.cinema.stat.statobjects.CountryFilmCountStatObject;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class StatisticsServiceImpl implements StatisticsService {

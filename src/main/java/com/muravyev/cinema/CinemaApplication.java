@@ -3,13 +3,10 @@ package com.muravyev.cinema;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -18,8 +15,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableJpaRepositories
 public class CinemaApplication implements WebMvcConfigurer {
 
-    @Value("${upload.default.path}")
-    private String fileStoragePath;
+    @Value("${files.storage.url}")
+    private String fileStorageURL;
 
     @Value("${app.resource-handler.path}")
     private String handlerPath;
@@ -31,7 +28,7 @@ public class CinemaApplication implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler(handlerPath + "/**")
-                .addResourceLocations("file:" + fileStoragePath + "/");
+                .addResourceLocations(fileStorageURL + "/");
     }
 
 

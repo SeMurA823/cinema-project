@@ -2,12 +2,8 @@ package com.muravyev.cinema.repo;
 
 import com.muravyev.cinema.entities.screening.FilmScreening;
 import com.muravyev.cinema.entities.screening.FilmScreeningSeat;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 public interface FilmScreeningSeatRepository extends ReadOnlyRepository<FilmScreeningSeat, Long> {
     List<FilmScreeningSeat> findAllByScreeningId(long screeningId);

@@ -10,6 +10,7 @@ import com.muravyev.cinema.repo.FilmMakerPostRepository;
 import com.muravyev.cinema.repo.FilmMakerRepository;
 import com.muravyev.cinema.repo.FilmRepository;
 import com.muravyev.cinema.services.FilmMakerService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +23,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Log4j2
 public class FilmMakerServiceImpl implements FilmMakerService {
     private FilmMakerRepository makerRepository;
     private FilmMakerPostRepository postRepository;
@@ -53,7 +55,7 @@ public class FilmMakerServiceImpl implements FilmMakerService {
     public FilmMakerPost setFilmMakerPost(FilmMakerPostDto makerPostDto) {
         Optional<FilmMakerPost> optionalPost = postRepository.findByFilmMakerIdAndFilmId(makerPostDto.getFilm(), makerPostDto.getMaker());
         if (optionalPost.isPresent()) return optionalPost.get();
-        Film film = filmRepository.findByIdAndEntityStatus(makerPostDto.getFilm(), EntityStatus.ACTIVE).orElseThrow(EntityNotFoundException::new);
+        Film film = filmRepository.findById(makerPostDto.getFilm()).orElseThrow(EntityNotFoundException::new);
         FilmMaker maker = makerRepository.findByIdAndEntityStatus(makerPostDto.getMaker(), EntityStatus.ACTIVE).orElseThrow(EntityNotFoundException::new);
         FilmMakerPost post = new FilmMakerPost();
         post.setFilmMaker(maker);
@@ -69,9 +71,9 @@ public class FilmMakerServiceImpl implements FilmMakerService {
     }
 
     private FilmMaker merge(FilmMaker maker, FilmMakerDto makerDto) {
-        maker.setFirstName(makerDto.getFirstName());
-        maker.setLastName(makerDto.getLastName());
-        maker.setPatronymic(makerDto.getPatronymic());
+        maker.setFirstName(makerDto.getFirstName().trim());
+        maker.setLastName(makerDto.getLastName().trim());
+        maker.setPatronymic(makerDto.getPatronymic().trim());
         maker.setId(makerDto.getId());
         return maker;
     }
@@ -137,6 +139,7 @@ public class FilmMakerServiceImpl implements FilmMakerService {
 
     @Override
     public Page<FilmMaker> getFilmMakers(String search, Pageable pageable) {
+        log.info("Search: {}", search);
         return makerRepository.findAllByFirstNameContainsOrLastNameContainsAndEntityStatus(search,
                 search,
                 EntityStatus.ACTIVE,

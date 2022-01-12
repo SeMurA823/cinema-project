@@ -39,7 +39,7 @@ public class FilmScreeningServiceImpl implements FilmScreeningService, Observer,
 
     private final Map<Class<? extends Event<?>>, Consumer<Event<?>>> eventActions = new HashMap<>() {{
         put(CancelFilmEvent.class, event -> cancelScreenings(((CancelFilmEvent) event).getValue()));
-        put(DisableHallEvent.class, event -> cancelScreenings(((CancelFilmEvent) event).getValue()));
+        put(DisableHallEvent.class, event -> cancelScreenings(((DisableHallEvent) event).getValue()));
     }};
 
     public FilmScreeningServiceImpl(FilmScreeningRepository screeningRepository,
@@ -71,6 +71,8 @@ public class FilmScreeningServiceImpl implements FilmScreeningService, Observer,
 
     @Override
     public List<FilmScreening> getFilmScreeningsInDay(long filmId, Date start, Date end) {
+        log.info("START {}", start);
+        log.info("END {}", end);
         return screeningRepository.getActiveFilmScreeningsInDayInterval(filmId,
                 start,
                 end);
@@ -137,6 +139,8 @@ public class FilmScreeningServiceImpl implements FilmScreeningService, Observer,
 
     @Override
     public Page<Film> getFilms(Date start, Date end, Pageable pageable) {
+        log.info("START: {}", start);
+        log.info("END: {}", end);
         return screeningRepository.findAllFilmsBetweenDates(start, end, EntityStatus.ACTIVE, pageable);
     }
 
@@ -147,8 +151,7 @@ public class FilmScreeningServiceImpl implements FilmScreeningService, Observer,
                 .orElseThrow(EntityNotFoundException::new);
     }
 
-    @Override
-    public void cancelScreenings(Film film) {
+    private void cancelScreenings(Film film) {
         Date now = new Date();
         screeningRepository.streamAllByFilmAndDateAfterAndEntityStatus(film, now, EntityStatus.ACTIVE)
                 .parallel()
@@ -159,9 +162,21 @@ public class FilmScreeningServiceImpl implements FilmScreeningService, Observer,
 
     }
 
+
+    private void cancelScreenings(Hall hall) {
+        Date now = new Date();
+        screeningRepository.streamAllByHallAndDateAfterAndEntityStatus(hall, now, EntityStatus.ACTIVE)
+                .parallel()
+                .peek(screening -> screening.setEntityStatus(EntityStatus.NOT_ACTIVE))
+                .peek(screeningRepository::save)
+                .forEach(screening -> notificationManager.notify(new CancelScreeningEvent(screening),
+                        CancelScreeningEvent.class));
+
+    }
+
     @Override
     public List<ScreeningTime> getScheduleFilmScreening(long hallId, Date start, Date end) {
-        List<FilmScreening> screenings = screeningRepository.findAllByDateBetweenAndEntityStatusAndHallId(start,
+        List<FilmScreening> screenings = screeningRepository.findAllByDateBetweenAndEntityStatusAndHallIdOrderByDate(start,
                 end,
                 EntityStatus.ACTIVE,
                 hallId);

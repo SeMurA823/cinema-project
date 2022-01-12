@@ -1,10 +1,5 @@
 package com.muravyev.cinema.security.services.cookieConfigurator;
 
-import com.muravyev.cinema.security.services.token.Token;
-import org.springframework.http.ResponseCookie;
-
-import java.time.Duration;
-
 public interface CookieConfigurator<T> {
 
 

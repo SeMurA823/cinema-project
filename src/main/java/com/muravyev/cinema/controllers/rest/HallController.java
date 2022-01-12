@@ -1,6 +1,7 @@
 package com.muravyev.cinema.controllers.rest;
 
 import com.muravyev.cinema.dto.HallDto;
+import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.hall.Hall;
 import com.muravyev.cinema.entities.hall.Seat;
 import com.muravyev.cinema.services.HallService;
@@ -84,6 +85,13 @@ public class HallController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getHall(@PathVariable("id") long hallId) {
         Hall hall = hallService.getHall(hallId);
+        return ResponseEntity.ok(hall);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping(value = "/{id}", params = {"status"})
+    public ResponseEntity<?> setStatusHall(@PathVariable("id") long id, @RequestParam("status") EntityStatus status) {
+        Hall hall = hallService.editStatus(id, status);
         return ResponseEntity.ok(hall);
     }
 

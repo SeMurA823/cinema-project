@@ -3,7 +3,6 @@ package com.muravyev.cinema.security.services.session;
 import com.muravyev.cinema.entities.session.ClientSessionEntity;
 import com.muravyev.cinema.entities.users.User;
 import com.muravyev.cinema.repo.ClientSessionRepository;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
