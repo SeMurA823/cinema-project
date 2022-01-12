@@ -15,10 +15,8 @@ import com.muravyev.cinema.repo.FilmScreeningRepository;
 import com.muravyev.cinema.repo.FilmScreeningSeatRepository;
 import com.muravyev.cinema.repo.HallRepository;
 import com.muravyev.cinema.services.FilmScreeningService;
-import com.muravyev.cinema.services.NotificationService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -36,29 +34,22 @@ public class FilmScreeningServiceImpl implements FilmScreeningService, Observer,
     private final FilmRepository filmRepository;
     private final HallRepository hallRepository;
     private final FilmScreeningSeatRepository screeningSeatRepository;
-    private final NotificationService notificationService;
-    private final MessageSource messageSource;
 
     private NotificationManager notificationManager;
 
     private final Map<Class<? extends Event<?>>, Consumer<Event<?>>> eventActions = new HashMap<>() {{
-
         put(CancelFilmEvent.class, event -> cancelScreenings(((CancelFilmEvent) event).getValue()));
-
+        put(DisableHallEvent.class, event -> cancelScreenings(((CancelFilmEvent) event).getValue()));
     }};
 
     public FilmScreeningServiceImpl(FilmScreeningRepository screeningRepository,
                                     FilmRepository filmRepository,
                                     HallRepository hallRepository,
-                                    FilmScreeningSeatRepository screeningSeatRepository,
-                                    NotificationService notificationService,
-                                    MessageSource messageSource) {
+                                    FilmScreeningSeatRepository screeningSeatRepository) {
         this.screeningRepository = screeningRepository;
         this.filmRepository = filmRepository;
         this.hallRepository = hallRepository;
         this.screeningSeatRepository = screeningSeatRepository;
-        this.notificationService = notificationService;
-        this.messageSource = messageSource;
     }
 
     @Autowired
@@ -79,10 +70,10 @@ public class FilmScreeningServiceImpl implements FilmScreeningService, Observer,
     }
 
     @Override
-    public List<FilmScreening> getFilmScreeningsInDay(long filmId, Date date) {
+    public List<FilmScreening> getFilmScreeningsInDay(long filmId, Date start, Date end) {
         return screeningRepository.getActiveFilmScreeningsInDayInterval(filmId,
-                getTodayDay(date),
-                getNextDay(date));
+                start,
+                end);
     }
 
     @Override
@@ -141,15 +132,12 @@ public class FilmScreeningServiceImpl implements FilmScreeningService, Observer,
         if (status.equals(EntityStatus.NOT_ACTIVE))
             screenings.stream()
                     .parallel()
-                    .forEach(x->notify(new CancelScreeningEvent(x), CancelScreeningEvent.class));
+                    .forEach(x -> notify(new CancelScreeningEvent(x), CancelScreeningEvent.class));
     }
 
     @Override
-    public Page<Film> getTodayFilms(Pageable pageable) {
-        Date now = new Date();
-        Date tomorrow = getNextDay(now);
-        Date today = getTodayDay(now);
-        return screeningRepository.findAllFilmsBetweenDates(today, tomorrow, EntityStatus.ACTIVE, pageable);
+    public Page<Film> getFilms(Date start, Date end, Pageable pageable) {
+        return screeningRepository.findAllFilmsBetweenDates(start, end, EntityStatus.ACTIVE, pageable);
     }
 
     @Override
@@ -172,44 +160,18 @@ public class FilmScreeningServiceImpl implements FilmScreeningService, Observer,
     }
 
     @Override
-    public List<ScreeningTime> getScheduleFilmScreening(long hallId, Date date) {
-        Date startDay = getCalendarDay(date).getTime();
-        Date endDay = getNextDay(date);
-        List<FilmScreening> screenings = screeningRepository.findAllByDateBetweenAndEntityStatusAndHallId(startDay,
-                endDay,
+    public List<ScreeningTime> getScheduleFilmScreening(long hallId, Date start, Date end) {
+        List<FilmScreening> screenings = screeningRepository.findAllByDateBetweenAndEntityStatusAndHallId(start,
+                end,
                 EntityStatus.ACTIVE,
                 hallId);
         return screenings.stream()
-                .map(x->new ScreeningTime(x.getFilm().getName(),
+                .map(x -> new ScreeningTime(x.getFilm().getName(),
                         x.getDate(),
-                        new Date(x.getDate().getTime() + (long) x.getFilm().getDuration() *  60 * 1000)))
+                        new Date(x.getDate().getTime() + (long) x.getFilm().getDuration() * 60 * 1000)))
                 .collect(Collectors.toList());
     }
 
-    private Date getTodayDay(Date date) {
-        Date today = getCalendarDay(date).getTime();
-        log.info("Today: {}", today);
-        return today;
-    }
-
-    private Calendar getCalendarDay(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        log.info("Start day: {}", calendar.getTime());
-        return calendar;
-    }
-
-    private Date getNextDay(Date date) {
-        Calendar calendar = getCalendarDay(date);
-        calendar.add(Calendar.DAY_OF_YEAR, 1);
-        Date nextDay = calendar.getTime();
-        log.info("Next day: {}", nextDay);
-        return nextDay;
-    }
 
     @Override
     public void notify(Event<?> event, Class<? extends Event<?>> eventType) {

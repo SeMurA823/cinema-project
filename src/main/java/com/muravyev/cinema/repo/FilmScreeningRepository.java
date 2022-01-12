@@ -33,7 +33,7 @@ public interface FilmScreeningRepository extends JpaRepository<FilmScreening, Lo
     Optional<FilmScreening> findByIdAndDateAfter(Long id, Date date);
 
     @Query("SELECT f FROM Film f JOIN FilmScreening fs ON fs.film = f " +
-            "WHERE (fs.date BETWEEN :start AND :end) AND fs.entityStatus = :status " +
+            "WHERE (fs.date BETWEEN :start AND :end) AND fs.entityStatus = :status AND f.entityStatus = :status " +
             "GROUP BY f")
     Page<Film> findAllFilmsBetweenDates(@Param("start") Date start,
                                         @Param("end") Date end,

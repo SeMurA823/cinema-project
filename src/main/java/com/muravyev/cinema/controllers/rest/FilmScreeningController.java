@@ -31,15 +31,18 @@ public class FilmScreeningController {
         return ResponseEntity.ok(screeningService.getAllFilmScreening(filmId, pageable));
     }
 
-    @GetMapping(params = {"film", "date"})
+    @GetMapping(params = {"film", "start", "end"})
     public ResponseEntity<?> screenings(@RequestParam("film") long filmId,
-                                        @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date date) {
-        return ResponseEntity.ok(screeningService.getFilmScreeningsInDay(filmId, date));
+                                        @RequestParam("start") Date start,
+                                        @RequestParam("end") Date end) {
+        return ResponseEntity.ok(screeningService.getFilmScreeningsInDay(filmId, start, end));
     }
 
-    @GetMapping(params = {"hall", "date"})
-    public ResponseEntity<?> getScheduleFilmScreening(@RequestParam("hall") long hallId, @RequestParam("date") Date date) {
-        return ResponseEntity.ok(screeningService.getScheduleFilmScreening(hallId, date));
+    @GetMapping(params = {"hall", "start", "end"})
+    public ResponseEntity<?> getScheduleFilmScreening(@RequestParam("hall") long hallId,
+                                                      @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date start,
+                                                      @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date end) {
+        return ResponseEntity.ok(screeningService.getScheduleFilmScreening(hallId, start, end));
     }
 
     @GetMapping("/{screening}/seats")
@@ -96,9 +99,9 @@ public class FilmScreeningController {
         return ResponseEntity.ok(allFilmScreening);
     }
 
-    @GetMapping("/todayfilms")
-    public ResponseEntity<?> getTodayFilms(@PageableDefault Pageable pageable) {
-        Page<Film> todayFilms = screeningService.getTodayFilms(pageable);
+    @GetMapping("/films")
+    public ResponseEntity<?> getFilmsInPeriod(@RequestParam("start") Date start, @RequestParam("end") Date end, @PageableDefault Pageable pageable) {
+        Page<Film> todayFilms = screeningService.getFilms(start, end, pageable);
         return ResponseEntity.ok(todayFilms);
     }
 }

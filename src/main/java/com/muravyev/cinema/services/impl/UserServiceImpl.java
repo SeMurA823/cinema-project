@@ -34,18 +34,6 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
     private RoleService roleService;
-    private NotificationService notificationService;
-    private MessageSource messageSource;
-
-    @Autowired
-    public void setNotificationService(NotificationService notificationService) {
-        this.notificationService = notificationService;
-    }
-
-    @Autowired
-    public void setMessageSource(MessageSource messageSource) {
-        this.messageSource = messageSource;
-    }
 
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
@@ -92,10 +80,6 @@ public class UserServiceImpl implements UserService {
         log.info(": {}", passwordEncoder.matches(password, user.getPassword()));
         if (!passwordEncoder.matches(password, user.getPassword()))
             throw new AuthenticationServiceException("Password is illegal");
-        notificationService.notifyUser(messageSource.getMessage("welcome",
-                        new Object[]{user.getFirstName()},
-                        Locale.getDefault()),
-                user);
         return user;
     }
 

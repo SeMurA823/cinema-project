@@ -6,6 +6,7 @@ import com.muravyev.cinema.entities.payment.Ticket;
 import com.muravyev.cinema.entities.payment.TicketRefund;
 import com.muravyev.cinema.entities.users.User;
 import com.muravyev.cinema.events.*;
+import com.muravyev.cinema.events.Observable;
 import com.muravyev.cinema.events.Observer;
 import com.muravyev.cinema.repo.TicketRepository;
 import com.muravyev.cinema.services.NotificationService;
@@ -23,11 +24,13 @@ import java.util.function.Consumer;
 
 @Log4j2
 @Service
-public class TicketServiceImpl implements TicketService, Observer {
+public class TicketServiceImpl implements TicketService, Observer, Observable {
 
     private final TicketRepository ticketRepository;
-    private final NotificationService notificationService;
     private final MessageSource messageSource;
+
+    private NotificationManager notificationManager;
+
 
     private final Map<Class<? extends Event<?>>, Consumer<Event<?>>> eventActions = new HashMap<>() {{
 
@@ -36,16 +39,15 @@ public class TicketServiceImpl implements TicketService, Observer {
     }};
 
     public TicketServiceImpl(TicketRepository ticketRepository,
-                             NotificationService notificationService,
                              MessageSource messageSource) {
         this.ticketRepository = ticketRepository;
-        this.notificationService = notificationService;
         this.messageSource = messageSource;
     }
 
     @Autowired
     @Override
     public void setNotificationManager(NotificationManager notificationManager) {
+        this.notificationManager = notificationManager;
         notificationManager.subscribe(this, eventActions.keySet());
     }
 
@@ -74,7 +76,7 @@ public class TicketServiceImpl implements TicketService, Observer {
     @Transactional
     public void cancelTicket(User user, long ticketId) {
         Ticket ticket = ticketRepository.findByIdAndPurchaseUserAndEntityStatus(ticketId, user, EntityStatus.ACTIVE)
-                .orElseThrow(()->new IllegalArgumentException("illegal ticket"));
+                .orElseThrow(() -> new IllegalArgumentException("illegal ticket"));
         disableTicket(ticket);
     }
 
@@ -100,10 +102,13 @@ public class TicketServiceImpl implements TicketService, Observer {
         ticket.setEntityStatus(EntityStatus.NOT_ACTIVE);
         ticket.setTicketRefund(createRefund(ticket));
         Ticket savedTicket = ticketRepository.save(ticket);
-        notificationService.notifyUser(messageSource.getMessage("ticket.canceled",
-                        new Object[]{ticket.getId()},
-                        Locale.getDefault()),
-                ticket.getPurchase().getUser());
+        User user = ticket.getPurchase().getUser();
+        notificationManager.notify(new DisableTicketEvent(Map.of(user.getId(),
+                        messageSource.getMessage("ticket.canceled",
+                                new Object[]{ticket.getId()},
+                                Locale.getDefault())),
+                        savedTicket),
+                DisableTicketEvent.class);
         return savedTicket;
     }
 

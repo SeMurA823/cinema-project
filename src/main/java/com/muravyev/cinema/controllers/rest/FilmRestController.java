@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping({"/api/films", "/api/admin/films"})
+@RequestMapping({"/api/films"})
 public class FilmRestController {
     private final FilmService filmService;
 
@@ -33,9 +33,19 @@ public class FilmRestController {
         return ResponseEntity.ok(filmService.getFilms(List.of(filmId)).get(0));
     }
 
+    @GetMapping(value = "/{film}", params = {"anystatus"})
+    public ResponseEntity<?> filmAnyStatus(@PathVariable("film") long filmId) {
+        return ResponseEntity.ok(filmService.getFilmsAnyStatus(List.of(filmId)).get(0));
+    }
+
     @GetMapping(params = "id")
     public ResponseEntity<?> getFilms(@RequestParam("id") List<Long> id) {
         return ResponseEntity.ok(filmService.getFilms(id));
+    }
+
+    @GetMapping(params = {"id", "anystatus"})
+    public ResponseEntity<?> getFilmsAnyStatus(@RequestParam("id") List<Long> id) {
+        return ResponseEntity.ok(filmService.getFilmsAnyStatus(id));
     }
 
     @GetMapping("/archive")

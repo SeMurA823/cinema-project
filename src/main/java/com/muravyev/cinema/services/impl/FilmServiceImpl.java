@@ -50,6 +50,11 @@ public class FilmServiceImpl implements FilmService, Observable {
     @Override
     public List<Film> getFilms(List<Long> id) {
         log.log(Level.DEBUG, "Getting film with id = {}", id);
+        return filmRepository.findAllByIdInAndEntityStatus(id, EntityStatus.ACTIVE);
+    }
+
+    @Override
+    public List<Film> getFilmsAnyStatus(List<Long> id) {
         return filmRepository.findAllById(id);
     }
 

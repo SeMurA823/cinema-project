@@ -20,7 +20,7 @@ public interface FilmScreeningService {
 
     void deleteFilmScreenings(List<Long> id);
 
-    List<FilmScreening> getFilmScreeningsInDay(long filmId, Date date);
+    List<FilmScreening> getFilmScreeningsInDay(long filmId, Date start, Date end);
 
     FilmScreening setFilmScreening(long screeningId, FilmScreeningDto screeningDto);
 
@@ -34,11 +34,11 @@ public interface FilmScreeningService {
 
     void setStatusScreenings(Collection<Long> ids, EntityStatus status);
 
-    Page<Film> getTodayFilms(Pageable pageable);
+    Page<Film> getFilms(Date start, Date end, Pageable pageable);
 
     Film getFilmByScreening(long screeningId);
 
     void cancelScreenings(Film film);
 
-    List<ScreeningTime> getScheduleFilmScreening(long hallId, Date date);
+    List<ScreeningTime> getScheduleFilmScreening(long hallId, Date start, Date end);
 }

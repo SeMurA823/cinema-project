@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -25,9 +26,6 @@ public interface FilmRepository extends JpaRepository<Film, Long> {
 
     Optional<Film> findByIdAndEntityStatus(Long id, EntityStatus entityStatus);
 
-    @Query("select count(f) from Country c left join c.films f where c = :country and (c.films is empty or f.entityStatus = 'ACTIVE')")
-    int countByCountry(@Param("country") Country country);
+    List<Film> findAllByIdInAndEntityStatus(Collection<Long> id, EntityStatus entityStatus);
 
-    @Query("select count(f) from AgeLimit a left join a.films f where a = :limit and (a.films is empty or f.entityStatus = 'ACTIVE')")
-    int countByAgeLimit(@Param("limit") AgeLimit ageLimit);
 }

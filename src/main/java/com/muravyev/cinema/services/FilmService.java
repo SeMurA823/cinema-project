@@ -11,6 +11,8 @@ import java.util.List;
 public interface FilmService {
     List<Film> getFilms(List<Long> id);
 
+    List<Film> getFilmsAnyStatus(List<Long> id);
+
     Page<Film> getPremieres(Pageable pageable);
 
     Film addFilm(FilmDto addingFilmDto);

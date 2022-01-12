@@ -4,9 +4,13 @@ import com.muravyev.cinema.dto.HallDto;
 import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.hall.Hall;
 import com.muravyev.cinema.entities.hall.Seat;
+import com.muravyev.cinema.events.DisableHallEvent;
+import com.muravyev.cinema.events.NotificationManager;
+import com.muravyev.cinema.events.Observable;
 import com.muravyev.cinema.repo.HallRepository;
 import com.muravyev.cinema.repo.SeatRepository;
 import com.muravyev.cinema.services.HallService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -22,9 +26,11 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
-public class HallServiceImpl implements HallService {
+public class HallServiceImpl implements HallService, Observable {
     private final SeatRepository seatRepository;
     private final HallRepository hallRepository;
+
+    private NotificationManager notificationManager;
 
     public HallServiceImpl(SeatRepository seatRepository, HallRepository hallRepository) {
         this.seatRepository = seatRepository;
@@ -36,6 +42,16 @@ public class HallServiceImpl implements HallService {
         Hall hall = hallRepository.findById(hallId)
                 .orElseThrow(EntityNotFoundException::new);
         hall.setName(hallDto.getName());
+        return hallRepository.save(hall);
+    }
+
+    @Override
+    public Hall editStatus(long hallId, EntityStatus status) {
+        Hall hall = hallRepository.findById(hallId)
+                .orElseThrow(EntityNotFoundException::new);
+        hall.setEntityStatus(status);
+        if (status.equals(EntityStatus.NOT_ACTIVE))
+            notificationManager.notify(new DisableHallEvent(hall), DisableHallEvent.class);
         return hallRepository.save(hall);
     }
 
@@ -132,5 +148,11 @@ public class HallServiceImpl implements HallService {
     @Override
     public Page<Hall> getHalls(String search, Pageable pageable) {
         return hallRepository.findAllByNameContainsAndEntityStatus(search, EntityStatus.ACTIVE, pageable);
+    }
+
+    @Autowired
+    @Override
+    public void setNotificationManager(NotificationManager notificationManager) {
+        this.notificationManager = notificationManager;
     }
 }

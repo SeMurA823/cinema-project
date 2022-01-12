@@ -1,6 +1,7 @@
 package com.muravyev.cinema.services;
 
 import com.muravyev.cinema.dto.HallDto;
+import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.hall.Hall;
 import com.muravyev.cinema.entities.hall.Seat;
 import org.springframework.data.domain.Page;
@@ -11,6 +12,8 @@ import java.util.Map;
 
 public interface HallService {
     Hall editHall(long hallId, HallDto hallDto);
+
+    Hall editStatus(long hallId, EntityStatus status);
 
     Hall createHall(HallDto hallDto);
 

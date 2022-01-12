@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 public class PurchaseServiceImpl implements PurchaseService, Observer, Observable {
     private final PurchaseRepository purchaseRepository;
     private final ReservationRepository reservationRepository;
-    private final NotificationService notificationService;
     private final MessageSource messageSource;
 
     private final Map<Class<? extends Event<?>>, Consumer<Event<?>>> eventActions = new HashMap<>() {{
@@ -45,10 +44,9 @@ public class PurchaseServiceImpl implements PurchaseService, Observer, Observabl
 
     public PurchaseServiceImpl(PurchaseRepository purchaseRepository,
                                ReservationRepository reservationRepository,
-                               NotificationService notificationService, MessageSource messageSource) {
+                               MessageSource messageSource) {
         this.purchaseRepository = purchaseRepository;
         this.reservationRepository = reservationRepository;
-        this.notificationService = notificationService;
         this.messageSource = messageSource;
     }
 
@@ -90,10 +88,10 @@ public class PurchaseServiceImpl implements PurchaseService, Observer, Observabl
 
         savedPurchases.stream()
                 .parallel()
-                .peek(x -> notificationService.notifyUser(messageSource.getMessage("purchase.canceled",
-                        new Object[]{x.getId()},
-                        Locale.getDefault()), x.getUser()))
-                .forEach(x -> notificationManager.notify(new ReturnPurchaseEvent(x), ReturnPurchaseEvent.class));
+                .forEach(x -> notificationManager.notify(new ReturnPurchaseEvent(Map.of(x.getUser().getId(),
+                        messageSource.getMessage("purchase.canceled",
+                                new Object[]{x.getId()},
+                                Locale.getDefault())), x), ReturnPurchaseEvent.class));
     }
 
     @Override

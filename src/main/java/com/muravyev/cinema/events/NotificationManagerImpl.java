@@ -1,5 +1,6 @@
 package com.muravyev.cinema.events;
 
+import com.muravyev.cinema.services.ReportService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
@@ -8,6 +9,12 @@ import java.util.*;
 @Log4j2
 @Service
 public class NotificationManagerImpl implements NotificationManager {
+
+    private final ReportService reportService;
+
+    public NotificationManagerImpl(ReportService reportService) {
+        this.reportService = reportService;
+    }
 
     private final Map<Class<? extends Event<?>>, Set<Observer>> observers = new HashMap<>();
 
@@ -27,5 +34,8 @@ public class NotificationManagerImpl implements NotificationManager {
                     .peek((x)->log.info("Observer: {}", x))
                     .parallel()
                     .forEach(x->x.notify(event, eventType));
+        event.reportInfo().entrySet().stream()
+                .parallel()
+                .forEach(x->reportService.notifyUser(x.getValue(), x.getKey()));
     }
 }
