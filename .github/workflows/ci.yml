@@ -1,0 +1,40 @@
+name: Java CI
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Docker Hub login
+        run: docker login --username ${{ secrets.USERNAME_HUB }} --password ${{ secrets.PASSWORD_HUB }}
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+      - name: Build with Maven
+        run: mvn package -D spring.profiles.active=test
+      - name: Build Docker
+        run: docker build --tag ${{ secrets.USERNAME_HUB }}/cinema-back:latest .
+      - name: Push into DockerHub
+        run: docker push ${{ secrets.USERNAME_HUB }}/cinema-back:latest
+#  deploy:
+#    needs: [build]
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Create SSH key file
+#        run: |
+#            mkdir ~/.ssh
+#            echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+#            chmod 400 ~/.ssh/id_rsa
+#            eval $(ssh-agent)
+#            ssh-add ~/.ssh/id_rsa
+#            ssh -o StrictHostKeyChecking=no -A azureuser@semura.eastus.cloudapp.azure.com 'sudo docker stop cinema-back; sudo docker rm cinema-back; sudo docker rmi ${{ secrets.USERNAME_HUB }}/cinema-back; sudo docker run -v /opt/files:/opt/files -d -p 80:8080 --name cinema-back semura823/cinema-back:latest;'
