@@ -4,6 +4,7 @@ import com.muravyev.cinema.dto.PosterDto;
 import com.muravyev.cinema.entities.film.Film;
 import com.muravyev.cinema.entities.film.FilmPoster;
 import com.muravyev.cinema.repo.FilmPosterRepository;
+import com.muravyev.cinema.repo.FilmRepository;
 import com.muravyev.cinema.services.FilmPosterService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,16 +27,18 @@ public class FilmPosterServiceImpl implements FilmPosterService {
     private String DEFAULT_PATH;
 
     private final FilmPosterRepository posterRepository;
+    private final FilmRepository filmRepository;
 
-    public FilmPosterServiceImpl(FilmPosterRepository posterRepository) {
+    public FilmPosterServiceImpl(FilmPosterRepository posterRepository, FilmRepository filmRepository) {
         this.posterRepository = posterRepository;
+        this.filmRepository = filmRepository;
     }
 
     @Override
     @Transactional
     public FilmPoster createPoster(PosterDto posterDto) {
-        Film film = new Film();
-        film.setId(posterDto.getFilmId());
+        Film film = filmRepository.findById(posterDto.getFilmId())
+                .orElseThrow(EntityNotFoundException::new);
         return createPoster(film, posterDto.getFileBase64());
     }
 

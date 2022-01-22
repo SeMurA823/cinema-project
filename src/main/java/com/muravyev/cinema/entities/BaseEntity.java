@@ -24,6 +24,9 @@ public class BaseEntity {
     @Column(name = "status")
     private EntityStatus entityStatus = EntityStatus.ACTIVE;
 
+    public BaseEntity() {
+    }
+
     @PreUpdate
     private void update() {
         updated = new Date();

@@ -9,6 +9,8 @@ import com.muravyev.cinema.entities.users.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
 import java.util.Date;
@@ -17,6 +19,10 @@ import java.util.Optional;
 
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
     Page<Ticket> findAllByPurchaseId(Long purchaseId, Pageable pageable);
+
+    @Query("select t from Ticket t join t.filmScreening fs " +
+            "where fs.date > current_timestamp and t.seat = :seat and t.entityStatus = :status")
+    List<Ticket> findAllBySeatAndEntityStatus(Seat seat, @Param("status") EntityStatus entityStatus);
 
 //    @Modifying
 //    @Query("update Ticket t " +

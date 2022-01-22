@@ -4,17 +4,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.muravyev.cinema.entities.IdentityBaseEntity;
 import com.muravyev.cinema.entities.users.User;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 
+@Entity
+@Table(name = "film_marks")
 @Getter
 @Setter
-@Entity
-@Table(name = "film_ratings")
-@NoArgsConstructor
 public class FilmMark extends IdentityBaseEntity {
+
     @JsonIgnore
     @OneToOne
     @JoinColumn(name = "user_id")
@@ -27,10 +26,6 @@ public class FilmMark extends IdentityBaseEntity {
 
     private int mark;
 
+    public FilmMark() {}
 
-    public FilmMark(User user, Film film, int mark) {
-        this.user = user;
-        this.film = film;
-        this.mark = mark;
-    }
 }

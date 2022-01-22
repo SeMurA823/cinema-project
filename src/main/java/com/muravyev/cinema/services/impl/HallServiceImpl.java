@@ -5,6 +5,7 @@ import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.hall.Hall;
 import com.muravyev.cinema.entities.hall.Seat;
 import com.muravyev.cinema.events.DisableHallEvent;
+import com.muravyev.cinema.events.DisableSeatEvent;
 import com.muravyev.cinema.events.NotificationManager;
 import com.muravyev.cinema.events.Observable;
 import com.muravyev.cinema.repo.HallRepository;
@@ -104,7 +105,8 @@ public class HallServiceImpl implements HallService, Observable {
         seatRepository.findByRowAndNumberAndHallIdAndEntityStatus(row, num, hallId, EntityStatus.ACTIVE)
                 .ifPresent(seat -> {
                     seat.setUnUsed(unused);
-                    seatRepository.save(seat);
+                    notificationManager.notify(new DisableSeatEvent(seatRepository.save(seat)),
+                            DisableSeatEvent.class);
                 });
     }
 
@@ -127,7 +129,9 @@ public class HallServiceImpl implements HallService, Observable {
 
     @Override
     public Map<Integer, List<Seat>> getAllSeats(long hallId) {
-        List<Seat> seats = seatRepository.findAllByHallId(hallId, Sort.by("row").and(Sort.by("number")));
+        List<Seat> seats = seatRepository.findAllByHallIdAndEntityStatus(hallId,
+                EntityStatus.ACTIVE,
+                Sort.by("row").and(Sort.by("number")));
         return seats.stream()
                 .collect(Collectors.groupingBy(Seat::getRow,
                         TreeMap::new,
@@ -137,13 +141,28 @@ public class HallServiceImpl implements HallService, Observable {
     @Override
     @Transactional
     public void setUnUsedSeats(long hallId, List<Long> seatIds, boolean unUsed) {
-        seatRepository.setAllUnUsedStatus(hallId, seatIds, unUsed);
+        List<Seat> seats = seatRepository.findAllByHallIdAndIdIn(hallId, seatIds);
+        if (seats.size() != seatIds.size())
+            throw new IllegalArgumentException("Illegal seats");
+        seats.forEach(seat -> seat.setUnUsed(unUsed));
+        notifyEditedStatusSeat(seatRepository.saveAll(seats));
     }
 
     @Override
     @Transactional
     public void deleteSeats(long hallId, List<Long> seatIds) {
-        seatRepository.deleteSeatsByIdInAndHallId(seatIds, hallId);
+        List<Seat> seats = seatRepository.findAllByHallIdAndIdIn(hallId, seatIds);
+        if (seats.size() != seatIds.size())
+            throw new IllegalArgumentException("Illegal seats");
+        seats.forEach(seat -> seat.setEntityStatus(EntityStatus.NOT_ACTIVE));
+        notifyEditedStatusSeat(seatRepository.saveAll(seats));
+    }
+
+    private void notifyEditedStatusSeat(List<Seat> seats) {
+        seats.stream()
+                .parallel()
+                .forEach(x -> notificationManager.notify(new DisableSeatEvent(x),
+                        DisableSeatEvent.class));
     }
 
     @Override

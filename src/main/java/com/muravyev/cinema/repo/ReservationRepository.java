@@ -29,9 +29,13 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                                                                            @Param("film") Long filmId,
                                                                            @Param("status") EntityStatus entityStatus);
 
+    List<Reservation> findAllBySeatAndEntityStatusAndExpiryDateAfter(Seat seat,
+                                                                     EntityStatus entityStatus,
+                                                                     Date expiryDate);
+
     List<Reservation> findAllByFilmScreeningAndEntityStatusAndExpiryDateAfter(FilmScreening filmScreening,
-                                                                               EntityStatus entityStatus,
-                                                                               Date date);
+                                                                              EntityStatus entityStatus,
+                                                                              Date expiryDate);
 
     boolean existsBySeatAndFilmScreeningAndEntityStatusAndExpiryDateAfter(Seat seat,
                                                                           FilmScreening filmScreening,
