@@ -74,7 +74,6 @@ public class FilmMakerServiceImpl implements FilmMakerService {
         maker.setFirstName(makerDto.getFirstName().trim());
         maker.setLastName(makerDto.getLastName().trim());
         maker.setPatronymic(makerDto.getPatronymic().trim());
-        maker.setId(makerDto.getId());
         return maker;
     }
 
