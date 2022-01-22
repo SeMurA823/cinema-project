@@ -6,6 +6,7 @@ import com.muravyev.cinema.entities.hall.Seat;
 import com.muravyev.cinema.entities.screening.FilmScreening;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -15,6 +16,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Table(name = "tickets")
+@EntityListeners(AuditingEntityListener.class)
 public class Ticket extends IdentityBaseEntity {
     @ManyToOne
     @JoinColumn(name = "seat_id")
