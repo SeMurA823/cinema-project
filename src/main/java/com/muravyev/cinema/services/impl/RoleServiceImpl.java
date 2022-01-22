@@ -5,21 +5,23 @@ import com.muravyev.cinema.entities.roles.Role;
 import com.muravyev.cinema.entities.roles.UserRole;
 import com.muravyev.cinema.entities.users.User;
 import com.muravyev.cinema.repo.RoleRepository;
+import com.muravyev.cinema.repo.UserRepository;
 import com.muravyev.cinema.services.RoleService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class RoleServiceImpl implements RoleService {
-    private RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    public void setRoleRepository(RoleRepository roleRepository) {
+    public RoleServiceImpl(RoleRepository roleRepository, UserRepository userRepository) {
         this.roleRepository = roleRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -32,8 +34,8 @@ public class RoleServiceImpl implements RoleService {
         Optional<UserRole> candidateRole = roleRepository.findByUserIdAndRoleAndEntityStatus(userId, role,
                 EntityStatus.ACTIVE);
         if (candidateRole.isEmpty()) {
-            User user = new User();
-            user.setId(userId);
+            User user = userRepository.findById(userId)
+                    .orElseThrow(EntityNotFoundException::new);
             UserRole userRole = new UserRole(role, user);
             return roleRepository.save(userRole);
         }

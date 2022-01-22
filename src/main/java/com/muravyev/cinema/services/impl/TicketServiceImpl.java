@@ -1,6 +1,7 @@
 package com.muravyev.cinema.services.impl;
 
 import com.muravyev.cinema.entities.EntityStatus;
+import com.muravyev.cinema.entities.hall.Seat;
 import com.muravyev.cinema.entities.payment.Purchase;
 import com.muravyev.cinema.entities.payment.Ticket;
 import com.muravyev.cinema.entities.payment.TicketRefund;
@@ -34,7 +35,7 @@ public class TicketServiceImpl implements TicketService, Observer, Observable {
     private final Map<Class<? extends Event<?>>, Consumer<Event<?>>> eventActions = new HashMap<>() {{
 
         put(ReturnPurchaseEvent.class, (event -> returnTickets((Purchase) event.getValue())));
-
+        put(DisableSeatEvent.class, (event -> returnTickets(((DisableSeatEvent)event).getValue())));
     }};
 
     public TicketServiceImpl(TicketRepository ticketRepository,
@@ -94,12 +95,20 @@ public class TicketServiceImpl implements TicketService, Observer, Observable {
                 .forEach(this::disableTicket);
     }
 
+    private void returnTickets(Seat seat) {
+        List<Ticket> tickets = ticketRepository.findAllBySeatAndEntityStatus(seat, EntityStatus.ACTIVE);
+        tickets.stream()
+                .parallel()
+                .forEach(this::disableTicket);
+    }
+
 
     private Ticket disableTicket(Ticket ticket) {
         if (ticket.isExpired())
             throw new IllegalStateException("Ticket expired");
         ticket.setEntityStatus(EntityStatus.NOT_ACTIVE);
         ticket.setTicketRefund(createRefund(ticket));
+//        log.info("User {}", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         Ticket savedTicket = ticketRepository.save(ticket);
         User user = ticket.getPurchase().getUser();
         notificationManager.notify(new DisableTicketEvent(Map.of(user.getId(),

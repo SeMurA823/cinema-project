@@ -8,10 +8,7 @@ import com.muravyev.cinema.entities.hall.Seat;
 import com.muravyev.cinema.entities.payment.Reservation;
 import com.muravyev.cinema.entities.screening.FilmScreening;
 import com.muravyev.cinema.entities.users.User;
-import com.muravyev.cinema.events.CancelScreeningEvent;
-import com.muravyev.cinema.events.Event;
-import com.muravyev.cinema.events.NotificationManager;
-import com.muravyev.cinema.events.Observer;
+import com.muravyev.cinema.events.*;
 import com.muravyev.cinema.repo.FilmScreeningRepository;
 import com.muravyev.cinema.repo.ReservationRepository;
 import com.muravyev.cinema.repo.SeatRepository;
@@ -25,6 +22,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -47,6 +45,7 @@ public class ReservationServiceImpl implements ReservationService, Observer {
     private final Map<Class<? extends Event<?>>, Consumer<Event<?>>> eventActions = new HashMap<>() {{
 
         put(CancelScreeningEvent.class, event -> cancelReservations(((CancelScreeningEvent) event).getValue()));
+        put(DisableSeatEvent.class, (event -> cancelReservations(((DisableSeatEvent)event).getValue())));
 
     }};
 
@@ -110,6 +109,17 @@ public class ReservationServiceImpl implements ReservationService, Observer {
                 .forEach(reservationRepository::save);
     }
 
+    private void cancelReservations(Seat seat) {
+        List<Reservation> reservations =
+                reservationRepository.findAllBySeatAndEntityStatusAndExpiryDateAfter(seat,
+                        EntityStatus.ACTIVE,
+                        new Date());
+        reservations.stream()
+                .peek(x -> x.setEntityStatus(EntityStatus.NOT_ACTIVE))
+                .forEach(reservationRepository::save);
+    }
+
+
     private Reservation toReservation(ReservationDto reservationDto, User user) {
         Reservation reservation = new Reservation();
         SeatDto seatDto = reservationDto.getSeat();
@@ -141,8 +151,8 @@ public class ReservationServiceImpl implements ReservationService, Observer {
 
 
     private Date createExpiryDate() {
-        Date now = new Date();
-        return new Date(now.getTime() + reserveExpiration);
+        ZonedDateTime dateTime = ZonedDateTime.now().plusMinutes(reserveExpiration);
+        return Date.from(dateTime.toInstant());
     }
 
     @Override

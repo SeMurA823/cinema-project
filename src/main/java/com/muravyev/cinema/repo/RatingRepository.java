@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 public interface RatingRepository extends JpaRepository<FilmMark, Long> {
@@ -16,4 +17,8 @@ public interface RatingRepository extends JpaRepository<FilmMark, Long> {
     Optional<Double> getRatingFilm(@Param("film") long filmId, @Param("filmStatus") EntityStatus filmStatus);
 
     Optional<FilmMark> findByFilmIdAndUserAndEntityStatus(Long filmId, User user, EntityStatus entityStatus);
+
+    @Transactional
+    void deleteAllByUserAndFilmId(User user, Long filmId);
+
 }
