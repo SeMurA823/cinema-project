@@ -32,6 +32,7 @@ public class FilmRestController {
         return ResponseEntity.ok(filmService.getFilms(List.of(filmId)).get(0));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(value = "/{film}", params = {"anystatus"})
     public ResponseEntity<?> filmAnyStatus(@PathVariable("film") long filmId) {
         return ResponseEntity.ok(filmService.getFilmsAnyStatus(List.of(filmId)).get(0));

@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Collection;
 import java.util.Date;
 
@@ -57,7 +58,7 @@ public class FilmScreeningController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
-    public ResponseEntity<?> addScreening(@RequestBody FilmScreeningDto filmScreeningDto) {
+    public ResponseEntity<?> addScreening(@RequestBody @Valid FilmScreeningDto filmScreeningDto) {
         FilmScreening filmScreening = screeningService.addFilmScreening(filmScreeningDto);
         return ResponseEntity.ok(filmScreening);
     }
@@ -87,7 +88,7 @@ public class FilmScreeningController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{screening}")
     public ResponseEntity<?> editScreening(@PathVariable("screening") long screening,
-                                           @RequestBody FilmScreeningDto screeningDto) {
+                                           @RequestBody @Valid FilmScreeningDto screeningDto) {
         FilmScreening filmScreening = screeningService.setFilmScreening(screening, screeningDto);
         return ResponseEntity.ok(filmScreening);
     }
