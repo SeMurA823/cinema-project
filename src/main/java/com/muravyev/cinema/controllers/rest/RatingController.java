@@ -33,6 +33,14 @@ public class RatingController {
     }
 
     @PreAuthorize("hasRole('CUSTOMER')")
+    @DeleteMapping(value = "/mark",params = {"film"})
+    public ResponseEntity<?> deleteMark(@RequestParam("film") long filmId, Authentication authentication) {
+        ratingService.deleteMark(filmId, (User) authentication.getPrincipal());
+        return ResponseEntity.ok()
+                .build();
+    }
+
+    @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping(value = "/mark", params = {"film"})
     public ResponseEntity<?> setMark(@RequestParam("film") long filmId, @RequestBody @Valid @Min(1) @Max(10) int mark, Authentication authentication) {
         return ResponseEntity.ok(ratingService.setMark(mark, filmId, (User) authentication.getPrincipal()));
