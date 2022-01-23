@@ -45,7 +45,7 @@ public class StatisticsRepositoryImpl implements StatisticsRepository {
                 .setParameter("endDate", endDate)
                 .setParameter("film", filmId)
                 .getSingleResult();
-        return Optional.ofNullable(avg.doubleValue());
+        return Optional.ofNullable(avg).map(BigDecimal::doubleValue);
     }
 
     @Override
@@ -62,14 +62,14 @@ public class StatisticsRepositoryImpl implements StatisticsRepository {
 
     @Override
     public Optional<Long> getCountTickets(long filmId, Date startDate, Date endDate) {
-        BigInteger count = (BigInteger) manager.createNativeQuery("select sum(count_tickets) " +
+        BigDecimal count = (BigDecimal) manager.createNativeQuery("select sum(count_tickets) " +
                         "from purchase_stat " +
                         "where film_id = :film and (purchase_date between :startDate and :endDate)")
                 .setParameter("startDate", startDate)
                 .setParameter("endDate", endDate)
                 .setParameter("film", filmId)
                 .getSingleResult();
-        return Optional.ofNullable(count).map(BigInteger::longValue);
+        return Optional.ofNullable(count).map(BigDecimal::longValue);
     }
 
     @Override
