@@ -36,14 +36,14 @@ public class StatisticsRepositoryImpl implements StatisticsRepository {
     }
 
     @Override
-    public Optional<Double> getOccupancyScreeningId(long filmId, Date startDate, Date endDate) {
-        Double avg = (Double) manager.createNativeQuery("select case when avg(ocf.occupancy)<>0 then avg(ocf.occupancy) else 0 end" +
+    public Optional<Double> getOccupancyFilm(long filmId, Date startDate, Date endDate) {
+        Double avg = (Double) manager.createNativeQuery("select case when avg(ocf.occupancy) <> 0 then avg(ocf.occupancy) else 0 end" +
                         "                    from occupancy_film ocf" +
                         "                            join films f on f.id = ocf.film_id" +
                         "                            join halls h on h.id = ocf.hall_id" +
                         "                            join seats s on h.id = s.hall_id" +
                         "                            left outer join tickets t on ocf.id = t.film_screening_id" +
-                        "                               and s.id = t.seat_id and (t.status = 'ACTIVE')" +
+                        "                               and s.id = t.seat_id and (t.status = 'ACTIVE') and s.status = 'ACTIVE'" +
                         "                    where f.id = :film and (ocf.date between :startDate and :endDate)")
                 .setParameter("startDate", startDate)
                 .setParameter("endDate", endDate)
@@ -55,11 +55,11 @@ public class StatisticsRepositoryImpl implements StatisticsRepository {
     @Override
     public Optional<Double> getAverageTicketsInPurchase(long filmId, Date startDate, Date endDate) {
         BigDecimal avg = (BigDecimal) manager.createNativeQuery("select avg(st.count) \n" +
-                                "from sold_tickets st\n" +
-                                "join purchases p on p.id = st.purchase_id\n" +
-                                "join tickets t on p.id = t.purchase_id\n" +
-                                "join film_screenings fs on fs.id = t.film_screening_id\n" +
-                                "where p.status = 'ACTIVE' and fs.film_id = :film and fs.date between :startDate and :endDate")
+                        "from sold_tickets st\n" +
+                        "join purchases p on p.id = st.purchase_id\n" +
+                        "join tickets t on p.id = t.purchase_id\n" +
+                        "join film_screenings fs on fs.id = t.film_screening_id\n" +
+                        "where p.status = 'ACTIVE' and fs.film_id = :film and t.status = 'ACTIVE' fs.date between :startDate and :endDate")
                 .setParameter("startDate", startDate)
                 .setParameter("endDate", endDate)
                 .setParameter("film", filmId)
@@ -70,9 +70,9 @@ public class StatisticsRepositoryImpl implements StatisticsRepository {
     @Override
     public Optional<Long> getCountTickets(long filmId, Date startDate, Date endDate) {
         BigInteger count = (BigInteger) manager.createNativeQuery("select count(t.id)\n" +
-                                "from tickets t\n" +
-                                "         join film_screenings fs on fs.id = t.film_screening_id\n" +
-                                "where t.status = 'ACTIVE' and fs.film_id = :film and fs.date between :startDate and :endDate")
+                        "from tickets t\n" +
+                        "         join film_screenings fs on fs.id = t.film_screening_id\n" +
+                        "where t.status = 'ACTIVE' and fs.film_id = :film and fs.date between :startDate and :endDate")
                 .setParameter("startDate", startDate)
                 .setParameter("endDate", endDate)
                 .setParameter("film", filmId)
