@@ -30,12 +30,7 @@ public class NotificationManagerImpl implements NotificationManager {
         log.info("Event: {} type: {}", event, eventType.getSimpleName());
         Set<Observer> observersByType = this.observers.get(eventType);
         if (observersByType != null)
-            observersByType.stream()
-                    .peek((x)->log.info("Observer: {}", x))
-                    .parallel()
-                    .forEach(x->x.notify(event, eventType));
-        event.reportInfo().entrySet().stream()
-                .parallel()
-                .forEach(x->reportService.notifyUser(x.getValue(), x.getKey()));
+            observersByType.forEach(x->x.notify(event, eventType));
+        event.reportInfo().forEach((key, value) -> reportService.notifyUser(value, key));
     }
 }

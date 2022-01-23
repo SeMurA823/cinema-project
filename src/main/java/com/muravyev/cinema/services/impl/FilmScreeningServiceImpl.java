@@ -132,9 +132,7 @@ public class FilmScreeningServiceImpl implements FilmScreeningService, Observer,
         screenings.forEach(x -> x.setEntityStatus(status));
         screeningRepository.saveAll(screenings);
         if (status.equals(EntityStatus.NOT_ACTIVE))
-            screenings.stream()
-                    .parallel()
-                    .forEach(x -> notify(new CancelScreeningEvent(x), CancelScreeningEvent.class));
+            screenings.forEach(x -> notify(new CancelScreeningEvent(x), CancelScreeningEvent.class));
     }
 
     @Override
@@ -154,7 +152,6 @@ public class FilmScreeningServiceImpl implements FilmScreeningService, Observer,
     private void cancelScreenings(Film film) {
         Date now = new Date();
         screeningRepository.streamAllByFilmAndDateAfterAndEntityStatus(film, now, EntityStatus.ACTIVE)
-                .parallel()
                 .peek(screening -> screening.setEntityStatus(EntityStatus.NOT_ACTIVE))
                 .peek(screeningRepository::save)
                 .forEach(screening -> notificationManager.notify(new CancelScreeningEvent(screening),
@@ -166,7 +163,6 @@ public class FilmScreeningServiceImpl implements FilmScreeningService, Observer,
     private void cancelScreenings(Hall hall) {
         Date now = new Date();
         screeningRepository.streamAllByHallAndDateAfterAndEntityStatus(hall, now, EntityStatus.ACTIVE)
-                .parallel()
                 .peek(screening -> screening.setEntityStatus(EntityStatus.NOT_ACTIVE))
                 .peek(screeningRepository::save)
                 .forEach(screening -> notificationManager.notify(new CancelScreeningEvent(screening),

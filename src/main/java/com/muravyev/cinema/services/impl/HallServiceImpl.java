@@ -159,9 +159,7 @@ public class HallServiceImpl implements HallService, Observable {
     }
 
     private void notifyEditedStatusSeat(List<Seat> seats) {
-        seats.stream()
-                .parallel()
-                .forEach(x -> notificationManager.notify(new DisableSeatEvent(x),
+        seats.forEach(x -> notificationManager.notify(new DisableSeatEvent(x),
                         DisableSeatEvent.class));
     }
 

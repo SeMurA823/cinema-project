@@ -17,7 +17,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     public double getOccupancyScreenings(long filmId, Date start, Date end) {
-        return statisticsRepository.getOccupancyScreeningId(filmId, start, end).orElse(0.);
+        return statisticsRepository.getOccupancyFilm(filmId, start, end).orElse(0.);
     }
 
     @Override

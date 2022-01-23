@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface StatisticsRepository {
     List<CountryFilmCountStatObject> getStatisticsCountryFilm(Date startDate, Date endDate);
 
-    Optional<Double> getOccupancyScreeningId(long filmId, Date startDate, Date endDate);
+    Optional<Double> getOccupancyFilm(long filmId, Date startDate, Date endDate);
 
     Optional<Double> getAverageTicketsInPurchase(long filmId, Date startDate, Date endDate);
 

@@ -67,9 +67,7 @@ public class TicketServiceImpl implements TicketService, Observer, Observable {
         List<Ticket> tickets = ticketRepository.findAllByIdInAndEntityStatus(ids, EntityStatus.ACTIVE);
         if (tickets.size() != ids.size())
             throw new IllegalArgumentException("illegal tickets");
-        tickets.stream()
-                .parallel()
-                .forEach(this::disableTicket);
+        tickets.forEach(this::disableTicket);
     }
 
     @Override
@@ -90,16 +88,12 @@ public class TicketServiceImpl implements TicketService, Observer, Observable {
 
     private void returnTickets(Purchase purchase) {
         List<Ticket> tickets = ticketRepository.findAllByPurchaseAndEntityStatus(purchase, EntityStatus.ACTIVE);
-        tickets.stream()
-                .parallel()
-                .forEach(this::disableTicket);
+        tickets.forEach(this::disableTicket);
     }
 
     private void returnTickets(Seat seat) {
         List<Ticket> tickets = ticketRepository.findAllBySeatAndEntityStatus(seat, EntityStatus.ACTIVE);
-        tickets.stream()
-                .parallel()
-                .forEach(this::disableTicket);
+        tickets.forEach(this::disableTicket);
     }
 
 

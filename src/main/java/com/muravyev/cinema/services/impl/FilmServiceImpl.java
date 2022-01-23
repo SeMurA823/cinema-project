@@ -119,9 +119,7 @@ public class FilmServiceImpl implements FilmService, Observable {
                 .map(x -> merge(filmDto, x))
                 .collect(Collectors.toList());
         List<Film> savedFilms = filmRepository.saveAll(allById);
-        savedFilms.stream()
-                .parallel()
-                .forEach(x->notificationManager.notify(new CancelFilmEvent(x), CancelFilmEvent.class));
+        savedFilms.forEach(x->notificationManager.notify(new CancelFilmEvent(x), CancelFilmEvent.class));
         return savedFilms;
     }
 }
