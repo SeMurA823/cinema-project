@@ -38,14 +38,14 @@ public class StatisticsRepositoryImpl implements StatisticsRepository {
 
     @Override
     public Optional<Double> getOccupancyFilm(long filmId, Date startDate, Date endDate) {
-        Double avg = (Double) manager.createNativeQuery("select sum(count) / sum(hall_size) " +
+        BigDecimal avg = (BigDecimal) manager.createNativeQuery("select sum(count) / sum(hall_size) " +
                         "from hall_occupancy_stat " +
                         "where film_id = :film and (purchase_date between :startDate and :endDate)")
                 .setParameter("startDate", startDate)
                 .setParameter("endDate", endDate)
                 .setParameter("film", filmId)
                 .getSingleResult();
-        return Optional.ofNullable(avg);
+        return Optional.ofNullable(avg.doubleValue());
     }
 
     @Override
