@@ -85,8 +85,7 @@ public class PurchaseServiceImpl implements PurchaseService, Observer, Observabl
         if (savedPurchases.size() != purchases.size())
             throw new IllegalArgumentException("invalid purchases");
 
-        savedPurchases.stream()
-                .parallel()
+        savedPurchases
                 .forEach(x -> notificationManager.notify(new ReturnPurchaseEvent(Map.of(x.getUser().getId(),
                         messageSource.getMessage("purchase.canceled",
                                 new Object[]{x.getId()},
