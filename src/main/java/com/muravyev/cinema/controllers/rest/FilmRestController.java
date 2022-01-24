@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -58,7 +59,7 @@ public class FilmRestController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
-    public ResponseEntity<?> createFilms(@RequestBody FilmDto filmAddingDto) {
+    public ResponseEntity<?> createFilms(@RequestBody @Valid FilmDto filmAddingDto) {
         return ResponseEntity.ok(filmService.addFilm(filmAddingDto));
     }
 
@@ -82,13 +83,13 @@ public class FilmRestController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{film}")
-    public ResponseEntity<?> setFilm(@PathVariable("film") long id, @RequestBody FilmDto filmDto) {
+    public ResponseEntity<?> setFilm(@PathVariable("film") long id, @RequestBody @Valid FilmDto filmDto) {
         return ResponseEntity.ok(filmService.setFilms(List.of(id), filmDto).get(0));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<?> setFilms(@RequestParam("id") List<Long> id, @RequestBody FilmDto filmDto) {
+    public ResponseEntity<?> setFilms(@RequestParam("id") List<Long> id, @RequestBody @Valid FilmDto filmDto) {
         return ResponseEntity.ok(filmService.setFilms(id, filmDto));
     }
 

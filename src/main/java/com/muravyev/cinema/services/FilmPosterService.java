@@ -16,6 +16,4 @@ public interface FilmPosterService {
     List<FilmPoster> getPosters(Iterable<Long> id);
 
     Page<FilmPoster> getPosters(long filmId, Pageable pageable);
-
-    FilmPoster updatePoster(long posterId, PosterDto posterDto);
 }

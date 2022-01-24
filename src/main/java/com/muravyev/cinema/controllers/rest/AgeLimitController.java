@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Log4j2
@@ -41,19 +42,19 @@ public class AgeLimitController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{ageLimit}")
-    public ResponseEntity<?> setAgeLimit(@PathVariable("ageLimit") String ageLimit, @RequestBody AgeLimitDto ageLimitDto) {
+    public ResponseEntity<?> setAgeLimit(@PathVariable("ageLimit") String ageLimit, @RequestBody @Valid AgeLimitDto ageLimitDto) {
         return ResponseEntity.ok(limitService.setAgeLimits(List.of(ageLimit), ageLimitDto).get(0));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<?> setAgeLimits(@RequestParam("id") List<String> id, @RequestBody AgeLimitDto ageLimitDto) {
+    public ResponseEntity<?> setAgeLimits(@RequestParam("id") List<String> id, @RequestBody @Valid AgeLimitDto ageLimitDto) {
         return ResponseEntity.ok(limitService.setAgeLimits(id, ageLimitDto));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
-    public ResponseEntity<?> addAgeLimit(@RequestBody AgeLimitDto ageLimitDto) {
+    public ResponseEntity<?> addAgeLimit(@RequestBody @Valid AgeLimitDto ageLimitDto) {
         return setAgeLimit(ageLimitDto.getName(), ageLimitDto);
     }
 

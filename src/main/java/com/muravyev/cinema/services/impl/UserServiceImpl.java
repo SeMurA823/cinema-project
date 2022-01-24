@@ -7,6 +7,7 @@ import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.roles.Role;
 import com.muravyev.cinema.entities.users.User;
 import com.muravyev.cinema.entities.users.UserStatus;
+import com.muravyev.cinema.repo.ClientSessionRepository;
 import com.muravyev.cinema.repo.UserRepository;
 import com.muravyev.cinema.services.RoleService;
 import com.muravyev.cinema.services.UserService;
@@ -19,6 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
@@ -29,8 +31,14 @@ import java.util.Set;
 @Log4j2
 public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
+    private ClientSessionRepository sessionRepository;
     private PasswordEncoder passwordEncoder;
     private RoleService roleService;
+
+    @Autowired
+    public void setSessionRepository(ClientSessionRepository sessionRepository) {
+        this.sessionRepository = sessionRepository;
+    }
 
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
@@ -85,8 +93,10 @@ public class UserServiceImpl implements UserService {
         return login(loginDto.getUsername(), loginDto.getPassword());
     }
 
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public User editPassword(String newPassword, User user) {
+        sessionRepository.disableAllSessionsByUser(user);
         log.info("User ({}) is editing password {}", user.getUsername(), newPassword);
         user.setPassword(passwordEncoder.encode(newPassword));
         log.info("Hashed password {}", user.getPassword());

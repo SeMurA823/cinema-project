@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -41,14 +42,14 @@ public class FilmMakerController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestBody FilmMakerDto filmMakerDto) {
+    public ResponseEntity<?> create(@RequestBody @Valid FilmMakerDto filmMakerDto) {
         FilmMaker maker = makerService.addFilmMaker(filmMakerDto);
         return ResponseEntity.ok(maker);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/relate")
-    public ResponseEntity<?> relate(@RequestBody FilmMakerPostDto postDto) {
+    public ResponseEntity<?> relate(@RequestBody @Valid FilmMakerPostDto postDto) {
         FilmMakerPost post = makerService.setFilmMakerPost(postDto);
         return ResponseEntity.ok(post);
     }

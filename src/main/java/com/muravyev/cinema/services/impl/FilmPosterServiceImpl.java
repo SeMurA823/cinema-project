@@ -109,12 +109,4 @@ public class FilmPosterServiceImpl implements FilmPosterService {
     public Page<FilmPoster> getPosters(long filmId, Pageable pageable) {
         return posterRepository.findAllByFilmId(filmId, pageable);
     }
-
-    @Override
-    @Transactional
-    public FilmPoster updatePoster(long posterId, PosterDto posterDto) {
-        FilmPoster poster = posterRepository.findById(posterId)
-                .orElseThrow(EntityNotFoundException::new);
-        return save(poster, posterDto.getFileBase64(), poster.getFilename());
-    }
 }
