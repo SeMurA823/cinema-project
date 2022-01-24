@@ -1,5 +1,23 @@
 # Cinema project
 
+
+##DEMO
+
+**CLIENT**
+[cinemaclient.eastus.cloudapp.azure.com](http://cinemaclient.eastus.cloudapp.azure.com/)
+
+**ADMIN**
+[cinemaclient.eastus.cloudapp.azure.com:8080](http://cinemaclient.eastus.cloudapp.azure.com:8080/)
+
+**API**
+[http://cinemaapi.eastus.cloudapp.azure.com](http://cinemaapi.eastus.cloudapp.azure.com)
+
+##Presentation
+
+[Download](./pres.pdf)
+
+##Other repositories 
+
 [ADMIN-UI](https://github.com/SeMurA823/cinema-ui-admin)
 
 [CLIENT-UI](https://github.com/SeMurA823/cinema-ui)
@@ -23,8 +41,7 @@ request body:
    ```json
 {
   "username": "+12345678910",
-  "password": "123456",
-  "rememberMe": true
+  "password": "123456"
 } 
    ```
 
