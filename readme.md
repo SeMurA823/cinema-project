@@ -1,7 +1,7 @@
 # Cinema project
 
 
-##DEMO
+## DEMO
 
 **CLIENT**
 [cinemaclient.eastus.cloudapp.azure.com](http://cinemaclient.eastus.cloudapp.azure.com/)
@@ -12,11 +12,11 @@
 **API**
 [http://cinemaapi.eastus.cloudapp.azure.com](http://cinemaapi.eastus.cloudapp.azure.com)
 
-##Presentation
+## Presentation
 
 [Download](./pres.pdf)
 
-##Other repositories 
+## Other repositories 
 
 [ADMIN-UI](https://github.com/SeMurA823/cinema-ui-admin)
 
