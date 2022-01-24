@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -53,7 +54,7 @@ public class UserNotificationController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
-    public ResponseEntity<?> createNotification(@RequestBody NotificationFormDto notification) {
+    public ResponseEntity<?> createNotification(@RequestBody @Valid NotificationFormDto notification) {
         notificationService.notifyUser(notification.getMessage(), notification.getUser());
         return ResponseEntity.ok()
                 .build();

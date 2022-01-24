@@ -33,4 +33,9 @@ public class FilmPoster extends IdentityBaseEntity {
     public int hashCode() {
         return Objects.hash(getId(), filename);
     }
+
+    @Override
+    public boolean isActive() {
+        return super.isActive();
+    }
 }

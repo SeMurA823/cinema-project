@@ -11,10 +11,12 @@ import java.util.Date;
 @Data
 @MappedSuperclass
 public class BaseEntity {
+    @JsonIgnore
     @CreatedDate
     @Column(name = "insert_date")
     private Date created;
 
+    @JsonIgnore
     @LastModifiedDate
     @Column(name = "update_date")
     private Date updated;

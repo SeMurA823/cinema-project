@@ -10,6 +10,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @RestController
@@ -24,7 +26,8 @@ public class ReservationController {
 
     @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping("/create")
-    public ResponseEntity<?> createReserv(@RequestBody List<ReservationDto> reservationDtos, Authentication authentication) {
+    public ResponseEntity<?> createReserv(@RequestBody @Valid @NotEmpty List<ReservationDto> reservationDtos,
+                                          Authentication authentication) {
         List<Reservation> reservations = reservationService.createReservations(reservationDtos,
                 (User) authentication.getPrincipal());
         return ResponseEntity.ok(reservations);
@@ -33,7 +36,8 @@ public class ReservationController {
     @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping(value = "/mybooking/screenings", params = {"film"})
     public ResponseEntity<?> screenings(@RequestParam("film") long filmId, Authentication authentication) {
-        List<FilmScreening> screenings = reservationService.getFilmScreeningWhereMyBookings(filmId, (User) authentication.getPrincipal());
+        List<FilmScreening> screenings = reservationService.getFilmScreeningWhereMyBookings(filmId,
+                (User) authentication.getPrincipal());
         return ResponseEntity.ok(screenings);
     }
 

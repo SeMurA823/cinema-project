@@ -48,4 +48,5 @@ public class Country extends BaseEntity implements Persistable<String> {
     public boolean isNew() {
         return getCreated() == null;
     }
+
 }

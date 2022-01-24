@@ -1,11 +1,13 @@
 package com.muravyev.cinema.entities.notifications;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.muravyev.cinema.entities.IdentityBaseEntity;
 import com.muravyev.cinema.entities.users.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -33,5 +35,11 @@ public class UserNotification extends IdentityBaseEntity {
     @PostLoad
     private void checkViewed() {
         isViewed = notificationStatus.equals(NotificationStatus.VIEWED);
+    }
+
+    @JsonProperty("created")
+    @Override
+    public Date getCreated() {
+        return super.getCreated();
     }
 }

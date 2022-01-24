@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -50,7 +51,7 @@ public class CountryController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{id}")
-    public ResponseEntity<?> setCountry(@PathVariable("id") String code, @RequestBody CountryDto countryDto) {
+    public ResponseEntity<?> setCountry(@PathVariable("id") String code, @RequestBody @Valid CountryDto countryDto) {
         countryDto.setId(code);
         Country country = countryService.setCountries(List.of(code), countryDto).get(0);
         return ResponseEntity.ok(country);

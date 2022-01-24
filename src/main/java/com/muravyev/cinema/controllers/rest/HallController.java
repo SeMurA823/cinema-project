@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +34,7 @@ public class HallController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
-    public ResponseEntity<?> createHall(@RequestBody HallDto hallDto) {
+    public ResponseEntity<?> createHall(@RequestBody @Valid HallDto hallDto) {
         Hall hall = hallService.createHall(hallDto);
         return ResponseEntity.ok(hall);
     }
@@ -97,7 +98,7 @@ public class HallController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{id}")
-    public ResponseEntity<?> setHall(@PathVariable("id") long id, @RequestBody HallDto hallDto) {
+    public ResponseEntity<?> setHall(@PathVariable("id") long id, @RequestBody @Valid HallDto hallDto) {
         Hall hall = hallService.editHall(id, hallDto);
         return ResponseEntity.ok(hall);
     }

@@ -7,6 +7,7 @@ import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.IdentityBaseEntity;
 import com.muravyev.cinema.entities.roles.Role;
 import com.muravyev.cinema.entities.roles.UserRole;
+import com.muravyev.cinema.entities.session.ClientSessionEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -57,6 +58,10 @@ public class User extends IdentityBaseEntity implements UserDetails {
 
     @Column(name = "gender", nullable = false)
     private String gender;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<ClientSessionEntity> session;
 
     @Override
     @JsonIgnore

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -28,7 +29,7 @@ public class FilmPosterRestController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
-    public ResponseEntity<?> uploadPoster(@RequestBody PosterDto posterDto) {
+    public ResponseEntity<?> uploadPoster(@RequestBody @Valid PosterDto posterDto) {
         FilmPoster poster = posterService.createPoster(posterDto);
         return ResponseEntity.ok(poster);
     }
@@ -52,12 +53,6 @@ public class FilmPosterRestController {
     @GetMapping
     public ResponseEntity<?> getPosters(@PageableDefault Pageable pageable, @RequestParam("film") long filmId) {
         return ResponseEntity.ok(posterService.getPosters(filmId, pageable));
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/{id}")
-    public ResponseEntity<?> updatePoster(@PathVariable("id") long posterId, @RequestBody PosterDto posterDto) {
-        return ResponseEntity.ok(posterService.updatePoster(posterId, posterDto));
     }
 
 }

@@ -33,8 +33,11 @@ public class AgeLimit extends BaseEntity implements Persistable<String> {
         return name;
     }
 
+    @JsonIgnore
     @Override
     public boolean isNew() {
         return this.getCreated() == null;
     }
+
+
 }
