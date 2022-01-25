@@ -20,7 +20,7 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
-    public List<Country> getCountries(List<String> id) {
+    public List<Country> getAllCountries(List<String> id) {
         return countryRepository.findAllById(id);
     }
 
@@ -35,7 +35,7 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
-    public List<Country> setCountries(List<String> code, CountryDto countryDto) {
+    public List<Country> updateCountries(List<String> code, CountryDto countryDto) {
         List<Country> allById = countryRepository.findAllById(code);
         allById.forEach(x -> setCountry(countryDto, x));
         return countryRepository.saveAll(allById);

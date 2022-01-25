@@ -19,11 +19,11 @@ public interface HallService {
 
     void disableHall(long hallId);
 
-    Seat addSeat(long hallId, int row);
+    Seat createSeat(long hallId, int row);
 
-    List<Seat> addSeats(long hallId, int row, int size);
+    List<Seat> createSeats(long hallId, int row, int size);
 
-    void setUnUsedSeat(long hallId, int num, int row, boolean unused);
+    void setUnUsedStatusSeat(long hallId, int num, int row, boolean unused);
 
     Page<Hall> getAllHalls(Pageable pageable);
 
@@ -31,9 +31,9 @@ public interface HallService {
 
     Map<Integer, List<Seat>> getAllSeats(long hallId);
 
-    void setUnUsedSeats(long hallId, List<Long> seatIds, boolean b);
+    void setUnUsedStatusSeats(long hallId, List<Long> seatIds, boolean b);
 
     void deleteSeats(long hallId, List<Long> seatIds);
 
-    Page<Hall> getHalls(String search, Pageable pageable);
+    Page<Hall> getActiveHalls(String search, Pageable pageable);
 }

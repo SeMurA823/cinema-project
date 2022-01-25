@@ -4,7 +4,6 @@ import com.muravyev.cinema.entities.session.ClientSessionEntity;
 import com.muravyev.cinema.entities.users.User;
 import com.muravyev.cinema.repo.ClientSessionRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
@@ -32,7 +31,7 @@ public class ClientSessionServiceImpl implements ClientSessionService {
     }
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional
     public void disableAll(User user) {
         clientSessionRepository.disableAllSessionsByUser(user);
     }

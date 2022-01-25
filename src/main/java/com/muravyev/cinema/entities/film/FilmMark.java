@@ -26,6 +26,7 @@ public class FilmMark extends IdentityBaseEntity {
 
     private int mark;
 
-    public FilmMark() {}
+    public FilmMark() {
+    }
 
 }

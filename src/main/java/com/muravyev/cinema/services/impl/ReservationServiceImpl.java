@@ -18,7 +18,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
@@ -34,7 +33,7 @@ import java.util.stream.Collectors;
 @Log4j2
 public class ReservationServiceImpl implements ReservationService, Observer {
 
-    @Value("${app.reserve.expiration}")
+    @Value("${app.reserve.age}")
     private long reserveExpiration;
 
     private final ReservationRepository reservationRepository;
@@ -45,7 +44,7 @@ public class ReservationServiceImpl implements ReservationService, Observer {
     private final Map<Class<? extends Event<?>>, Consumer<Event<?>>> eventActions = new HashMap<>() {{
 
         put(CancelScreeningEvent.class, event -> cancelReservations(((CancelScreeningEvent) event).getValue()));
-        put(DisableSeatEvent.class, (event -> cancelReservations(((DisableSeatEvent)event).getValue())));
+        put(DisableSeatEvent.class, (event -> cancelReservations(((DisableSeatEvent) event).getValue())));
 
     }};
 
@@ -66,19 +65,12 @@ public class ReservationServiceImpl implements ReservationService, Observer {
     }
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional
     public List<Reservation> createReservations(List<ReservationDto> reservationDtos, User user) {
         List<Reservation> reservations = reservationDtos.stream()
                 .map(reservationDto -> toReservation(reservationDto, user))
                 .collect(Collectors.toList());
-
-        try {
-
-            return reservationRepository.saveAll(reservations);
-        } catch (Exception e) {
-            log.error(e);
-            throw new RuntimeException(e);
-        }
+        return reservationRepository.saveAll(reservations);
     }
 
     @Override
@@ -141,7 +133,7 @@ public class ReservationServiceImpl implements ReservationService, Observer {
         if (ticketRepository.existsBySeatAndFilmScreeningAndEntityStatus(seat, filmScreening, EntityStatus.ACTIVE))
             throw new IllegalArgumentException("This seat is busy");
         reservation.setSeat(seat);
-        Date autoExpiryDate = createExpiryDate();
+        Date autoExpiryDate = createExpirationDate();
         reservation.setExpiryDate(autoExpiryDate.before(filmScreening.getDate())
                 ? autoExpiryDate
                 : filmScreening.getDate());
@@ -150,7 +142,7 @@ public class ReservationServiceImpl implements ReservationService, Observer {
     }
 
 
-    private Date createExpiryDate() {
+    private Date createExpirationDate() {
         ZonedDateTime dateTime = ZonedDateTime.now().plusMinutes(reserveExpiration);
         return Date.from(dateTime.toInstant());
     }

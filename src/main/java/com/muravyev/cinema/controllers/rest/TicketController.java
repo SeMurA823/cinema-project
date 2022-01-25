@@ -49,7 +49,7 @@ public class TicketController {
     @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping("/{id}/cancel")
     public ResponseEntity<?> cancelTicket(@PathVariable("id") long id, Authentication authentication) {
-        ticketService.cancelTicket((User) authentication.getPrincipal(), id);
+        ticketService.returnTicket((User) authentication.getPrincipal(), id);
         return ResponseEntity.ok()
                 .build();
     }

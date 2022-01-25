@@ -11,7 +11,7 @@ public interface FilmPosterService {
 
     FilmPoster createPoster(PosterDto posterDto);
 
-    void delete(Iterable<Long> posterId);
+    void deletePosters(Iterable<Long> posterId);
 
     List<FilmPoster> getPosters(Iterable<Long> id);
 

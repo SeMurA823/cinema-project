@@ -108,9 +108,8 @@ public class PurchaseServiceImpl implements PurchaseService, Observer, Observabl
                 .peek(x -> x.setPurchase(purchase))
                 .collect(Collectors.toList());
         purchase.setTickets(collect);
-        Purchase savedPurchase = purchaseRepository.save(purchase);
         reservationRepository.saveAll(reservations);
-        return savedPurchase;
+        return purchaseRepository.save(purchase);
     }
 
     private Ticket createTicket(Reservation reservation) {

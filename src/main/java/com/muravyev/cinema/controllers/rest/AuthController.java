@@ -60,17 +60,16 @@ public class AuthController {
     @PostMapping(value = "/logout")
     public ResponseEntity<?> logout(@RequestHeader("Authorization") String authorizationHeader) {
         tokenManager.disable(authorizationHeader.substring(7));
-        return ResponseEntity
-                .ok()
-                .body("Successfully");
+        return ResponseEntity.ok()
+                .build();
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping(value = "/logout", params = {"all"})
     public ResponseEntity<?> logoutAll(Authentication authentication) {
         tokenManager.disableAll((User) authentication.getPrincipal());
-        return ResponseEntity
-                .ok("Successfully");
+        return ResponseEntity.ok()
+                .build();
     }
 
     @PostMapping(params = {"refresh"})

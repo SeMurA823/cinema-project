@@ -36,7 +36,7 @@ public interface FilmScreeningRepository extends JpaRepository<FilmScreening, Lo
             "GROUP BY f")
     Page<Film> findAllFilmsBetweenDates(@Param("start") Date start,
                                         @Param("end") Date end,
-                                        @Param("status")EntityStatus status,
+                                        @Param("status") EntityStatus status,
                                         Pageable pageable);
 
     List<FilmScreening> findAllByFilmIdAndDateBetween(Long filmId, Date start, Date end);

@@ -3,6 +3,7 @@ package com.muravyev.cinema.security.services.token;
 import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.session.ClientSessionEntity;
 import com.muravyev.cinema.repo.ClientSessionRepository;
+import com.muravyev.cinema.security.exceptions.IllegalSessionException;
 import com.muravyev.cinema.security.services.session.ClientSession;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 /**
@@ -23,31 +25,22 @@ import java.util.*;
 @Service
 public class AccessTokenService implements TokenService<ClientSession> {
     @Value("${token.access.age}")
-    private long maxAge;
-
-    @Value("${token.access.cookie}")
-    private String cookieKey;
+    private long maxAgeMinutes;
 
     @Value("${token.access.secret}")
     private String secretKey;
-
-    @Value("${app.cookie.domain}")
-    private String cookieDomain;
-
-    @Value("${app.cookie.path}")
-    private String cookiePath;
 
     @Autowired
     private ClientSessionRepository sessionRepository;
 
     @Override
     public Token createToken(ClientSession clientSession) {
-        return generateToken(clientSession.compact(), new Date(new Date().getTime() + this.maxAge));
+        return generateToken(clientSession.compact(), createExpirationDate());
     }
 
     @Override
     public Token refreshToken(String clientSession) {
-        return generateToken(clientSession, new Date(new Date().getTime() + this.maxAge));
+        return generateToken(clientSession, createExpirationDate());
     }
 
     @Override
@@ -55,7 +48,7 @@ public class AccessTokenService implements TokenService<ClientSession> {
         String sessionStr = extractAllClaims(token).getSubject();
         ClientSessionEntity session = sessionRepository.findByIdAndEntityStatus(UUID.fromString(sessionStr),
                         EntityStatus.ACTIVE)
-                .orElseThrow(() -> new IllegalArgumentException("Illegal session"));
+                .orElseThrow(IllegalSessionException::new);
         return session.getUser().getUsername();
     }
 
@@ -104,6 +97,10 @@ public class AccessTokenService implements TokenService<ClientSession> {
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
         return new AccessToken(compact, expiration, clientSession);
+    }
+
+    private Date createExpirationDate() {
+        return Date.from(ZonedDateTime.now().plusMinutes(maxAgeMinutes).toInstant());
     }
 
     private static class AccessToken implements Token {

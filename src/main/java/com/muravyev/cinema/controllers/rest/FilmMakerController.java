@@ -2,7 +2,6 @@ package com.muravyev.cinema.controllers.rest;
 
 import com.muravyev.cinema.dto.FilmMakerDto;
 import com.muravyev.cinema.dto.FilmMakerPostDto;
-import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.film.FilmMaker;
 import com.muravyev.cinema.entities.film.FilmMakerPost;
 import com.muravyev.cinema.services.FilmMakerService;
@@ -19,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping({"/api/filmmakers", "/api/admin/filmmakers"})
+@RequestMapping({"/api/filmmakers"})
 public class FilmMakerController {
     private final FilmMakerService makerService;
 
@@ -43,30 +42,21 @@ public class FilmMakerController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody @Valid FilmMakerDto filmMakerDto) {
-        FilmMaker maker = makerService.addFilmMaker(filmMakerDto);
+        FilmMaker maker = makerService.createFilmMaker(filmMakerDto);
         return ResponseEntity.ok(maker);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/relate")
     public ResponseEntity<?> relate(@RequestBody @Valid FilmMakerPostDto postDto) {
-        FilmMakerPost post = makerService.setFilmMakerPost(postDto);
+        FilmMakerPost post = makerService.uploadFilmMakerPost(postDto);
         return ResponseEntity.ok(post);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping(params = {"status", "id"})
-    public ResponseEntity<?> setStatusMakers(@RequestParam("id") Collection<Long> ids,
-                                             @RequestParam("status") EntityStatus status) {
-        makerService.setFilmMakersStatus(ids, status);
-        return ResponseEntity.ok()
-                .build();
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping(value = "/{maker}/disable", params = {"film"})
-    public ResponseEntity<?> disable(@PathVariable("maker") long makerId, @RequestParam("film") long filmId) {
-        makerService.disableFilmMakerPost(filmId, makerId);
+    @DeleteMapping(params = {"id"})
+    public ResponseEntity<?> setStatusMakers(@RequestParam("id") Collection<Long> ids) {
+        makerService.deleteFilmMakers(ids);
         return ResponseEntity.ok()
                 .build();
     }
@@ -81,7 +71,7 @@ public class FilmMakerController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{id}")
     public ResponseEntity<?> setFilmmaker(@PathVariable("id") long id, @RequestBody FilmMakerDto filmMakerDto) {
-        FilmMaker maker = makerService.setFilmMaker(id, filmMakerDto);
+        FilmMaker maker = makerService.uploadFilmMaker(id, filmMakerDto);
         return ResponseEntity.ok(maker);
     }
 
@@ -97,7 +87,7 @@ public class FilmMakerController {
 
     @GetMapping
     public ResponseEntity<?> getPosts(@RequestParam("film") long filmId) {
-        Map<String, List<FilmMaker>> filmMakers = makerService.getFilmMakers(filmId);
+        Map<String, List<FilmMaker>> filmMakers = makerService.getFilmMakersPostMap(filmId);
         return ResponseEntity.ok(filmMakers);
     }
 

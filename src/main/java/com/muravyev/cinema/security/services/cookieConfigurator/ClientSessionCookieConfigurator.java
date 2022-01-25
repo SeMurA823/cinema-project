@@ -18,7 +18,7 @@ public class ClientSessionCookieConfigurator implements CookieConfigurator<Clien
     private String cookieDomain;
 
     @Override
-    public String configureSession(ClientSession clientSession) {
+    public String configureSessionCookie(ClientSession clientSession) {
         return ResponseCookie.from(cookieName, clientSession.compact())
                 .maxAge(-1)
                 .httpOnly(true)

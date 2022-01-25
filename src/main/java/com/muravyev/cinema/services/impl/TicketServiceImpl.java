@@ -33,9 +33,8 @@ public class TicketServiceImpl implements TicketService, Observer, Observable {
 
 
     private final Map<Class<? extends Event<?>>, Consumer<Event<?>>> eventActions = new HashMap<>() {{
-
         put(ReturnPurchaseEvent.class, (event -> returnTickets((Purchase) event.getValue())));
-        put(DisableSeatEvent.class, (event -> returnTickets(((DisableSeatEvent)event).getValue())));
+        put(DisableSeatEvent.class, (event -> returnTickets(((DisableSeatEvent) event).getValue())));
     }};
 
     public TicketServiceImpl(TicketRepository ticketRepository,
@@ -72,7 +71,7 @@ public class TicketServiceImpl implements TicketService, Observer, Observable {
 
     @Override
     @Transactional
-    public void cancelTicket(User user, long ticketId) {
+    public void returnTicket(User user, long ticketId) {
         Ticket ticket = ticketRepository.findByIdAndPurchaseUserAndEntityStatus(ticketId, user, EntityStatus.ACTIVE)
                 .orElseThrow(() -> new IllegalArgumentException("illegal ticket"));
         disableTicket(ticket);
@@ -105,12 +104,12 @@ public class TicketServiceImpl implements TicketService, Observer, Observable {
 //        log.info("User {}", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         Ticket savedTicket = ticketRepository.save(ticket);
         User user = ticket.getPurchase().getUser();
-        notificationManager.notify(new DisableTicketEvent(Map.of(user.getId(),
+        notificationManager.notify(new ReturnTicketEvent(Map.of(user.getId(),
                         messageSource.getMessage("ticket.canceled",
                                 new Object[]{ticket.getId()},
                                 Locale.getDefault())),
                         savedTicket),
-                DisableTicketEvent.class);
+                ReturnTicketEvent.class);
         return savedTicket;
     }
 

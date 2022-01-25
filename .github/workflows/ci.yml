@@ -26,15 +26,15 @@ jobs:
       - name: Push into DockerHub
         run: docker push ${{ secrets.USERNAME_HUB }}/cinema-back:latest
   deploy:
-    needs: [build]
+    needs: [ build ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Create SSH key file
         run: |
-            mkdir ~/.ssh
-            echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-            chmod 400 ~/.ssh/id_rsa
-            eval $(ssh-agent)
-            ssh-add ~/.ssh/id_rsa
-            ssh -o StrictHostKeyChecking=no -A azureuser@cinemaapi.eastus.cloudapp.azure.com 'sudo docker stop cinema-back; sudo docker rm cinema-back; sudo docker rmi ${{ secrets.USERNAME_HUB }}/cinema-back; sudo docker run -v /opt/files:/opt/files -d -p 80:8080 --name cinema-back ${{ secrets.USERNAME_HUB }}/cinema-back:latest;'
+          mkdir ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 400 ~/.ssh/id_rsa
+          eval $(ssh-agent)
+          ssh-add ~/.ssh/id_rsa
+          ssh -o StrictHostKeyChecking=no -A azureuser@cinemaapi.eastus.cloudapp.azure.com 'sudo docker stop cinema-back; sudo docker rm cinema-back; sudo docker rmi ${{ secrets.USERNAME_HUB }}/cinema-back; sudo docker run -v /opt/files:/opt/files -d -p 80:8080 --name cinema-back ${{ secrets.USERNAME_HUB }}/cinema-back:latest;'

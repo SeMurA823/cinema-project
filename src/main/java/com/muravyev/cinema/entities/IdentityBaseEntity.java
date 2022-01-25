@@ -11,7 +11,7 @@ import javax.persistence.MappedSuperclass;
 
 @EqualsAndHashCode(callSuper = true)
 @MappedSuperclass
-public class IdentityBaseEntity extends BaseEntity {
+public abstract class IdentityBaseEntity extends BaseEntity {
     @Id
     @Getter
     @GeneratedValue(strategy = GenerationType.IDENTITY)

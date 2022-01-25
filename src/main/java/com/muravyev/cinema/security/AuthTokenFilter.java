@@ -1,7 +1,6 @@
 package com.muravyev.cinema.security;
 
 import com.muravyev.cinema.security.services.token.AccessTokenService;
-import io.jsonwebtoken.JwtException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -58,8 +57,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext()
                         .setAuthentication(authentication);
             }
-        } catch (JwtException e) {
-            log.error(e.getLocalizedMessage());
+        } catch (Exception e) {
+            log.error(e);
         }
         filterChain.doFilter(request, response);
     }

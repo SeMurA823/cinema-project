@@ -21,7 +21,7 @@ public class StatisticsController {
     public ResponseEntity<?> averageTicketCount(@RequestParam("film") long filmId,
                                                 @RequestParam("start") Date start,
                                                 @RequestParam("end") Date end) {
-        return ResponseEntity.ok(statisticsService.getAverageTicketsInPurchase(filmId, start, end) );
+        return ResponseEntity.ok(statisticsService.getAverageTicketsInPurchase(filmId, start, end));
     }
 
     @GetMapping(value = "/soldtickets", params = {"lastmonth"})
@@ -38,8 +38,8 @@ public class StatisticsController {
 
     @GetMapping(value = "/amounttickets", params = {"film", "start", "end"})
     public ResponseEntity<?> countTickets(@RequestParam("film") long filmId,
-                                                 @RequestParam("start") Date start,
-                                                 @RequestParam("end") Date end) {
+                                          @RequestParam("start") Date start,
+                                          @RequestParam("end") Date end) {
         return ResponseEntity.ok(statisticsService.getCountTickets(filmId, start, end));
     }
 

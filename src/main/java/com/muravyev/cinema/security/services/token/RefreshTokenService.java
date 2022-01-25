@@ -9,7 +9,6 @@ import com.muravyev.cinema.security.exceptions.IllegalTokenException;
 import com.muravyev.cinema.security.services.session.ClientSession;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
@@ -32,7 +31,7 @@ public class RefreshTokenService implements TokenService<ClientSession> {
     }
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional
     public Token createToken(ClientSession session) {
         tokenRepository.disableAllByClientSession(UUID.fromString(session.compact()));
         RefreshTokenEntity refreshToken = new RefreshTokenEntity();
@@ -46,7 +45,7 @@ public class RefreshTokenService implements TokenService<ClientSession> {
 
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional
     public Token refreshToken(String token) {
         RefreshTokenEntity oldRefreshToken = tokenRepository.findByTokenAndEntityStatus(token, EntityStatus.ACTIVE)
                 .orElseThrow(IllegalTokenException::new);
@@ -120,9 +119,9 @@ public class RefreshTokenService implements TokenService<ClientSession> {
         }
 
         public RefreshToken(RefreshTokenEntity refreshToken) {
-            this.expiration = refreshToken.getExpiryDate();
-            this.compact = refreshToken.getToken();
-            this.subject = refreshToken.getClientSession().getId().toString();
+            this(refreshToken.getExpiryDate(),
+                    refreshToken.getToken(),
+                    refreshToken.getClientSession().getId().toString());
         }
 
         @Override

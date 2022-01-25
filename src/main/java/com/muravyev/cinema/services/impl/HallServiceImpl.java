@@ -16,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
@@ -74,8 +73,8 @@ public class HallServiceImpl implements HallService, Observable {
     }
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
-    public Seat addSeat(long hallId, int row) {
+    @Transactional
+    public Seat createSeat(long hallId, int row) {
         Hall hall = hallRepository.findById(hallId)
                 .orElseThrow(EntityNotFoundException::new);
         Seat seat = new Seat();
@@ -88,7 +87,7 @@ public class HallServiceImpl implements HallService, Observable {
     }
 
     @Override
-    public List<Seat> addSeats(long hallId, int row, int size) {
+    public List<Seat> createSeats(long hallId, int row, int size) {
         Hall hall = hallRepository.findById(hallId)
                 .orElseThrow(EntityNotFoundException::new);
         List<Seat> collect = IntStream.rangeClosed(1, size)
@@ -101,7 +100,7 @@ public class HallServiceImpl implements HallService, Observable {
     }
 
     @Override
-    public void setUnUsedSeat(long hallId, int num, int row, boolean unused) {
+    public void setUnUsedStatusSeat(long hallId, int num, int row, boolean unused) {
         seatRepository.findByRowAndNumberAndHallIdAndEntityStatus(row, num, hallId, EntityStatus.ACTIVE)
                 .ifPresent(seat -> {
                     seat.setUnUsed(unused);
@@ -140,12 +139,12 @@ public class HallServiceImpl implements HallService, Observable {
 
     @Override
     @Transactional
-    public void setUnUsedSeats(long hallId, List<Long> seatIds, boolean unUsed) {
+    public void setUnUsedStatusSeats(long hallId, List<Long> seatIds, boolean unUsed) {
         List<Seat> seats = seatRepository.findAllByHallIdAndIdIn(hallId, seatIds);
         if (seats.size() != seatIds.size())
             throw new IllegalArgumentException("Illegal seats");
         seats.forEach(seat -> seat.setUnUsed(unUsed));
-        notifyEditedStatusSeat(seatRepository.saveAll(seats));
+        notifyDisabledStatusSeat(seatRepository.saveAll(seats));
     }
 
     @Override
@@ -155,16 +154,16 @@ public class HallServiceImpl implements HallService, Observable {
         if (seats.size() != seatIds.size())
             throw new IllegalArgumentException("Illegal seats");
         seats.forEach(seat -> seat.setEntityStatus(EntityStatus.NOT_ACTIVE));
-        notifyEditedStatusSeat(seatRepository.saveAll(seats));
+        notifyDisabledStatusSeat(seatRepository.saveAll(seats));
     }
 
-    private void notifyEditedStatusSeat(List<Seat> seats) {
+    private void notifyDisabledStatusSeat(List<Seat> seats) {
         seats.forEach(x -> notificationManager.notify(new DisableSeatEvent(x),
-                        DisableSeatEvent.class));
+                DisableSeatEvent.class));
     }
 
     @Override
-    public Page<Hall> getHalls(String search, Pageable pageable) {
+    public Page<Hall> getActiveHalls(String search, Pageable pageable) {
         return hallRepository.findAllByNameContainsAndEntityStatus(search, EntityStatus.ACTIVE, pageable);
     }
 

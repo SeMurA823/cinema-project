@@ -2,7 +2,6 @@ package com.muravyev.cinema.services;
 
 import com.muravyev.cinema.dto.FilmMakerDto;
 import com.muravyev.cinema.dto.FilmMakerPostDto;
-import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.film.FilmMaker;
 import com.muravyev.cinema.entities.film.FilmMakerPost;
 import org.springframework.data.domain.Page;
@@ -13,11 +12,11 @@ import java.util.List;
 import java.util.Map;
 
 public interface FilmMakerService {
-    FilmMaker addFilmMaker(FilmMakerDto filmMakerDto);
+    FilmMaker createFilmMaker(FilmMakerDto filmMakerDto);
 
-    FilmMakerPost setFilmMakerPost(FilmMakerPostDto makerPostDto);
+    FilmMakerPost uploadFilmMakerPost(FilmMakerPostDto makerPostDto);
 
-    FilmMaker setFilmMaker(long id, FilmMakerDto makerDto);
+    FilmMaker uploadFilmMaker(long id, FilmMakerDto makerDto);
 
     void disableFilmMaker(long filmMakerId);
 
@@ -33,11 +32,11 @@ public interface FilmMakerService {
 
     Page<FilmMakerPost> getAllPosts(long filmMakerId, Pageable pageable);
 
-    Map<String, List<FilmMaker>> getFilmMakers(long filmId);
+    Map<String, List<FilmMaker>> getFilmMakersPostMap(long filmId);
 
     Page<FilmMaker> getAllFilmMakers(Pageable pageable);
 
-    void setFilmMakersStatus(Collection<Long> ids, EntityStatus status);
+    void deleteFilmMakers(Collection<Long> ids);
 
     Page<FilmMaker> getFilmMakers(String search, Pageable pageable);
 }

@@ -20,8 +20,8 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Override
     public void subscribe(Observer observer, Collection<Class<? extends Event<?>>> eventTypes) {
-        for (Class<? extends Event<?>> eventType: eventTypes) {
-            observers.computeIfAbsent(eventType, x->new HashSet<>()).add(observer);
+        for (Class<? extends Event<?>> eventType : eventTypes) {
+            observers.computeIfAbsent(eventType, x -> new HashSet<>()).add(observer);
         }
     }
 
@@ -30,7 +30,7 @@ public class NotificationManagerImpl implements NotificationManager {
         log.info("Event: {} type: {}", event, eventType.getSimpleName());
         Set<Observer> observersByType = this.observers.get(eventType);
         if (observersByType != null)
-            observersByType.forEach(x->x.notify(event, eventType));
+            observersByType.forEach(x -> x.notify(event, eventType));
         event.reportInfo().forEach((key, value) -> reportService.notifyUser(value, key));
     }
 }

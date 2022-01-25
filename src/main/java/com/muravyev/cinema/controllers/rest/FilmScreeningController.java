@@ -28,15 +28,15 @@ public class FilmScreeningController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(params = {"film", "page", "size", "anystatus"})
-    public ResponseEntity<?> screenings(@RequestParam("film") long filmId, @PageableDefault Pageable pageable) {
+    public ResponseEntity<?> getAllFilmScreenings(@RequestParam("film") long filmId, @PageableDefault Pageable pageable) {
         return ResponseEntity.ok(screeningService.getAllFilmScreening(filmId, pageable));
     }
 
     @GetMapping(params = {"film", "start", "end"})
-    public ResponseEntity<?> screenings(@RequestParam("film") long filmId,
-                                        @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date start,
-                                        @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date end) {
-        return ResponseEntity.ok(screeningService.getFilmScreeningsInDay(filmId, start, end));
+    public ResponseEntity<?> getFilmScreenings(@RequestParam("film") long filmId,
+                                               @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date start,
+                                               @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date end) {
+        return ResponseEntity.ok(screeningService.getFilmScreenings(filmId, start, end));
     }
 
     @GetMapping(params = {"hall", "start", "end"})
@@ -59,7 +59,7 @@ public class FilmScreeningController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
     public ResponseEntity<?> addScreening(@RequestBody @Valid FilmScreeningDto filmScreeningDto) {
-        FilmScreening filmScreening = screeningService.addFilmScreening(filmScreeningDto);
+        FilmScreening filmScreening = screeningService.createFilmScreening(filmScreeningDto);
         return ResponseEntity.ok(filmScreening);
     }
 
@@ -102,7 +102,7 @@ public class FilmScreeningController {
 
     @GetMapping("/films")
     public ResponseEntity<?> getFilmsInPeriod(@RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date start,
-                                              @RequestParam("end")  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date end,
+                                              @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date end,
                                               @PageableDefault Pageable pageable) {
         Page<Film> todayFilms = screeningService.getFilms(start, end, pageable);
         return ResponseEntity.ok(todayFilms);

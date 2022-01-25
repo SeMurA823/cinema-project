@@ -70,7 +70,7 @@ public class FilmScreeningServiceImpl implements FilmScreeningService, Observer,
     }
 
     @Override
-    public List<FilmScreening> getFilmScreeningsInDay(long filmId, Date start, Date end) {
+    public List<FilmScreening> getFilmScreenings(long filmId, Date start, Date end) {
         log.info("START {}", start);
         log.info("END {}", end);
         return screeningRepository.getActiveFilmScreeningsInDayInterval(filmId,
@@ -104,7 +104,7 @@ public class FilmScreeningServiceImpl implements FilmScreeningService, Observer,
 
     @Override
     @Transactional
-    public FilmScreening addFilmScreening(FilmScreeningDto filmScreeningDto) {
+    public FilmScreening createFilmScreening(FilmScreeningDto filmScreeningDto) {
         FilmScreening filmScreening = merge(filmScreeningDto, new FilmScreening());
         return screeningRepository.save(filmScreening);
     }
@@ -126,6 +126,7 @@ public class FilmScreeningServiceImpl implements FilmScreeningService, Observer,
     }
 
     @Override
+    @Transactional
     public void setStatusScreenings(Collection<Long> ids, EntityStatus status) {
         List<FilmScreening> screenings =
                 screeningRepository.findAllByIdInAndEntityStatusAndDateAfter(ids, EntityStatus.ACTIVE, new Date());

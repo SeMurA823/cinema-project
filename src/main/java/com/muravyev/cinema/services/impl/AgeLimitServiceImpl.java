@@ -23,7 +23,7 @@ public class AgeLimitServiceImpl implements AgeLimitService {
     @Transactional
     public List<AgeLimit> setAgeLimits(List<String> ageLimitId, AgeLimitDto ageLimitDto) {
         List<AgeLimit> allById = ageLimitRepository.findAllById(ageLimitId);
-        allById.forEach(x -> setLimit(ageLimitDto, x));
+        allById.forEach(x -> updateLimit(ageLimitDto, x));
         return ageLimitRepository.saveAll(allById);
     }
 
@@ -33,10 +33,10 @@ public class AgeLimitServiceImpl implements AgeLimitService {
     }
 
     private AgeLimit createLimit(AgeLimitDto ageLimitDto) {
-        return setLimit(ageLimitDto, new AgeLimit());
+        return updateLimit(ageLimitDto, new AgeLimit());
     }
 
-    private AgeLimit setLimit(AgeLimitDto ageLimitDto, AgeLimit ageLimit) {
+    private AgeLimit updateLimit(AgeLimitDto ageLimitDto, AgeLimit ageLimit) {
         ageLimit.setStartAge(ageLimitDto.getStartAge());
         ageLimit.setName(ageLimitDto.getName());
         ageLimit.setDescription(ageLimitDto.getDescription());

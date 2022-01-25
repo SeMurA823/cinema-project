@@ -20,7 +20,7 @@ public class RefreshTokenCookieConfigurator implements CookieConfigurator<Token>
     private String cookieDomain;
 
     @Override
-    public String configureSession(Token token) {
+    public String configureSessionCookie(Token token) {
         return ResponseCookie.from(cookieName, token.compact())
                 .maxAge(-1)
                 .httpOnly(true)

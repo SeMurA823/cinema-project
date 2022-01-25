@@ -15,7 +15,7 @@ public interface TicketService {
 
     void cancelTickets(Collection<Long> ids);
 
-    void cancelTicket(User user, long ticketId);
+    void returnTicket(User user, long ticketId);
 
     Page<Ticket> getTickets(User user, Pageable pageable);
 }

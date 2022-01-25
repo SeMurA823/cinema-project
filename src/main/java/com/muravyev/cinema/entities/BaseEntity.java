@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Data
 @MappedSuperclass
-public class BaseEntity {
+public abstract class BaseEntity {
     @JsonIgnore
     @CreatedDate
     @Column(name = "insert_date")

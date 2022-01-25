@@ -10,6 +10,7 @@ import java.util.Optional;
 
 public interface FilmMakerRepository extends JpaRepository<FilmMaker, Long> {
     Optional<FilmMaker> findByIdAndEntityStatus(Long id, EntityStatus entityStatus);
+
     Page<FilmMaker> findAllByFirstNameContainsOrLastNameContainsAndEntityStatus(String firstName,
                                                                                 String lastName,
                                                                                 EntityStatus entityStatus,

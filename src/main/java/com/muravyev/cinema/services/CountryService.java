@@ -8,14 +8,14 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface CountryService {
-    List<Country> getCountries(List<String> id);
+    List<Country> getAllCountries(List<String> id);
 
     Page<Country> getAllCountries(Pageable pageable);
 
 
     List<Country> getAllCountries();
 
-    List<Country> setCountries(List<String> code, CountryDto countryDto);
+    List<Country> updateCountries(List<String> code, CountryDto countryDto);
 
     Country createCountry(CountryDto countryDto);
 
