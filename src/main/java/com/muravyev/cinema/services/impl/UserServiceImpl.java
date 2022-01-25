@@ -22,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -80,10 +81,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User login(String username, String password) {
         User user = userRepository.findByUsernameAndEntityStatusAndUserStatus(username, EntityStatus.ACTIVE, UserStatus.ACTIVE)
-                .orElseThrow(() -> new UsernameNotFoundException("User '" + username + "' not found"));
+                .orElseThrow(EntityNotFoundException::new);
         log.info(": {}", passwordEncoder.matches(password, user.getPassword()));
         if (!passwordEncoder.matches(password, user.getPassword()))
-            throw new AuthenticationServiceException("Password is illegal");
+            throw new IllegalArgumentException("Password is illegal");
         return user;
     }
 

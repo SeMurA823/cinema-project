@@ -5,6 +5,7 @@ import com.muravyev.cinema.entities.hall.Seat;
 import com.muravyev.cinema.entities.payment.Purchase;
 import com.muravyev.cinema.entities.payment.Ticket;
 import com.muravyev.cinema.entities.payment.TicketRefund;
+import com.muravyev.cinema.entities.screening.FilmScreening;
 import com.muravyev.cinema.entities.users.User;
 import com.muravyev.cinema.events.Observable;
 import com.muravyev.cinema.events.Observer;
@@ -13,18 +14,24 @@ import com.muravyev.cinema.repo.TicketRepository;
 import com.muravyev.cinema.services.TicketService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.function.Consumer;
 
 @Log4j2
 @Service
 public class TicketServiceImpl implements TicketService, Observer, Observable {
+
+    @Value("${app.refund.limit-time}")
+    private long limitReturnTicketDays;
 
     private final TicketRepository ticketRepository;
     private final MessageSource messageSource;
@@ -74,6 +81,10 @@ public class TicketServiceImpl implements TicketService, Observer, Observable {
     public void returnTicket(User user, long ticketId) {
         Ticket ticket = ticketRepository.findByIdAndPurchaseUserAndEntityStatus(ticketId, user, EntityStatus.ACTIVE)
                 .orElseThrow(() -> new IllegalArgumentException("illegal ticket"));
+        FilmScreening filmScreening = ticket.getFilmScreening();
+        Instant limit = ZonedDateTime.now().plusDays(limitReturnTicketDays).toInstant();
+        if (filmScreening.getDate().after(Date.from(limit)))
+            throw new IllegalArgumentException("Refund is not possible");
         disableTicket(ticket);
     }
 
