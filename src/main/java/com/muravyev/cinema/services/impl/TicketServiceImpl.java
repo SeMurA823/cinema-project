@@ -83,7 +83,7 @@ public class TicketServiceImpl implements TicketService, Observer, Observable {
                 .orElseThrow(() -> new IllegalArgumentException("illegal ticket"));
         FilmScreening filmScreening = ticket.getFilmScreening();
         Instant limit = ZonedDateTime.now().plusDays(limitReturnTicketDays).toInstant();
-        if (filmScreening.getDate().after(Date.from(limit)))
+        if (filmScreening.getDate().before(Date.from(limit)))
             throw new IllegalArgumentException("Refund is not possible");
         disableTicket(ticket);
     }
