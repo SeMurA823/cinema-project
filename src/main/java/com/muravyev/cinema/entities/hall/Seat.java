@@ -35,7 +35,8 @@ public class Seat extends IdentityBaseEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Seat seat = (Seat) o;
-        return row == seat.row && number == seat.number && unUsed == seat.unUsed && Objects.equals(getId(), seat.getId()) && Objects.equals(hall, seat.hall);
+        return row == seat.row && number == seat.number && unUsed == seat.unUsed
+                && Objects.equals(getId(), seat.getId()) && Objects.equals(hall, seat.hall);
     }
 
     @Override

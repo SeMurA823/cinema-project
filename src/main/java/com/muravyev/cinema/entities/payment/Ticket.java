@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -43,5 +44,24 @@ public class Ticket extends IdentityBaseEntity {
     @PostLoad
     private void checkExpired() {
         isExpired = filmScreening.getDate().before(new Date()) || !isActive();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Ticket)) return false;
+        if (!super.equals(o)) return false;
+        Ticket ticket = (Ticket) o;
+        return isExpired == ticket.isExpired
+                && Objects.equals(seat, ticket.seat)
+                && Objects.equals(price, ticket.price)
+                && Objects.equals(purchase, ticket.purchase)
+                && Objects.equals(filmScreening, ticket.filmScreening)
+                && Objects.equals(ticketRefund, ticket.ticketRefund);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), seat, price, purchase, filmScreening, ticketRefund, isExpired);
     }
 }

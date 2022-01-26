@@ -7,6 +7,7 @@ import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Subselect;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Immutable
@@ -32,4 +33,20 @@ public class FilmScreeningSeat {
     @Column(name = "status_seat")
     @Enumerated(EnumType.STRING)
     private SeatStatus seatStatus;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FilmScreeningSeat)) return false;
+        FilmScreeningSeat that = (FilmScreeningSeat) o;
+        return number == that.number && row == that.row
+                && Objects.equals(id, that.id)
+                && Objects.equals(screening, that.screening)
+                && seatStatus == that.seatStatus;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, number, row, screening, seatStatus);
+    }
 }

@@ -37,7 +37,7 @@ public class RefreshTokenService implements TokenService<Client> {
         RefreshTokenEntity refreshToken = new RefreshTokenEntity();
         refreshToken.setToken(generateTokenStr(session.getSubject()));
         refreshToken.setExpiryDate(generateExpiryDate());
-        refreshToken.setClientSession(sessionRepository.findByIdAndEntityStatus(UUID.fromString(session.compact()),
+        refreshToken.setClient(sessionRepository.findByIdAndEntityStatus(UUID.fromString(session.compact()),
                         EntityStatus.ACTIVE)
                 .orElseThrow(IllegalSessionException::new));
         return new RefreshToken(tokenRepository.save(refreshToken));
@@ -49,7 +49,7 @@ public class RefreshTokenService implements TokenService<Client> {
     public Token refreshToken(String token) {
         RefreshTokenEntity oldRefreshToken = tokenRepository.findByTokenAndEntityStatus(token, EntityStatus.ACTIVE)
                 .orElseThrow(IllegalTokenException::new);
-        if (oldRefreshToken.getClientSession().getEntityStatus() == EntityStatus.NOT_ACTIVE) {
+        if (oldRefreshToken.getClient().getEntityStatus() == EntityStatus.NOT_ACTIVE) {
             throw new IllegalTokenException();
         }
         RefreshTokenEntity refreshToken = refreshToken(oldRefreshToken);
@@ -73,7 +73,7 @@ public class RefreshTokenService implements TokenService<Client> {
         RefreshTokenEntity newRefreshToken = new RefreshTokenEntity();
         String username = extractUsername(refreshToken.getToken());
         newRefreshToken.setToken(generateTokenStr(username));
-        newRefreshToken.setClientSession(refreshToken.getClientSession());
+        newRefreshToken.setClient(refreshToken.getClient());
         newRefreshToken.setExpiryDate(generateExpiryDate());
         return newRefreshToken;
     }
@@ -89,7 +89,7 @@ public class RefreshTokenService implements TokenService<Client> {
     public String extractSubject(String token) {
         return tokenRepository.findByTokenAndEntityStatus(token, EntityStatus.ACTIVE)
                 .orElseThrow(IllegalTokenException::new)
-                .getClientSession().getId().toString();
+                .getClient().getId().toString();
     }
 
     private RefreshTokenEntity disableToken(RefreshTokenEntity refreshToken) {
@@ -121,7 +121,7 @@ public class RefreshTokenService implements TokenService<Client> {
         public RefreshToken(RefreshTokenEntity refreshToken) {
             this(refreshToken.getExpiryDate(),
                     refreshToken.getToken(),
-                    refreshToken.getClientSession().getId().toString());
+                    refreshToken.getClient().getId().toString());
         }
 
         @Override

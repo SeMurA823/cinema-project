@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -30,5 +31,20 @@ public class FilmMaker extends IdentityBaseEntity {
     @OneToMany(mappedBy = "filmMaker")
     private List<FilmMakerPost> postList;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FilmMaker)) return false;
+        if (!super.equals(o)) return false;
+        FilmMaker filmMaker = (FilmMaker) o;
+        return Objects.equals(firstName, filmMaker.firstName)
+                && Objects.equals(lastName, filmMaker.lastName)
+                && Objects.equals(patronymic, filmMaker.patronymic)
+                && Objects.equals(postList, filmMaker.postList);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), firstName, lastName, patronymic, postList);
+    }
 }

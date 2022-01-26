@@ -18,6 +18,6 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshTokenEntity
     Optional<RefreshTokenEntity> findByTokenAndEntityStatus(String token, EntityStatus entityStatus);
 
     @Modifying
-    @Query("update RefreshTokenEntity rt set rt.entityStatus = 'NOT_ACTIVE' where rt.clientSession.id = :cs and rt.entityStatus = 'ACTIVE'")
+    @Query("update RefreshTokenEntity rt set rt.entityStatus = 'NOT_ACTIVE' where rt.client.id = :cs and rt.entityStatus = 'ACTIVE'")
     void disableAllByClientSession(@Param("cs") UUID clientSession);
 }

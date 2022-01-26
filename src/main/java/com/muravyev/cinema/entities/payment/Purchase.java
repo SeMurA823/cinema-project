@@ -9,6 +9,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -33,5 +34,20 @@ public class Purchase extends IdentityBaseEntity {
     @Override
     public Date getCreated() {
         return super.getCreated();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Purchase)) return false;
+        if (!super.equals(o)) return false;
+        Purchase purchase = (Purchase) o;
+        return Objects.equals(user, purchase.user)
+                && Objects.equals(tickets, purchase.tickets);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), user, tickets);
     }
 }

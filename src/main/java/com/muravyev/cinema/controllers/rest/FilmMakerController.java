@@ -55,7 +55,7 @@ public class FilmMakerController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(params = {"id"})
-    public ResponseEntity<?> setStatusMakers(@RequestParam("id") Collection<Long> ids) {
+    public ResponseEntity<?> deleteFilmMakers(@RequestParam("id") Collection<Long> ids) {
         makerService.deleteFilmMakers(ids);
         return ResponseEntity.ok()
                 .build();
