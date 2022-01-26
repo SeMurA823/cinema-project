@@ -12,6 +12,8 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "ticket_refunds")
 @EntityListeners(AuditingEntityListener.class)
 public class TicketRefund extends IdentityBaseEntity {
