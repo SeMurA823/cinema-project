@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface RefreshTokenRepository extends JpaRepository<RefreshTokenEntity, Long> {
-    List<RefreshTokenEntity> findAllByClientSessionAndEntityStatus(ClientEntity clientSession, EntityStatus entityStatus);
+    List<RefreshTokenEntity> findAllByClientAndEntityStatus(ClientEntity clientSession, EntityStatus entityStatus);
 
     Optional<RefreshTokenEntity> findByTokenAndEntityStatus(String token, EntityStatus entityStatus);
 
