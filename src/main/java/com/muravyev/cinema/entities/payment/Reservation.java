@@ -12,6 +12,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -43,5 +44,23 @@ public class Reservation extends IdentityBaseEntity {
     private void checkExpired() {
         Date now = new Date();
         isExpired = expiryDate.before(now) || filmScreening.getDate().before(now);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Reservation)) return false;
+        if (!super.equals(o)) return false;
+        Reservation that = (Reservation) o;
+        return isExpired == that.isExpired
+                && Objects.equals(user, that.user)
+                && Objects.equals(seat, that.seat)
+                && Objects.equals(expiryDate, that.expiryDate)
+                && Objects.equals(filmScreening, that.filmScreening);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), user, seat, expiryDate, filmScreening, isExpired);
     }
 }

@@ -27,6 +27,7 @@ public interface FilmMakerPostRepository extends JpaRepository<FilmMakerPost, Lo
     Page<FilmMakerPost> findAllByFilmMakerIdAndEntityStatus(Long filmMakerId,
                                                             EntityStatus entityStatus,
                                                             Pageable pageable);
+
     @Modifying
     void deleteAllByFilmMakerIdAndFilmIdAndName(Long filmMakerId, Long filmId, String post);
 }

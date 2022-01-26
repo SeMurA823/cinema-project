@@ -4,7 +4,8 @@ import java.util.Map;
 
 public interface Event<T> {
     T getValue();
-    default Map<Long, String> reportInfo(){
+
+    default Map<Long, String> reportInfo() {
         return Map.of();
     }
 }

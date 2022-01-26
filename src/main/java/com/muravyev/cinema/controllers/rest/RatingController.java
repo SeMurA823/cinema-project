@@ -27,13 +27,13 @@ public class RatingController {
     }
 
     @PreAuthorize("hasRole('CUSTOMER')")
-    @GetMapping(value = "/mark",params = {"film"})
+    @GetMapping(value = "/mark", params = {"film"})
     public ResponseEntity<?> getMark(@RequestParam("film") long filmId, Authentication authentication) {
         return ResponseEntity.ok(ratingService.getMark(filmId, (User) authentication.getPrincipal()));
     }
 
     @PreAuthorize("hasRole('CUSTOMER')")
-    @DeleteMapping(value = "/mark",params = {"film"})
+    @DeleteMapping(value = "/mark", params = {"film"})
     public ResponseEntity<?> deleteMark(@RequestParam("film") long filmId, Authentication authentication) {
         ratingService.deleteMark(filmId, (User) authentication.getPrincipal());
         return ResponseEntity.ok()

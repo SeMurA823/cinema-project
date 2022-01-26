@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.muravyev.cinema.entities.IdentityBaseEntity;
 import com.muravyev.cinema.entities.film.Film;
 import com.muravyev.cinema.entities.hall.Hall;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,8 +14,7 @@ import java.util.Date;
 import java.util.Objects;
 
 @Entity
-@Getter
-@Setter
+@Data
 @Table(name = "film_screenings")
 public class FilmScreening extends IdentityBaseEntity {
     @ManyToOne

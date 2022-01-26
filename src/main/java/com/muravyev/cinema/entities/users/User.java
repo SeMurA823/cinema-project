@@ -7,7 +7,7 @@ import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.IdentityBaseEntity;
 import com.muravyev.cinema.entities.roles.Role;
 import com.muravyev.cinema.entities.roles.UserRole;
-import com.muravyev.cinema.entities.session.ClientSessionEntity;
+import com.muravyev.cinema.entities.session.ClientEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -61,7 +61,7 @@ public class User extends IdentityBaseEntity implements UserDetails {
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<ClientSessionEntity> session;
+    private List<ClientEntity> session;
 
     @Override
     @JsonIgnore

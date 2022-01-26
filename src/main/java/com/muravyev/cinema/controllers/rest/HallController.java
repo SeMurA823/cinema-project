@@ -43,7 +43,7 @@ public class HallController {
     @PostMapping(value = "{hall}/seats/create")
     public ResponseEntity<?> addSeat(@PathVariable("hall") long hallId,
                                      @RequestParam("row") int row) {
-        Seat seat = hallService.addSeat(hallId, row);
+        Seat seat = hallService.createSeat(hallId, row);
         return ResponseEntity.ok(seat);
     }
 
@@ -61,7 +61,7 @@ public class HallController {
     public ResponseEntity<?> setStatusSeats(@PathVariable("hall") long hallId,
                                             @RequestParam("id") List<Long> seatIds,
                                             @RequestParam("used") boolean used) {
-        hallService.setUnUsedSeats(hallId, seatIds, !used);
+        hallService.setUnUsedStatusSeats(hallId, seatIds, !used);
         return ResponseEntity.ok()
                 .build();
     }
@@ -71,7 +71,7 @@ public class HallController {
     public ResponseEntity<?> addSeats(@PathVariable("hall") long hallId,
                                       @RequestParam("row") int row,
                                       @RequestParam("size") int size) {
-        List<Seat> seats = hallService.addSeats(hallId, row, size);
+        List<Seat> seats = hallService.createSeats(hallId, row, size);
         return ResponseEntity.ok(seats);
     }
 
@@ -105,7 +105,7 @@ public class HallController {
 
     @GetMapping(params = "search")
     public ResponseEntity<?> getHall(@RequestParam("search") String search, @PageableDefault Pageable pageable) {
-        Page<Hall> halls = hallService.getHalls(search, pageable);
+        Page<Hall> halls = hallService.getActiveHalls(search, pageable);
         return ResponseEntity.ok(halls);
     }
 }

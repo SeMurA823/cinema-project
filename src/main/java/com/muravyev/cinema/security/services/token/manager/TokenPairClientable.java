@@ -1,12 +1,12 @@
 package com.muravyev.cinema.security.services.token.manager;
 
-import com.muravyev.cinema.security.services.session.ClientSession;
+import com.muravyev.cinema.security.services.session.Client;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public interface TokenPairClientable extends TokenPair {
-    ClientSession getClient();
+    Client getClient();
 
     @Override
     default Map<String, Object> result() {

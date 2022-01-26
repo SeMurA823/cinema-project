@@ -22,20 +22,21 @@ public class FilmPoster extends IdentityBaseEntity {
     private Film film;
 
     @Override
+    public boolean isActive() {
+        return super.isActive();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof FilmPoster)) return false;
+        if (!super.equals(o)) return false;
         FilmPoster that = (FilmPoster) o;
-        return Objects.equals(getId(), that.getId()) && Objects.equals(filename, that.filename) && Objects.equals(film, that.film);
+        return Objects.equals(filename, that.filename);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), filename);
-    }
-
-    @Override
-    public boolean isActive() {
-        return super.isActive();
+        return Objects.hash(super.hashCode(), filename);
     }
 }

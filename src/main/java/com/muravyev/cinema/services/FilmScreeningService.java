@@ -20,11 +20,11 @@ public interface FilmScreeningService {
 
     void deleteFilmScreenings(List<Long> id);
 
-    List<FilmScreening> getFilmScreeningsInDay(long filmId, Date start, Date end);
+    List<FilmScreening> getFilmScreenings(long filmId, Date start, Date end);
 
     FilmScreening setFilmScreening(long screeningId, FilmScreeningDto screeningDto);
 
-    FilmScreening addFilmScreening(FilmScreeningDto filmScreeningDto);
+    FilmScreening createFilmScreening(FilmScreeningDto filmScreeningDto);
 
     List<FilmScreeningSeat> getStatusSeats(long screeningId);
 

@@ -1,6 +1,5 @@
 # Cinema project
 
-
 ## DEMO
 
 **CLIENT**
@@ -16,7 +15,7 @@
 
 [Download](./pres.pdf)
 
-## Other repositories 
+## Other repositories
 
 [ADMIN-UI](https://github.com/SeMurA823/cinema-ui-admin)
 

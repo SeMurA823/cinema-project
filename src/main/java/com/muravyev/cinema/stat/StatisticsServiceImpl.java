@@ -1,5 +1,6 @@
 package com.muravyev.cinema.stat;
 
+import com.muravyev.cinema.repo.StatisticsRepository;
 import com.muravyev.cinema.stat.statobjects.AgeLimitFilmCountStatObject;
 import com.muravyev.cinema.stat.statobjects.CountryFilmCountStatObject;
 import org.springframework.stereotype.Service;

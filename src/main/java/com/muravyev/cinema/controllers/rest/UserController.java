@@ -36,7 +36,7 @@ public class UserController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PostMapping(value = "/edit",params = {"password"})
+    @PostMapping(value = "/edit", params = {"password"})
     public ResponseEntity<?> editPassword(@RequestBody String newPassword, Authentication authentication) {
         return ResponseEntity.ok(userService.editPassword(newPassword, (User) authentication.getPrincipal()));
     }
@@ -65,7 +65,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping(value = "/edit",params = {"status","id"})
+    @PostMapping(value = "/edit", params = {"status", "id"})
     public ResponseEntity<?> setStatus(@RequestParam("status") UserStatus status, @RequestParam("id") List<Long> ids) {
         userService.setUserStatus(status, ids);
         return ResponseEntity.ok()

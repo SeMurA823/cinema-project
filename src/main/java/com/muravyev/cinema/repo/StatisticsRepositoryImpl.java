@@ -1,4 +1,4 @@
-package com.muravyev.cinema.stat;
+package com.muravyev.cinema.repo;
 
 import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.stat.statobjects.AgeLimitFilmCountStatObject;

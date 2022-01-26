@@ -51,10 +51,10 @@ public class FilmPosterServiceImpl implements FilmPosterService {
         int end = meta.indexOf(";base64");
         String filename = getFilename(meta.substring(start, end));
         poster.setFilename(filename);
-        return save(poster, strings[1], filename);
+        return savePosterToFile(poster, strings[1], filename);
     }
 
-    private FilmPoster save(FilmPoster poster, String data, String filename) {
+    private FilmPoster savePosterToFile(FilmPoster poster, String data, String filename) {
         File defaultDir = new File(DEFAULT_PATH);
         if (!defaultDir.exists())
             defaultDir.mkdirs();
@@ -94,7 +94,7 @@ public class FilmPosterServiceImpl implements FilmPosterService {
 
     @Override
     @Transactional
-    public void delete(Iterable<Long> postersId) {
+    public void deletePosters(Iterable<Long> postersId) {
         posterRepository.findAllById(postersId).stream()
                 .peek(posterRepository::delete)
                 .forEach(poster -> this.deleteFile(poster.getFilename()));

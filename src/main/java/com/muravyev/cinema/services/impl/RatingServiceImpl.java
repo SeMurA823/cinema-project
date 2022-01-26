@@ -8,7 +8,6 @@ import com.muravyev.cinema.repo.FilmRepository;
 import com.muravyev.cinema.repo.RatingRepository;
 import com.muravyev.cinema.services.RatingService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
@@ -26,7 +25,7 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional
     public FilmMark setMark(int mark, long filmId, User user) {
         FilmMark filmMark = ratingRepository.findByFilmIdAndUserAndEntityStatus(filmId,
                         user,
@@ -64,7 +63,7 @@ public class RatingServiceImpl implements RatingService {
     }
 
 
-    private final static FilmMark EMPTY_MARK = new FilmMark(){
+    private final static FilmMark EMPTY_MARK = new FilmMark() {
         {
             super.setMark(0);
         }

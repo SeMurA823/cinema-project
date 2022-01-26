@@ -17,6 +17,7 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
     Optional<Seat> findByRowAndNumberAndHallIdAndEntityStatus(int row, int number, long hallId, EntityStatus status);
 
     List<Seat> findAllByHallIdAndIdIn(long hallId, Collection<Long> id);
+
     List<Seat> findAllByHallIdAndEntityStatus(Long hallId, EntityStatus status, Sort sort);
 
     void deleteSeatsByIdInAndHallId(Collection<Long> id, Long hallId);
@@ -30,8 +31,8 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
     @Modifying
     @Query("update Seat set entityStatus = :status where id in (:ids) and hall.id = :hallId")
     void setAllNotActiveEntityStatus(@Param("hallId") long hallId,
-                            @Param("ids") Collection<Long> ids,
-                            @Param("status") EntityStatus status);
+                                     @Param("ids") Collection<Long> ids,
+                                     @Param("status") EntityStatus status);
 
     @Query("select max(s.number) from Seat s where s.row = :row and s.hall = :hall and s.entityStatus = 'ACTIVE'")
     Optional<Integer> findLastSeatNumberInRow(@Param("row") int row, @Param("hall") Hall hall);

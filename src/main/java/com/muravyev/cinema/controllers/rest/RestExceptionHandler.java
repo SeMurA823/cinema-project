@@ -19,7 +19,7 @@ import java.util.Objects;
 @ControllerAdvice
 public class RestExceptionHandler {
 
-    @ExceptionHandler({EntityNotFoundException.class, IndexOutOfBoundsException.class})
+    @ExceptionHandler({EntityNotFoundException.class, IndexOutOfBoundsException.class, IllegalArgumentException.class})
     public ResponseEntity<?> handleNotFound(Exception e) {
         log.error(e);
         return ResponseEntity

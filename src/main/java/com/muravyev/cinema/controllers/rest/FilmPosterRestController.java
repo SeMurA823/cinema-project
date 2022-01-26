@@ -9,11 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityExistsException;
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping({"/api/posters", "/api/admin/posters"})
+@RequestMapping({"/api/posters"})
 public class FilmPosterRestController {
     private final FilmPosterService posterService;
 
@@ -23,7 +24,9 @@ public class FilmPosterRestController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getPoster(@PathVariable("id") long id) {
-        FilmPoster poster = posterService.getPosters(List.of(id)).get(0);
+        FilmPoster poster = posterService.getPosters(List.of(id)).stream()
+                .findFirst()
+                .orElseThrow(EntityExistsException::new);
         return ResponseEntity.ok(poster);
     }
 
@@ -37,7 +40,7 @@ public class FilmPosterRestController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("{poster}")
     public ResponseEntity<?> deletePoster(@PathVariable("poster") long posterId) {
-        posterService.delete(List.of(posterId));
+        posterService.deletePosters(List.of(posterId));
         return ResponseEntity.ok()
                 .build();
     }
@@ -45,11 +48,12 @@ public class FilmPosterRestController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(params = "id")
     public ResponseEntity<?> deletePosters(@RequestParam("id") List<Long> postersId) {
-        posterService.delete(postersId);
+        posterService.deletePosters(postersId);
         return ResponseEntity.ok()
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<?> getPosters(@PageableDefault Pageable pageable, @RequestParam("film") long filmId) {
         return ResponseEntity.ok(posterService.getPosters(filmId, pageable));

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "film_marks")
@@ -26,6 +27,22 @@ public class FilmMark extends IdentityBaseEntity {
 
     private int mark;
 
-    public FilmMark() {}
+    public FilmMark() {
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FilmMark)) return false;
+        if (!super.equals(o)) return false;
+        FilmMark filmMark = (FilmMark) o;
+        return mark == filmMark.mark
+                && Objects.equals(user, filmMark.user)
+                && Objects.equals(film, filmMark.film);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), user, film, mark);
+    }
 }

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -23,34 +24,37 @@ public class FilmRestController {
     }
 
     @GetMapping(value = "/premieres")
-    public ResponseEntity<?> premieres(@PageableDefault(sort = "localPremiere") Pageable pageable) {
+    public ResponseEntity<?> getPremieres(@PageableDefault(sort = "localPremiere") Pageable pageable) {
         Page<Film> premieres = filmService.getPremieres(pageable);
         return ResponseEntity.ok(premieres);
     }
 
     @GetMapping("/{film}")
-    public ResponseEntity<?> film(@PathVariable("film") long filmId) {
-        return ResponseEntity.ok(filmService.getFilms(List.of(filmId)).get(0));
+    public ResponseEntity<?> getActiveFilm(@PathVariable("film") long filmId) {
+        Film film = filmService.getActiveFilms(List.of(filmId)).stream()
+                .findFirst()
+                .orElseThrow(EntityNotFoundException::new);
+        return ResponseEntity.ok(film);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(value = "/{film}", params = {"anystatus"})
-    public ResponseEntity<?> filmAnyStatus(@PathVariable("film") long filmId) {
-        return ResponseEntity.ok(filmService.getFilmsAnyStatus(List.of(filmId)).get(0));
+    public ResponseEntity<?> getAllFilms(@PathVariable("film") long filmId) {
+        return ResponseEntity.ok(filmService.getAllFilms(List.of(filmId)).get(0));
     }
 
     @GetMapping(params = "id")
-    public ResponseEntity<?> getFilms(@RequestParam("id") List<Long> id) {
-        return ResponseEntity.ok(filmService.getFilms(id));
+    public ResponseEntity<?> getActiveFilms(@RequestParam("id") List<Long> id) {
+        return ResponseEntity.ok(filmService.getActiveFilms(id));
     }
 
     @GetMapping(params = {"id", "anystatus"})
     public ResponseEntity<?> getFilmsAnyStatus(@RequestParam("id") List<Long> id) {
-        return ResponseEntity.ok(filmService.getFilmsAnyStatus(id));
+        return ResponseEntity.ok(filmService.getAllFilms(id));
     }
 
     @GetMapping("/archive")
-    public ResponseEntity<?> archive(@PageableDefault(sort = "localPremiere") Pageable pageable) {
+    public ResponseEntity<?> getArchive(@PageableDefault(sort = "localPremiere") Pageable pageable) {
         Page<Film> archiveFilms = filmService.getArchiveFilms(pageable);
         return ResponseEntity.ok(archiveFilms);
     }
@@ -60,7 +64,7 @@ public class FilmRestController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
     public ResponseEntity<?> createFilms(@RequestBody @Valid FilmDto filmAddingDto) {
-        return ResponseEntity.ok(filmService.addFilm(filmAddingDto));
+        return ResponseEntity.ok(filmService.saveFilm(filmAddingDto));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -69,35 +73,34 @@ public class FilmRestController {
         return ResponseEntity.ok(filmService.disableFilm(filmId));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/{film}")
-    public ResponseEntity<?> deleteFilm(@PathVariable("film") long filmId) {
-        return ResponseEntity.ok(filmService.deleteFilms(List.of(filmId)).get(0));
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping
-    public ResponseEntity<?> deleteFilms(@RequestParam("id") List<Long> id) {
-        return ResponseEntity.ok(filmService.deleteFilms(id));
-    }
+//    @PreAuthorize("hasRole('ADMIN')")
+//    @DeleteMapping("/{film}")
+//    public ResponseEntity<?> deleteFilm(@PathVariable("film") long filmId) {
+//        return ResponseEntity.ok(filmService.deleteFilms(List.of(filmId)).get(0));
+//    }
+//
+//    @PreAuthorize("hasRole('ADMIN')")
+//    @DeleteMapping
+//    public ResponseEntity<?> deleteFilms(@RequestParam("id") List<Long> id) {
+//        return ResponseEntity.ok(filmService.deleteFilms(id));
+//    }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{film}")
-    public ResponseEntity<?> setFilm(@PathVariable("film") long id, @RequestBody @Valid FilmDto filmDto) {
-        return ResponseEntity.ok(filmService.setFilms(List.of(id), filmDto).get(0));
+    public ResponseEntity<?> updateFilm(@PathVariable("film") long id, @RequestBody @Valid FilmDto filmDto) {
+        return ResponseEntity.ok(filmService.updateFilms(id, filmDto));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<?> setFilms(@RequestParam("id") List<Long> id, @RequestBody @Valid FilmDto filmDto) {
-        return ResponseEntity.ok(filmService.setFilms(id, filmDto));
+    public ResponseEntity<?> updateFilm(@RequestParam("id") List<Long> id, @RequestBody @Valid FilmDto filmDto) {
+        return ResponseEntity.ok(filmService.updateFilms(id, filmDto));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
-    public ResponseEntity<?> getFilms(@PageableDefault Pageable pageable) {
+    public ResponseEntity<?> getAllFilms(@PageableDefault Pageable pageable) {
         return ResponseEntity.ok(filmService.getAllFilms(pageable));
     }
-
 
 }

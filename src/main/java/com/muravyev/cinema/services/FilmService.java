@@ -4,17 +4,18 @@ import com.muravyev.cinema.dto.FilmDto;
 import com.muravyev.cinema.entities.film.Film;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 public interface FilmService {
-    List<Film> getFilms(List<Long> id);
+    List<Film> getActiveFilms(List<Long> id);
 
-    List<Film> getFilmsAnyStatus(List<Long> id);
+    List<Film> getAllFilms(List<Long> id);
 
     Page<Film> getPremieres(Pageable pageable);
 
-    Film addFilm(FilmDto addingFilmDto);
+    Film saveFilm(FilmDto addingFilmDto);
 
     Page<Film> getArchiveFilms(Pageable pageable);
 
@@ -24,5 +25,8 @@ public interface FilmService {
 
     Page<Film> getAllFilms(Pageable pageable);
 
-    List<Film> setFilms(List<Long> filmId, FilmDto filmDto);
+    List<Film> updateFilms(List<Long> filmId, FilmDto filmDto);
+
+    @Transactional
+    Film updateFilms(long id, FilmDto filmDto);
 }

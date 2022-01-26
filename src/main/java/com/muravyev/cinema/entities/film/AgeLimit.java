@@ -8,6 +8,7 @@ import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -39,5 +40,18 @@ public class AgeLimit extends BaseEntity implements Persistable<String> {
         return this.getCreated() == null;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        AgeLimit ageLimit = (AgeLimit) o;
+        return startAge == ageLimit.startAge && Objects.equals(name, ageLimit.name)
+                && Objects.equals(description, ageLimit.description) && Objects.equals(films, ageLimit.films);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), name, description, startAge, films);
+    }
 }

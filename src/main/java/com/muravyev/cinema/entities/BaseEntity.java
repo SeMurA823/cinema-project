@@ -7,10 +7,11 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Objects;
 
 @Data
 @MappedSuperclass
-public class BaseEntity {
+public abstract class BaseEntity {
     @JsonIgnore
     @CreatedDate
     @Column(name = "insert_date")
@@ -41,5 +42,19 @@ public class BaseEntity {
 
     public boolean isActive() {
         return entityStatus == EntityStatus.ACTIVE;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BaseEntity that = (BaseEntity) o;
+        return Objects.equals(created, that.created) && Objects.equals(updated, that.updated)
+                && entityStatus == that.entityStatus;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(created, updated, entityStatus);
     }
 }

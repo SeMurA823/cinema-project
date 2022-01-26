@@ -48,13 +48,13 @@ public class FilmServiceImpl implements FilmService, Observable {
     }
 
     @Override
-    public List<Film> getFilms(List<Long> id) {
+    public List<Film> getActiveFilms(List<Long> id) {
         log.log(Level.DEBUG, "Getting film with id = {}", id);
         return filmRepository.findAllByIdInAndEntityStatus(id, EntityStatus.ACTIVE);
     }
 
     @Override
-    public List<Film> getFilmsAnyStatus(List<Long> id) {
+    public List<Film> getAllFilms(List<Long> id) {
         return filmRepository.findAllById(id);
     }
 
@@ -65,7 +65,7 @@ public class FilmServiceImpl implements FilmService, Observable {
     }
 
     @Override
-    public Film addFilm(FilmDto filmDto) {
+    public Film saveFilm(FilmDto filmDto) {
         Film film = merge(filmDto, new Film());
         return filmRepository.save(film);
     }
@@ -98,6 +98,7 @@ public class FilmServiceImpl implements FilmService, Observable {
     }
 
     @Override
+    @Transactional
     public Film disableFilm(long filmId) {
         Film film = filmRepository.findById(filmId)
                 .orElseThrow(EntityNotFoundException::new);
@@ -114,12 +115,22 @@ public class FilmServiceImpl implements FilmService, Observable {
 
     @Override
     @Transactional
-    public List<Film> setFilms(List<Long> id, FilmDto filmDto) {
+    public List<Film> updateFilms(List<Long> id, FilmDto filmDto) {
         List<Film> allById = filmRepository.findAllById(id).stream()
                 .map(x -> merge(filmDto, x))
                 .collect(Collectors.toList());
         List<Film> savedFilms = filmRepository.saveAll(allById);
-        savedFilms.forEach(x->notificationManager.notify(new CancelFilmEvent(x), CancelFilmEvent.class));
+        if (!filmDto.isActive())
+            savedFilms.forEach(film -> notificationManager.notify(new CancelFilmEvent(film), CancelFilmEvent.class));
         return savedFilms;
     }
+
+    @Override
+    @Transactional
+    public Film updateFilms(long id, FilmDto filmDto) {
+        return this.updateFilms(List.of(id), filmDto).stream()
+                .findFirst()
+                .orElseThrow(EntityNotFoundException::new);
+    }
+
 }
