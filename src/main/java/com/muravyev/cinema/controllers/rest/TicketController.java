@@ -40,9 +40,16 @@ public class TicketController {
     }
 
     @PreAuthorize("hasRole('CUSTOMER')")
-    @GetMapping("/mytickets")
+    @GetMapping(value = "/mytickets")
     public ResponseEntity<?> getTickets(@PageableDefault Pageable pageable, Authentication authentication) {
-        Page<Ticket> tickets = ticketService.getTickets((User) authentication.getPrincipal(), pageable);
+        Page<Ticket> tickets = ticketService.getAllActiveTickets((User) authentication.getPrincipal(), pageable);
+        return ResponseEntity.ok(tickets);
+    }
+
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @GetMapping(value = "/mytickets", params = {"all"})
+    public ResponseEntity<?> getAllTickets(@PageableDefault Pageable pageable, Authentication authentication) {
+        Page<Ticket> tickets = ticketService.getAllNotExpiredTickets((User) authentication.getPrincipal(), pageable);
         return ResponseEntity.ok(tickets);
     }
 

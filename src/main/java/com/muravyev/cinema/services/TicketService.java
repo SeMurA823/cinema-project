@@ -17,5 +17,7 @@ public interface TicketService {
 
     void returnTicket(User user, long ticketId);
 
-    Page<Ticket> getTickets(User user, Pageable pageable);
+    Page<Ticket> getAllActiveTickets(User user, Pageable pageable);
+
+    Page<Ticket> getAllNotExpiredTickets(User user, Pageable pageable);
 }

@@ -51,6 +51,10 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
                                                                                EntityStatus entityStatus,
                                                                                Pageable pageable);
 
+    Page<Ticket> findAllByPurchaseUserAndFilmScreeningDateAfter(User purchaseUser,
+                                                                Date filmScreeningDate,
+                                                                Pageable pageable);
+
     List<Ticket> findAllByPurchaseAndEntityStatus(Purchase purchase, EntityStatus entityStatus);
 
     boolean existsBySeatAndFilmScreeningAndEntityStatus(Seat seat, FilmScreening filmScreening, EntityStatus entityStatus);

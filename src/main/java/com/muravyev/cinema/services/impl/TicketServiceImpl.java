@@ -89,11 +89,16 @@ public class TicketServiceImpl implements TicketService, Observer, Observable {
     }
 
     @Override
-    public Page<Ticket> getTickets(User user, Pageable pageable) {
+    public Page<Ticket> getAllActiveTickets(User user, Pageable pageable) {
         return ticketRepository.findAllByPurchaseUserAndFilmScreeningDateAfterAndEntityStatus(user,
                 new Date(),
                 EntityStatus.ACTIVE,
                 pageable);
+    }
+
+    @Override
+    public Page<Ticket> getAllNotExpiredTickets(User user, Pageable pageable) {
+        return ticketRepository.findAllByPurchaseUserAndFilmScreeningDateAfter(user, new Date(), pageable);
     }
 
     private void returnTickets(Purchase purchase) {
