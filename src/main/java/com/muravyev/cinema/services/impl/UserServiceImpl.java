@@ -21,7 +21,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import javax.validation.ConstraintViolationException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -72,9 +74,13 @@ public class UserServiceImpl implements UserService {
         user.setBirthDate(registrationForm.getBirthDate());
         user.setPatronymic(registrationForm.getPatronymic());
         user.setGender(registrationForm.getGender());
-        user = userRepository.save(user);
-        user.setUserRoles(Set.of(roleService.setRole(user, Role.CUSTOMER)));
-        return user;
+        try {
+            User savedUser = userRepository.save(user);
+            savedUser.setUserRoles(Set.of(roleService.setRole(savedUser, Role.CUSTOMER)));
+            return savedUser;
+        } catch (ConstraintViolationException e) {
+            throw new EntityExistsException(e);
+        }
     }
 
     @Override
