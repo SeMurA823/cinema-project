@@ -2,11 +2,11 @@ package com.muravyev.cinema.security.services.token;
 
 import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.session.RefreshTokenEntity;
-import com.muravyev.cinema.repo.ClientSessionRepository;
+import com.muravyev.cinema.repo.ClientRepository;
 import com.muravyev.cinema.repo.RefreshTokenRepository;
 import com.muravyev.cinema.security.exceptions.IllegalSessionException;
 import com.muravyev.cinema.security.exceptions.IllegalTokenException;
-import com.muravyev.cinema.security.services.session.ClientSession;
+import com.muravyev.cinema.security.services.session.Client;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,23 +16,23 @@ import java.time.Duration;
 import java.util.*;
 
 @Service
-public class RefreshTokenService implements TokenService<ClientSession> {
+public class RefreshTokenService implements TokenService<Client> {
 
     @Value("${token.refresh.age}")
     private long maxAgeDays;
 
 
     private final RefreshTokenRepository tokenRepository;
-    private final ClientSessionRepository sessionRepository;
+    private final ClientRepository sessionRepository;
 
-    public RefreshTokenService(RefreshTokenRepository tokenRepository, ClientSessionRepository sessionRepository) {
+    public RefreshTokenService(RefreshTokenRepository tokenRepository, ClientRepository sessionRepository) {
         this.tokenRepository = tokenRepository;
         this.sessionRepository = sessionRepository;
     }
 
     @Override
     @Transactional
-    public Token createToken(ClientSession session) {
+    public Token createToken(Client session) {
         tokenRepository.disableAllByClientSession(UUID.fromString(session.compact()));
         RefreshTokenEntity refreshToken = new RefreshTokenEntity();
         refreshToken.setToken(generateTokenStr(session.getSubject()));

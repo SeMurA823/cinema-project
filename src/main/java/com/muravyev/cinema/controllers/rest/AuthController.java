@@ -3,7 +3,7 @@ package com.muravyev.cinema.controllers.rest;
 import com.muravyev.cinema.dto.LoginDto;
 import com.muravyev.cinema.dto.RegistrationDto;
 import com.muravyev.cinema.entities.users.User;
-import com.muravyev.cinema.security.services.cookieConfigurator.ClientSessionCookieConfigurator;
+import com.muravyev.cinema.security.services.cookieConfigurator.ClientCookieConfigurator;
 import com.muravyev.cinema.security.services.cookieConfigurator.RefreshTokenCookieConfigurator;
 import com.muravyev.cinema.security.services.token.manager.TokenManager;
 import com.muravyev.cinema.security.services.token.manager.TokenPair;
@@ -26,12 +26,12 @@ public class AuthController {
     private final UserService userService;
     private final TokenManager tokenManager;
     private final RefreshTokenCookieConfigurator tokenCookieConfigurator;
-    private final ClientSessionCookieConfigurator sessionCookieConfigurator;
+    private final ClientCookieConfigurator sessionCookieConfigurator;
 
     public AuthController(UserService userService,
                           TokenManager tokenManager,
                           RefreshTokenCookieConfigurator tokenCookieConfigurator,
-                          ClientSessionCookieConfigurator sessionCookieConfigurator) {
+                          ClientCookieConfigurator sessionCookieConfigurator) {
         this.userService = userService;
         this.tokenManager = tokenManager;
         this.tokenCookieConfigurator = tokenCookieConfigurator;

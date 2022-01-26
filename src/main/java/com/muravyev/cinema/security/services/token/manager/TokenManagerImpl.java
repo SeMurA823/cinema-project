@@ -1,8 +1,8 @@
 package com.muravyev.cinema.security.services.token.manager;
 
 import com.muravyev.cinema.entities.users.User;
-import com.muravyev.cinema.security.services.session.ClientSession;
-import com.muravyev.cinema.security.services.session.ClientSessionService;
+import com.muravyev.cinema.security.services.session.Client;
+import com.muravyev.cinema.security.services.session.ClientService;
 import com.muravyev.cinema.security.services.token.AccessTokenService;
 import com.muravyev.cinema.security.services.token.RefreshTokenService;
 import com.muravyev.cinema.security.services.token.Token;
@@ -13,23 +13,23 @@ import org.springframework.transaction.annotation.Transactional;
 public class TokenManagerImpl implements TokenManager {
     private final RefreshTokenService refreshTokenService;
     private final AccessTokenService accessTokenService;
-    private final ClientSessionService clientSessionService;
+    private final ClientService clientService;
 
     public TokenManagerImpl(RefreshTokenService refreshTokenService,
                             AccessTokenService accessTokenService,
-                            ClientSessionService clientSessionService) {
+                            ClientService clientService) {
         this.refreshTokenService = refreshTokenService;
         this.accessTokenService = accessTokenService;
-        this.clientSessionService = clientSessionService;
+        this.clientService = clientService;
     }
 
     @Override
     @Transactional
     public TokenPairClientable createTokenClientSession(User user) {
-        ClientSession session = clientSessionService.createSession(user);
+        Client session = clientService.createSession(user);
         Token refreshToken = refreshTokenService.createToken(session);
         Token accessToken = accessTokenService.createToken(session);
-        return new ClientSessionTokenPair(session, new SimpleTokenPair(accessToken, refreshToken));
+        return new ClientTokenPair(session, new SimpleTokenPair(accessToken, refreshToken));
     }
 
     @Override
@@ -41,12 +41,12 @@ public class TokenManagerImpl implements TokenManager {
 
     @Override
     public void disable(String accessTokenStr) {
-        clientSessionService.disableClient(accessTokenService.extractSubject(accessTokenStr));
+        clientService.disableClient(accessTokenService.extractSubject(accessTokenStr));
     }
 
     @Override
     public void disableAll(User user) {
-        clientSessionService.disableAll(user);
+        clientService.disableAll(user);
     }
 
 }

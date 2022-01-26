@@ -7,7 +7,7 @@ import com.muravyev.cinema.entities.EntityStatus;
 import com.muravyev.cinema.entities.roles.Role;
 import com.muravyev.cinema.entities.users.User;
 import com.muravyev.cinema.entities.users.UserStatus;
-import com.muravyev.cinema.repo.ClientSessionRepository;
+import com.muravyev.cinema.repo.ClientRepository;
 import com.muravyev.cinema.repo.UserRepository;
 import com.muravyev.cinema.services.RoleService;
 import com.muravyev.cinema.services.UserService;
@@ -15,7 +15,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,12 +30,12 @@ import java.util.Set;
 @Log4j2
 public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
-    private ClientSessionRepository sessionRepository;
+    private ClientRepository sessionRepository;
     private PasswordEncoder passwordEncoder;
     private RoleService roleService;
 
     @Autowired
-    public void setSessionRepository(ClientSessionRepository sessionRepository) {
+    public void setSessionRepository(ClientRepository sessionRepository) {
         this.sessionRepository = sessionRepository;
     }
 

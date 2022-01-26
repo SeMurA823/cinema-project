@@ -20,5 +20,5 @@ public class RefreshTokenEntity extends IdentityBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")
-    private ClientSessionEntity clientSession;
+    private ClientEntity clientSession;
 }

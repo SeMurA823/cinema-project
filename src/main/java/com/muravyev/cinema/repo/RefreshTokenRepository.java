@@ -1,7 +1,7 @@
 package com.muravyev.cinema.repo;
 
 import com.muravyev.cinema.entities.EntityStatus;
-import com.muravyev.cinema.entities.session.ClientSessionEntity;
+import com.muravyev.cinema.entities.session.ClientEntity;
 import com.muravyev.cinema.entities.session.RefreshTokenEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface RefreshTokenRepository extends JpaRepository<RefreshTokenEntity, Long> {
-    List<RefreshTokenEntity> findAllByClientSessionAndEntityStatus(ClientSessionEntity clientSession, EntityStatus entityStatus);
+    List<RefreshTokenEntity> findAllByClientSessionAndEntityStatus(ClientEntity clientSession, EntityStatus entityStatus);
 
     Optional<RefreshTokenEntity> findByTokenAndEntityStatus(String token, EntityStatus entityStatus);
 

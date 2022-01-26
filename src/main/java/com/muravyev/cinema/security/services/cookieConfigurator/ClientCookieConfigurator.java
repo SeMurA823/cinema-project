@@ -1,12 +1,12 @@
 package com.muravyev.cinema.security.services.cookieConfigurator;
 
-import com.muravyev.cinema.security.services.session.ClientSession;
+import com.muravyev.cinema.security.services.session.Client;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ClientSessionCookieConfigurator implements CookieConfigurator<ClientSession> {
+public class ClientCookieConfigurator implements CookieConfigurator<Client> {
 
     @Value("${session.client.cookie}")
     private String cookieName;
@@ -18,8 +18,8 @@ public class ClientSessionCookieConfigurator implements CookieConfigurator<Clien
     private String cookieDomain;
 
     @Override
-    public String configureSessionCookie(ClientSession clientSession) {
-        return ResponseCookie.from(cookieName, clientSession.compact())
+    public String configureSessionCookie(Client client) {
+        return ResponseCookie.from(cookieName, client.compact())
                 .maxAge(-1)
                 .httpOnly(true)
                 .path(cookiePath)
@@ -30,8 +30,8 @@ public class ClientSessionCookieConfigurator implements CookieConfigurator<Clien
     }
 
     @Override
-    public String configure(ClientSession clientSession) {
-        return ResponseCookie.from(cookieName, clientSession.compact())
+    public String configure(Client client) {
+        return ResponseCookie.from(cookieName, client.compact())
                 .maxAge(Integer.MAX_VALUE)
                 .httpOnly(true)
                 .path(cookiePath)

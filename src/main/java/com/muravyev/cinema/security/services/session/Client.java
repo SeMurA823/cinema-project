@@ -1,7 +1,6 @@
 package com.muravyev.cinema.security.services.session;
 
-public interface ClientSession {
+public interface Client {
     String compact();
-
     String getSubject();
 }

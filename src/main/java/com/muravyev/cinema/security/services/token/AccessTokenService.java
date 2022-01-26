@@ -1,10 +1,10 @@
 package com.muravyev.cinema.security.services.token;
 
 import com.muravyev.cinema.entities.EntityStatus;
-import com.muravyev.cinema.entities.session.ClientSessionEntity;
-import com.muravyev.cinema.repo.ClientSessionRepository;
+import com.muravyev.cinema.entities.session.ClientEntity;
+import com.muravyev.cinema.repo.ClientRepository;
 import com.muravyev.cinema.security.exceptions.IllegalSessionException;
-import com.muravyev.cinema.security.services.session.ClientSession;
+import com.muravyev.cinema.security.services.session.Client;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
@@ -23,7 +23,7 @@ import java.util.*;
  * Service for processing access token
  */
 @Service
-public class AccessTokenService implements TokenService<ClientSession> {
+public class AccessTokenService implements TokenService<Client> {
     @Value("${token.access.age}")
     private long maxAgeMinutes;
 
@@ -31,11 +31,11 @@ public class AccessTokenService implements TokenService<ClientSession> {
     private String secretKey;
 
     @Autowired
-    private ClientSessionRepository sessionRepository;
+    private ClientRepository sessionRepository;
 
     @Override
-    public Token createToken(ClientSession clientSession) {
-        return generateToken(clientSession.compact(), createExpirationDate());
+    public Token createToken(Client client) {
+        return generateToken(client.compact(), createExpirationDate());
     }
 
     @Override
@@ -46,7 +46,7 @@ public class AccessTokenService implements TokenService<ClientSession> {
     @Override
     public String extractUsername(String token) {
         String sessionStr = extractAllClaims(token).getSubject();
-        ClientSessionEntity session = sessionRepository.findByIdAndEntityStatus(UUID.fromString(sessionStr),
+        ClientEntity session = sessionRepository.findByIdAndEntityStatus(UUID.fromString(sessionStr),
                         EntityStatus.ACTIVE)
                 .orElseThrow(IllegalSessionException::new);
         return session.getUser().getUsername();
