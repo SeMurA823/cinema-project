@@ -1,10 +1,18 @@
-postgres:
-  image: postgres:latest
-  ports:
-    - 5432:5432
-  environment:
-    POSTGRES_PASSWORD: cinema
-    POSTGRES_USER: cinema
-    POSTGRES_DB: cinema
-  volumes:
-    - "$HOME/docker/volumes/postgres:/var/lib/postgresql/"
+version: 3.8
+services:
+  api:
+    image: semura823/cinema-back:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ""
+    environment:
+      SPRING_PROFILES_ACTIVE: yandex
+  ui-admin:
+    image: semura823/cinema-admin-ui
+    ports:
+      - "3000:80"
+  ui:
+    image: semura823/cinema-ui
+    ports:
+      - "80:80"
