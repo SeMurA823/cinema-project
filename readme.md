@@ -1,5 +1,8 @@
 # Cinema project
 
+## Presentation
+[Open](./pres.pdf)
+
 ## Other repositories
 
 [ADMIN-UI](https://github.com/SeMurA823/cinema-ui-admin)
