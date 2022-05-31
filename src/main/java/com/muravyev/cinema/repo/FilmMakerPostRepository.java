@@ -20,7 +20,7 @@ public interface FilmMakerPostRepository extends JpaRepository<FilmMakerPost, Lo
 
     List<FilmMakerPost> findAllByFilmMaker(FilmMaker filmMaker);
 
-    Optional<FilmMakerPost> findByFilmMakerIdAndFilmId(Long filmMakerId, Long filmId);
+    Optional<FilmMakerPost> findByFilmMakerIdAndFilmIdAndName(Long filmMakerId, Long filmId, String name);
 
     List<FilmMakerPost> findAllByFilmIdAndEntityStatus(Long filmId, EntityStatus entityStatus);
 
