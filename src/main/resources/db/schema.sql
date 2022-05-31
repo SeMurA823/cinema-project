@@ -281,61 +281,20 @@ create table if not exists film_marks
 create unique index if not exists film_ratings_customer_id_film_id_uindex
     on film_marks (user_id, film_id);
 
-create or replace view pg_stat_statements
-            (userid, dbid, queryid, query, calls, total_time, min_time, max_time, mean_time, stddev_time, rows,
-             shared_blks_hit, shared_blks_read, shared_blks_dirtied, shared_blks_written, local_blks_hit,
-             local_blks_read, local_blks_dirtied, local_blks_written, temp_blks_read, temp_blks_written, blk_read_time,
-             blk_write_time)
+
+create or replace function size_hall(hallid bigint) returns integer
+    language plpgsql
 as
-SELECT pg_stat_statements.userid,
-       pg_stat_statements.dbid,
-       pg_stat_statements.queryid,
-       pg_stat_statements.query,
-       pg_stat_statements.calls,
-       pg_stat_statements.total_time,
-       pg_stat_statements.min_time,
-       pg_stat_statements.max_time,
-       pg_stat_statements.mean_time,
-       pg_stat_statements.stddev_time,
-       pg_stat_statements.rows,
-       pg_stat_statements.shared_blks_hit,
-       pg_stat_statements.shared_blks_read,
-       pg_stat_statements.shared_blks_dirtied,
-       pg_stat_statements.shared_blks_written,
-       pg_stat_statements.local_blks_hit,
-       pg_stat_statements.local_blks_read,
-       pg_stat_statements.local_blks_dirtied,
-       pg_stat_statements.local_blks_written,
-       pg_stat_statements.temp_blks_read,
-       pg_stat_statements.temp_blks_written,
-       pg_stat_statements.blk_read_time,
-       pg_stat_statements.blk_write_time
-FROM pg_stat_statements(true) pg_stat_statements(userid, dbid, queryid, query, calls, total_time, min_time, max_time,
-                                                 mean_time, stddev_time, rows, shared_blks_hit, shared_blks_read,
-                                                 shared_blks_dirtied, shared_blks_written, local_blks_hit,
-                                                 local_blks_read, local_blks_dirtied, local_blks_written,
-                                                 temp_blks_read, temp_blks_written, blk_read_time, blk_write_time);
-
-grant select on pg_stat_statements to public;
-
-create or replace view pg_buffercache
-            (bufferid, relfilenode, reltablespace, reldatabase, relforknumber, relblocknumber, isdirty, usagecount,
-             pinning_backends)
-as
-SELECT p.bufferid,
-       p.relfilenode,
-       p.reltablespace,
-       p.reldatabase,
-       p.relforknumber,
-       p.relblocknumber,
-       p.isdirty,
-       p.usagecount,
-       p.pinning_backends
-FROM pg_buffercache_pages() p(bufferid integer, relfilenode oid, reltablespace oid, reldatabase oid,
-                              relforknumber smallint, relblocknumber bigint, isdirty boolean, usagecount smallint,
-                              pinning_backends integer);
-
-grant select on pg_buffercache to pg_monitor;
+$$
+declare
+    size int := 0;
+begin
+    select count(*) into size from halls
+                                       join seats s on halls.id = s.hall_id
+    where halls.id = hallId and s.status = 'ACTIVE';
+    return size;
+end;
+$$;
 
 create or replace view screening_seats(id, number, row, screening_id, status_seat) as
 SELECT DISTINCT s.id,
@@ -411,40 +370,6 @@ FROM tickets t
 WHERE t.status::text = 'ACTIVE'::text
 GROUP BY h.id, f.id, fs.id, fs.insert_date, p.insert_date;
 
-create or replace function pg_stat_statements_reset() returns void
-    parallel safe
-    language c
-as
-$$
-begin
--- missing source code
-end;
-$$;
-
-create or replace function pg_stat_statements(showtext boolean, out userid oid, out dbid oid, out queryid bigint, out query text, out calls bigint, out total_time double precision, out min_time double precision, out max_time double precision, out mean_time double precision, out stddev_time double precision, out rows bigint, out shared_blks_hit bigint, out shared_blks_read bigint, out shared_blks_dirtied bigint, out shared_blks_written bigint, out local_blks_hit bigint, out local_blks_read bigint, out local_blks_dirtied bigint, out local_blks_written bigint, out temp_blks_read bigint, out temp_blks_written bigint, out blk_read_time double precision, out blk_write_time double precision) returns setof setof record
-    strict
-    parallel safe
-    language c
-as
-$$
-begin
--- missing source code
-end;
-
-$$;
-
-create or replace function pg_buffercache_pages() returns setof setof record
-    parallel safe
-    language c
-as
-$$
-begin
--- missing source code
-end;
-
-$$;
-
-grant execute on function pg_buffercache_pages() to pg_monitor;
 
 create or replace function disable_previous_tokens() returns trigger
     language plpgsql
@@ -540,19 +465,5 @@ create trigger check_free_update
     for each row
     when (old.status::text <> new.status::text OR old.date <> new.date)
 execute procedure check_free();
-
-create or replace function size_hall(hallid bigint) returns integer
-    language plpgsql
-as
-$$
-declare
-    size int := 0;
-begin
-    select count(*) into size from halls
-                                       join seats s on halls.id = s.hall_id
-    where halls.id = hallId and s.status = 'ACTIVE';
-    return size;
-end;
-$$;
 
 
