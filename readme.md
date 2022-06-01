@@ -3,6 +3,11 @@
 ## Presentation
 [Open](./pres.pdf)
 
+## DEMO
+
+[UI](http://51.250.105.234/home)
+[UI-ADMIN](http://51.250.105.234:81/)
+
 ## Other repositories
 
 [ADMIN-UI](https://github.com/SeMurA823/cinema-ui-admin)
