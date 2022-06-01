@@ -2,9 +2,9 @@ name: Java CI
 
 on:
   push:
-    branches: [ master, develop ]
+    branches: [ master, develop, feature/** ]
   pull_request:
-    branches: [ master, develop ]
+    branches: [ master, develop, feature/** ]
 
 jobs:
   build:
@@ -25,16 +25,16 @@ jobs:
         run: docker build --tag ${{ secrets.USERNAME_HUB }}/cinema-back:latest .
       - name: Push into DockerHub
         run: docker push ${{ secrets.USERNAME_HUB }}/cinema-back:latest
-#  deploy:
-#    needs: [ build ]
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Create SSH key file
-#        run: |
-#          mkdir ~/.ssh
-#          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-#          chmod 400 ~/.ssh/id_rsa
-#          eval $(ssh-agent)
-#          ssh-add ~/.ssh/id_rsa
-#          ssh -o StrictHostKeyChecking=no -A azureuser@cinemaapi.eastus.cloudapp.azure.com 'sudo docker stop cinema-back; sudo docker rm cinema-back; sudo docker rmi ${{ secrets.USERNAME_HUB }}/cinema-back; sudo docker run -v /opt/files:/opt/files -d -p 80:8080 --name cinema-back ${{ secrets.USERNAME_HUB }}/cinema-back:latest;'
+  deploy:
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Create SSH key file
+        run: |
+          mkdir ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 400 ~/.ssh/id_rsa
+          eval $(ssh-agent)
+          ssh-add ~/.ssh/id_rsa
+          ssh -o StrictHostKeyChecking=no -A cinema@${{ secrets.SERVER_IP }} 'sudo docker stop cinema-back; sudo docker rm cinema-back; sudo docker rmi ${{ secrets.USERNAME_HUB }}/cinema-back; sudo docker run -v /opt/files:/opt/files -d -p 8080:8080 --name cinema-back -e APP_COOKIE_DOMAIN=${{secrets.SERVER_IP}} -e APP_SERVER_URL=${{secrets.SERVER_IP}} -e SPRING_PROFILES_ACTIVE=yandex ${{ secrets.USERNAME_HUB }}/cinema-back:latest;'

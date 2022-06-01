@@ -95,7 +95,9 @@ public class FilmMakerServiceImpl implements FilmMakerService {
     @Override
     @Transactional
     public FilmMakerPost uploadFilmMakerPost(FilmMakerPostDto makerPostDto) {
-        Optional<FilmMakerPost> optionalPost = postRepository.findByFilmMakerIdAndFilmId(makerPostDto.getFilm(), makerPostDto.getMaker());
+        Optional<FilmMakerPost> optionalPost = postRepository.findByFilmMakerIdAndFilmIdAndName(makerPostDto.getFilm(),
+                makerPostDto.getMaker(),
+                makerPostDto.getPost());
         return optionalPost.orElseGet(() -> createFilmMakerPost(makerPostDto));
     }
 
