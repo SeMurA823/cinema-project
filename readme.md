@@ -5,8 +5,8 @@
 
 ## DEMO
 
-[UI](http://51.250.105.234/home)
-[UI-ADMIN](http://51.250.105.234:81/)
+[UI](http://62.84.121.243/home)
+[UI-ADMIN](http://62.84.121.243:81/)
 
 ## Other repositories
 
