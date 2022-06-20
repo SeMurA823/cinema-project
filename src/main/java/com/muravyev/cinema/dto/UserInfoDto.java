@@ -6,6 +6,7 @@ import lombok.Setter;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -18,7 +19,7 @@ public class UserInfoDto {
     @NotNull
     private String patronymic;
     @Past
-    private Date birthDate;
+    private LocalDate birthDate;
     private String gender;
     @NotEmpty
     private String tel;

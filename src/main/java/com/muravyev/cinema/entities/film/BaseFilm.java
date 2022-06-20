@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -20,10 +21,10 @@ public abstract class BaseFilm extends IdentityBaseEntity {
     private String name;
 
     @Column(name = "date_local_premiere")
-    private Date localPremiere;
+    private LocalDate localPremiere;
 
     @Column(name = "date_world_premiere")
-    private Date worldPremiere;
+    private LocalDate worldPremiere;
 
     @Column(name = "duration")
     private int duration;

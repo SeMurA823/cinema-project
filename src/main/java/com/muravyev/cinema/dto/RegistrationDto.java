@@ -6,6 +6,7 @@ import lombok.Data;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -24,5 +25,5 @@ public class RegistrationDto {
     private String gender;
     @Past
     @JsonProperty("birthDate")
-    private Date birthDate;
+    private LocalDate birthDate;
 }

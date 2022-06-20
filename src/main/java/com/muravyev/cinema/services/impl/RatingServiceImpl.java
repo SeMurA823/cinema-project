@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Service
@@ -37,7 +38,7 @@ public class RatingServiceImpl implements RatingService {
 
     private FilmMark createSemiMark(long filmId, User user) {
         Film film = filmRepository.findByIdAndEntityStatus(filmId, EntityStatus.ACTIVE)
-                .filter(x -> x.getLocalPremiere().before(new Date()))
+                .filter(x -> x.getLocalPremiere().isBefore(LocalDate.now()))
                 .orElseThrow(EntityNotFoundException::new);
         FilmMark filmMark = new FilmMark();
         filmMark.setFilm(film);

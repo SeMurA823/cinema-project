@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -66,13 +68,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User registration(RegistrationDto registrationForm) {
         User user = new User();
-        user.setUsername(registrationForm.getTel());
-        user.setPassword(passwordEncoder.encode(registrationForm.getPassword()));
+        user.setUsername(registrationForm.getTel().trim());
+        user.setPassword(passwordEncoder.encode(new String(registrationForm.getPassword().getBytes(), StandardCharsets.UTF_8).trim()));
         user.setUserStatus(UserStatus.ACTIVE);
-        user.setFirstName(registrationForm.getFirstName());
-        user.setLastName(registrationForm.getLastName());
+        user.setFirstName(registrationForm.getFirstName().trim());
+        user.setLastName(registrationForm.getLastName().trim());
         user.setBirthDate(registrationForm.getBirthDate());
-        user.setPatronymic(registrationForm.getPatronymic());
+        user.setPatronymic(registrationForm.getPatronymic().trim());
         user.setGender(registrationForm.getGender());
         try {
             User savedUser = userRepository.save(user);
@@ -87,6 +89,7 @@ public class UserServiceImpl implements UserService {
     public User login(String username, String password) {
         User user = userRepository.findByUsernameAndEntityStatusAndUserStatus(username, EntityStatus.ACTIVE, UserStatus.ACTIVE)
                 .orElseThrow(EntityNotFoundException::new);
+        log.info("({})", password);
         log.info(": {}", passwordEncoder.matches(password, user.getPassword()));
         if (!passwordEncoder.matches(password, user.getPassword()))
             throw new IllegalArgumentException("Password is illegal");
@@ -102,20 +105,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public User editPassword(String newPassword, User user) {
         sessionRepository.disableAllSessionsByUser(user);
-        log.info("User ({}) is editing password {}", user.getUsername(), newPassword);
-        user.setPassword(passwordEncoder.encode(newPassword));
+        log.info("User({}) is editing password old {}", user.getUsername(), new String(user.getPassword().getBytes(), StandardCharsets.UTF_8));
+        log.info("User ({}) is editing password {}", user.getUsername(), new String(newPassword.getBytes(), StandardCharsets.UTF_8));
+        user.setPassword(passwordEncoder.encode(new String(newPassword.getBytes(), StandardCharsets.UTF_8)).trim());
         log.info("Hashed password {}", user.getPassword());
         return userRepository.save(user);
     }
 
     @Override
     public User editUserInfo(UserInfoDto userInfo, User user) {
-        user.setFirstName(userInfo.getFirstName());
-        user.setLastName(userInfo.getLastName());
-        user.setPatronymic(userInfo.getPatronymic());
+        user.setFirstName(userInfo.getFirstName().trim());
+        user.setLastName(userInfo.getLastName().trim());
+        user.setPatronymic(userInfo.getPatronymic().trim());
         user.setBirthDate(userInfo.getBirthDate());
-        user.setUsername(userInfo.getTel());
-        user.setGender(userInfo.getGender());
+        user.setUsername(userInfo.getTel().trim());
+        user.setGender(userInfo.getGender().trim());
         return userRepository.save(user);
     }
 

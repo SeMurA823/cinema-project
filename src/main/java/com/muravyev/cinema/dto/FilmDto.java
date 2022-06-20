@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -16,9 +17,9 @@ public class FilmDto {
     @NotEmpty
     private String name;
     @NotNull
-    private Date localPremiere;
+    private LocalDate localPremiere;
     @NotNull
-    private Date worldPremiere;
+    private LocalDate worldPremiere;
     @NotEmpty
     private String plot;
     @NotEmpty

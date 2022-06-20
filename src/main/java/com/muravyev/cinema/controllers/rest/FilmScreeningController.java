@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.Date;
 
@@ -34,9 +35,9 @@ public class FilmScreeningController {
 
     @GetMapping(params = {"film", "start", "end"})
     public ResponseEntity<?> getFilmScreenings(@RequestParam("film") long filmId,
-                                               @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date start,
-                                               @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date end) {
-        return ResponseEntity.ok(screeningService.getFilmScreenings(filmId, start, end));
+                                               @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime start,
+                                               @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime end) {
+        return ResponseEntity.ok(screeningService.getFilmScreenings(filmId, Date.from(start.toInstant()), Date.from(end.toInstant())));
     }
 
     @GetMapping(params = {"hall", "start", "end"})
@@ -101,10 +102,10 @@ public class FilmScreeningController {
     }
 
     @GetMapping("/films")
-    public ResponseEntity<?> getFilmsInPeriod(@RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date start,
-                                              @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date end,
+    public ResponseEntity<?> getFilmsInPeriod(@RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime start,
+                                              @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime end,
                                               @PageableDefault Pageable pageable) {
-        Page<Film> todayFilms = screeningService.getFilms(start, end, pageable);
+        Page<Film> todayFilms = screeningService.getFilms(Date.from(start.toInstant()), Date.from(end.toInstant()), pageable);
         return ResponseEntity.ok(todayFilms);
     }
 }

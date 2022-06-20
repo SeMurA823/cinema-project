@@ -38,7 +38,7 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping(value = "/edit", params = {"password"})
     public ResponseEntity<?> editPassword(@RequestBody String newPassword, Authentication authentication) {
-        return ResponseEntity.ok(userService.editPassword(newPassword, (User) authentication.getPrincipal()));
+        return ResponseEntity.ok(userService.editPassword(newPassword.substring(1, newPassword.length() - 1), (User) authentication.getPrincipal()));
     }
 
     @PreAuthorize("isAuthenticated()")

@@ -16,6 +16,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -28,7 +29,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Table(name = "users")
 public class User extends IdentityBaseEntity implements UserDetails {
-    @CreatedDate
+    @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     private Set<UserRole> userRoles;
 
@@ -54,7 +55,7 @@ public class User extends IdentityBaseEntity implements UserDetails {
     private String patronymic;
 
     @Column(name = "birth_date")
-    private Date birthDate;
+    private LocalDate birthDate;
 
     @Column(name = "gender", nullable = false)
     private String gender;

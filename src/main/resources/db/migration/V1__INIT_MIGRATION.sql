@@ -27,10 +27,10 @@ create table if not exists films
     status              varchar(255)                                       not null,
     insert_date         timestamp with time zone default CURRENT_TIMESTAMP not null,
     update_date         timestamp with time zone,
-    date_local_premiere timestamp with time zone                           not null,
+    date_local_premiere date                           not null,
     name                varchar(255)                                       not null,
     plot                text                     default ''::text          not null,
-    date_world_premiere timestamp with time zone,
+    date_world_premiere date,
     age_limit_id        varchar(255)                                       not null
         references age_limits,
     duration            integer                  default 0                 not null
@@ -139,7 +139,7 @@ create table if not exists users
     last_name     varchar(255)                                       not null,
     patronymic    varchar(255),
     gender        varchar(255)                                       not null,
-    birth_date    timestamp with time zone                           not null
+    birth_date    date                          not null
 );
 
 create table if not exists user_roles
@@ -467,3 +467,17 @@ create trigger check_free_update
 execute procedure check_free();
 
 
+INSERT INTO age_limits (name, status, insert_date, update_date, description, start_age)
+VALUES ('18+', 'ACTIVE', '2022-01-06 15:37:38.217319 +04:00', null, 'Для зрителей старше 18 лет', 18);
+INSERT INTO age_limits (name, status, insert_date, update_date, description, start_age)
+VALUES ('16+', 'ACTIVE', '2022-01-06 15:37:38.217319 +04:00', null, 'Для зрителей старше 16 лет', 16);
+INSERT INTO age_limits (name, status, insert_date, update_date, description, start_age)
+VALUES ('12+', 'ACTIVE', '2022-01-06 15:37:38.217319 +04:00', null, 'Для зрителей старше 12 лет', 12);
+INSERT INTO age_limits (name, status, insert_date, update_date, description, start_age)
+VALUES ('6+', 'ACTIVE', '2022-01-06 15:37:38.217319 +04:00', null, 'Для зрителей старше 6 лет', 6);
+INSERT INTO age_limits (name, status, insert_date, update_date, description, start_age)
+VALUES ('0+', 'ACTIVE', '2022-01-06 15:37:38.217319 +04:00', null, 'Без возврастных ограничений', 0);
+INSERT INTO users (status, update_date, hash_password, user_status, username, first_name, last_name, patronymic, gender, birth_date)
+VALUES ('ACTIVE', null, '$2a$10$RmQ0Z20v9KvcZYKmn5Ebiu1sQhnAvwj5gH/rP9tBQ6kPklG/mGxhq', 'ACTIVE', '7987654321','Admin', 'Admin', null, 'Male', current_date);
+INSERT INTO user_roles (status, update_date, role, user_id)
+VALUES ('ACTIVE', current_date, 'ADMIN', 1);
